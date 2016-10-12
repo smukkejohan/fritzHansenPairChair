@@ -1,0 +1,5 @@
+ofxAssimpModelLoader
+ofxBiquadFilter
+ofxGui
+ofxOsc
+ofxXmlSettings
