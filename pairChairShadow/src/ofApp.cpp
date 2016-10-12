@@ -14,21 +14,19 @@ void ofApp::setup(){
     light.enable();
     
     
-    
-    
-    // lets say our units are cm
-    floor.set(400, 400, 10);
+    // lets say our units are mm
+    floor.set(4000, 4000, 10);
     
     // rotate chair to stand on the floor
     // set the scale of the chair
-    
     
     gui.setup(params);
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-
+    
+    light.setPosition(lightPosition);
     
 }
 
@@ -45,6 +43,10 @@ void ofApp::draw(){
     
     
     ofPushMatrix();
+    
+    
+    ofTranslate(chairOffset.get());
+    
     ofRotateX(chairRotation.get().x);
     ofRotateY(chairRotation.get().y);
     ofRotateZ(chairRotation.get().z);
