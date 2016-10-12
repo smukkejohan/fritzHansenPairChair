@@ -6,6 +6,7 @@ void ofApp::setup(){
     
     pairChairModel.loadModel("BH20_high_3D.obj");
     
+    
 }
 
 //--------------------------------------------------------------
@@ -17,8 +18,11 @@ void ofApp::update(){
 void ofApp::draw(){
     
     
-    //pairChairModel.draw();
+    cam.begin();
     
+    pairChairModel.drawFaces();
+    
+    cam.end();
 
 }
 

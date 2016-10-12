@@ -23,4 +23,7 @@ class ofApp : public ofBaseApp{
     
     ofxAssimpModelLoader pairChairModel;
     
+    ofEasyCam cam;
+
+    
 };
