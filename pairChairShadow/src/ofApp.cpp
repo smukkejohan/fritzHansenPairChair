@@ -6,37 +6,63 @@ void ofApp::setup(){
     
     pairChairModel.loadModel("BH20_high_3D.obj");
     
+    pairChairMesh = pairChairModel.getMesh(0);
+
+    
+    
     light.setAreaLight(100, 100);
     light.enable();
     
-    ofEnableLighting();
-    ofEnableDepthTest();
+    
     
     
     // lets say our units are cm
     floor.set(400, 400, 10);
     
-    
     // rotate chair to stand on the floor
     // set the scale of the chair
+    
+    
+    gui.setup(params);
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
 
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
     
     
+    ofEnableDepthTest();
+    ofEnableLighting();
+    
     cam.begin();
     
     floor.draw();
     
+    
+    ofPushMatrix();
+    ofRotateX(chairRotation.get().x);
+    ofRotateY(chairRotation.get().y);
+    ofRotateZ(chairRotation.get().z);
+    
     pairChairModel.drawFaces();
     
+    ofPopMatrix();
+    
     cam.end();
+    
+    
+    ofDisableDepthTest();
+    ofDisableLighting();
+    ofSetColor(255);
+    
+    
+    // move to its own window
+    gui.draw();
 
 }
 
