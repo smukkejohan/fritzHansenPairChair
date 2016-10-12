@@ -6,6 +6,11 @@ void ofApp::setup(){
     
     pairChairModel.loadModel("BH20_high_3D.obj");
     
+    light.setAreaLight(100, 100);
+    light.enable();
+    
+    ofEnableLighting();
+    ofEnableDepthTest();
     
 }
 
