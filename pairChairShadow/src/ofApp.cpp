@@ -12,6 +12,13 @@ void ofApp::setup(){
     ofEnableLighting();
     ofEnableDepthTest();
     
+    
+    // lets say our units are cm
+    floor.set(400, 400, 10);
+    
+    
+    // rotate chair to stand on the floor
+    // set the scale of the chair
 }
 
 //--------------------------------------------------------------
@@ -24,6 +31,8 @@ void ofApp::draw(){
     
     
     cam.begin();
+    
+    floor.draw();
     
     pairChairModel.drawFaces();
     

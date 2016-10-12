@@ -27,6 +27,9 @@ class ofApp : public ofBaseApp{
 
     
     
-    ofLight light; 
+    ofLight light;
+    
+    
+    ofBoxPrimitive floor;
     
 };
