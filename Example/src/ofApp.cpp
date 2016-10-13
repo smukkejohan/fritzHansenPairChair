@@ -37,7 +37,6 @@ void ofApp::setup() {
     chairModel.loadModel("BH31_high_3D.obj");
     chairMesh = chairModel.getMesh(0);
     
-    
     vector< ofMeshFace > chairFaces = chairMesh.getUniqueFaces();
     for( int i = 0; i < chairFaces.size(); i++ ) {
         chairFaces[i].setVertex( 0, chairFaces[i].getVertex(0 ));
@@ -58,8 +57,8 @@ void ofApp::setup() {
 //--------------------------------------------------------------
 void ofApp::update(){
     
-    //shadow.setLightPosition( ofVec3f(cos(ofGetElapsedTimef()*0.6) * 10, -30, -25) );
-    //shadow.setLightPosition( ofVec3f(cos(ofGetElapsedTimef()*0.6) * 50, -30, -50) );
+    shadow.setLightPosition( ofVec3f(cos(ofGetElapsedTimef()*0.6) * 10, -30, -25) );
+    shadow.setLightPosition( ofVec3f(cos(ofGetElapsedTimef()*0.6) * 50, -30, -50) );
     shadow.setLightPosition(ofVec3f(cos(ofGetElapsedTimef()*0.6) * 50,
                                     sin(ofGetElapsedTimef()*10) -30,
                                     (sin(ofGetElapsedTimef()*0.7)*30)-50
@@ -92,7 +91,7 @@ void ofApp::draw(){
 //--------------------------------------------------------------
 void ofApp::renderScene() {
     
-    ofBackground( 241,212,55 );
+    ofBackground( 255,255,255 );
     
     /*
     ofSetColor( 241,238,162 );
@@ -116,8 +115,8 @@ void ofApp::renderScene() {
         //ofRotate(180, 1, 0, 0 );
         
         ofTranslate(chairOffset.get());
-        ofRotateX( cos( ofGetElapsedTimef() * 2.3) * sin( ofGetElapsedTimef() ) * RAD_TO_DEG );
-        ofRotateY( sin( ofGetElapsedTimef() ) * RAD_TO_DEG );
+        //ofRotateX( cos( ofGetElapsedTimef() * 2.3) * sin( ofGetElapsedTimef() ) * RAD_TO_DEG );
+        //ofRotateY( sin( ofGetElapsedTimef() ) * RAD_TO_DEG );
         
         //ofRotateX(chairRotation.get().x);
         //ofRotateY(chairRotation.get().y);
@@ -139,7 +138,7 @@ void ofApp::renderScene() {
     
     //ofDrawSphere( light.getPosition(), 1 );
     
-    cam.end();
+    //cam.end();
 
     ofDisableDepthTest();
     ofDisableLighting();

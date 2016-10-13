@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2E6436B91B71B20D00C4B4F5 /* ofxShadowSimple.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E6436B71B71B20D00C4B4F5 /* ofxShadowSimple.cpp */; };
+		04AD3C1B1DB0331D00BAE2E3 /* ofxShadowSimple.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 04AD3C191DB0331D00BAE2E3 /* ofxShadowSimple.cpp */; };
 		B728F11E1DAFAD1500B0272F /* ofxAssimpAnimation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B728F0DE1DAFAD1500B0272F /* ofxAssimpAnimation.cpp */; };
 		B728F11F1DAFAD1500B0272F /* ofxAssimpMeshHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B728F0E01DAFAD1500B0272F /* ofxAssimpMeshHelper.cpp */; };
 		B728F1201DAFAD1500B0272F /* ofxAssimpModelLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B728F0E21DAFAD1500B0272F /* ofxAssimpModelLoader.cpp */; };
@@ -74,8 +74,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		2E6436B71B71B20D00C4B4F5 /* ofxShadowSimple.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxShadowSimple.cpp; sourceTree = "<group>"; };
-		2E6436B81B71B20D00C4B4F5 /* ofxShadowSimple.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxShadowSimple.h; sourceTree = "<group>"; };
+		04AD3C191DB0331D00BAE2E3 /* ofxShadowSimple.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ofxShadowSimple.cpp; path = ../../../addons/ofxShadowSimple/src/ofxShadowSimple.cpp; sourceTree = "<group>"; };
+		04AD3C1A1DB0331D00BAE2E3 /* ofxShadowSimple.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxShadowSimple.h; path = ../../../addons/ofxShadowSimple/src/ofxShadowSimple.h; sourceTree = "<group>"; };
 		B728F0DE1DAFAD1500B0272F /* ofxAssimpAnimation.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ofxAssimpAnimation.cpp; sourceTree = "<group>"; };
 		B728F0DF1DAFAD1500B0272F /* ofxAssimpAnimation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxAssimpAnimation.h; sourceTree = "<group>"; };
 		B728F0E01DAFAD1500B0272F /* ofxAssimpMeshHelper.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ofxAssimpMeshHelper.cpp; sourceTree = "<group>"; };
@@ -213,8 +213,8 @@
 		2E6436B61B71B1F500C4B4F5 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				2E6436B71B71B20D00C4B4F5 /* ofxShadowSimple.cpp */,
-				2E6436B81B71B20D00C4B4F5 /* ofxShadowSimple.h */,
+				04AD3C191DB0331D00BAE2E3 /* ofxShadowSimple.cpp */,
+				04AD3C1A1DB0331D00BAE2E3 /* ofxShadowSimple.h */,
 			);
 			name = src;
 			path = ../src;
@@ -583,11 +583,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				B728F1211DAFAD1500B0272F /* ofxAssimpTexture.cpp in Sources */,
+				04AD3C1B1DB0331D00BAE2E3 /* ofxShadowSimple.cpp in Sources */,
 				E4B69E200A3A1BDC003C02F2 /* main.cpp in Sources */,
 				B728F11F1DAFAD1500B0272F /* ofxAssimpMeshHelper.cpp in Sources */,
 				B79EE3D01DAFA97000E00840 /* ofxShadow.cpp in Sources */,
 				B728F1381DAFD1B800B0272F /* ofxBaseGui.cpp in Sources */,
-				2E6436B91B71B20D00C4B4F5 /* ofxShadowSimple.cpp in Sources */,
 				B728F13B1DAFD1B800B0272F /* ofxLabel.cpp in Sources */,
 				E4B69E210A3A1BDC003C02F2 /* ofApp.cpp in Sources */,
 				B728F13D1DAFD1B800B0272F /* ofxSlider.cpp in Sources */,
