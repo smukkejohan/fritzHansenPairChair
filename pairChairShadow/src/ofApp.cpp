@@ -25,9 +25,7 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    
     light.setPosition(lightPosition);
-    
 }
 
 //--------------------------------------------------------------
@@ -43,7 +41,6 @@ void ofApp::draw(){
     
     
     ofPushMatrix();
-    
     
     ofTranslate(chairOffset.get());
     
