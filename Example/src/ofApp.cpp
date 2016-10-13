@@ -7,10 +7,11 @@ void ofApp::setup() {
     
     cam.disableMouseInput();
     cam.setDistance( 10 );
-    cam.setPosition(0, 0, -10 );
+    //cam.setPosition(0, 0, -10 );
+    cam.setPosition(0, -50, -10 );
     cam.lookAt( ofVec3f(0,0,0), ofVec3f(0,-1,0) );
     cam.setNearClip(1);
-    cam.setFarClip(150);
+    cam.setFarClip(300);
     
     cam.enableMouseInput();
     
@@ -36,6 +37,8 @@ void ofApp::setup() {
     chairModel.loadModel("BH31_high_3D.obj");
     chairMesh = chairModel.getMesh(0);
     
+    
+    /*
     vector< ofMeshFace > chairFaces = chairMesh.getUniqueFaces();
     for( int i = 0; i < chairFaces.size(); i++ ) {
         chairFaces[i].setVertex( 0, chairFaces[i].getVertex(0 ));
@@ -46,9 +49,9 @@ void ofApp::setup() {
     chairMesh.setFromTriangles( chairFaces );
     chairMesh.smoothNormals( 60 );
     cout << "Chair normals = " << chairMesh.getNumNormals() << endl;
+*/
 
-
-    gui.setup(params);
+    //gui.setup(params);
 
     
 }
@@ -56,7 +59,8 @@ void ofApp::setup() {
 //--------------------------------------------------------------
 void ofApp::update(){
     
-    shadow.setLightPosition( ofVec3f(cos(ofGetElapsedTimef()*0.6) * 10, -3, -25) );
+    //shadow.setLightPosition( ofVec3f(cos(ofGetElapsedTimef()*0.6) * 10, -30, -25) );
+    shadow.setLightPosition( ofVec3f(cos(ofGetElapsedTimef()*0.6) * 50, -30, -50) );
     shadow.setLightLookAt( ofVec3f(0,0,0), ofVec3f(0,-1,0) );
 }
 
@@ -86,6 +90,7 @@ void ofApp::renderScene() {
     
     ofBackground( 241,212,55 );
     
+    /*
     ofSetColor( 241,238,162 );
     ofPushMatrix(); {
         ofRotateX( cos( ofGetElapsedTimef() * 2.3) * sin( ofGetElapsedTimef() ) * RAD_TO_DEG );
@@ -97,6 +102,8 @@ void ofApp::renderScene() {
     ofDrawSphere( -4, sin( ofGetElapsedTimef() ) * 3, 2 );
     ofSetColor( 183,241,195 );
     ofDrawSphere( -4, sin( ofGetElapsedTimef() * 0.3 ) * 3, 5, 2 );
+    
+    */
     
     
     ofSetColor( 241,212,55 );
@@ -121,10 +128,12 @@ void ofApp::renderScene() {
     // floor //
     ofSetColor( 142,187,151 );
     ofDrawBox( 0, 5, 0, 250, 2, 250 );
-    ofDrawBox(0, -8, 10, 80, 30, 2 );
+    
+    // wall //
+    //ofDrawBox(0, -8, 10, 80, 30, 2 );
     
     
-//    ofDrawSphere( light.getPosition(), 1 );
+    //ofDrawSphere( light.getPosition(), 1 );
     
     cam.end();
 
