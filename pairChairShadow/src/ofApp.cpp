@@ -4,7 +4,7 @@
 void ofApp::setup(){
 
     
-    pairChairModel.loadModel("BH20_high_3D.obj");
+    pairChairModel.loadModel("BH31_high_3D.obj");
     
     pairChairMesh = pairChairModel.getMesh(0);
 

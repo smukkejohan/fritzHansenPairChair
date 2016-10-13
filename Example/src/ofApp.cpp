@@ -30,6 +30,27 @@ void ofApp::setup() {
     bunny.setFromTriangles( faces );
     bunny.smoothNormals( 60 );
     cout << "Bunny normals = " << bunny.getNumNormals() << endl;
+    
+    
+    
+    chairModel.loadModel("BH31_high_3D.obj");
+    chairMesh = chairModel.getMesh(0);
+    
+    vector< ofMeshFace > chairFaces = chairMesh.getUniqueFaces();
+    for( int i = 0; i < chairFaces.size(); i++ ) {
+        chairFaces[i].setVertex( 0, chairFaces[i].getVertex(0 ));
+        chairFaces[i].setNormal(0, chairFaces[i].getFaceNormal() );
+        chairFaces[i].setNormal(1, chairFaces[i].getFaceNormal() );
+        chairFaces[i].setNormal(2, chairFaces[i].getFaceNormal() );
+    }
+    chairMesh.setFromTriangles( chairFaces );
+    chairMesh.smoothNormals( 60 );
+    cout << "Chair normals = " << chairMesh.getNumNormals() << endl;
+
+
+    gui.setup(params);
+
+    
 }
 
 //--------------------------------------------------------------
@@ -81,19 +102,38 @@ void ofApp::renderScene() {
     ofSetColor( 241,212,55 );
     ofPushMatrix(); {
         ofTranslate(5, 0, 0 );
-        ofRotate(180, 1, 0, 0 );
+        //ofRotate(180, 1, 0, 0 );
+        
+        ofTranslate(chairOffset.get());
+        ofRotateX( cos( ofGetElapsedTimef() * 2.3) * sin( ofGetElapsedTimef() ) * RAD_TO_DEG );
+        ofRotateY( sin( ofGetElapsedTimef() ) * RAD_TO_DEG );
+        
+        //ofRotateX(chairRotation.get().x);
+        //ofRotateY(chairRotation.get().y);
+        ofRotateZ(chairRotation.get().z);
+        //make adjustable scale
         ofScale( 0.015, 0.015, 0.015 );
-        bunny.draw();
+        //bunny.draw();
+        chairModel.drawFaces();
+        //chairMesh.draw();
     } ofPopMatrix();
     
     // floor //
     ofSetColor( 142,187,151 );
     ofDrawBox( 0, 5, 0, 250, 2, 250 );
-    
     ofDrawBox(0, -8, 10, 80, 30, 2 );
     
     
 //    ofDrawSphere( light.getPosition(), 1 );
+    
+    cam.end();
+
+    ofDisableDepthTest();
+    ofDisableLighting();
+    ofSetColor(255);
+    
+    //move to its own window
+    gui.draw();
 }
 
 //--------------------------------------------------------------
