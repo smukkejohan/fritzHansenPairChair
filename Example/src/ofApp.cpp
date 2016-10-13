@@ -37,7 +37,7 @@ void ofApp::setup() {
     chairModel.loadModel("BH31_high_3D.obj");
     chairMesh = chairModel.getMesh(0);
     
-    
+    /*
     vector< ofMeshFace > chairFaces = chairMesh.getUniqueFaces();
     for( int i = 0; i < chairFaces.size(); i++ ) {
         chairFaces[i].setVertex( 0, chairFaces[i].getVertex(0 ));
@@ -48,7 +48,7 @@ void ofApp::setup() {
     chairMesh.setFromTriangles( chairFaces );
     chairMesh.smoothNormals( 60 );
     cout << "Chair normals = " << chairMesh.getNumNormals() << endl;
-
+    */
 
     //gui.setup(params);
 
