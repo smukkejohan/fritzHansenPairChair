@@ -37,6 +37,7 @@ void ofApp::setup() {
     chairModel.loadModel("BH31_high_3D.obj");
     chairMesh = chairModel.getMesh(0);
     
+    /*
     vector< ofMeshFace > chairFaces = chairMesh.getUniqueFaces();
     for( int i = 0; i < chairFaces.size(); i++ ) {
         chairFaces[i].setVertex( 0, chairFaces[i].getVertex(0 ));
@@ -47,11 +48,10 @@ void ofApp::setup() {
     chairMesh.setFromTriangles( chairFaces );
     chairMesh.smoothNormals( 60 );
     cout << "Chair normals = " << chairMesh.getNumNormals() << endl;
+    */
 
+    gui.setup(params);
 
-    //gui.setup(params);
-
-    
 }
 
 //--------------------------------------------------------------
@@ -72,7 +72,7 @@ void ofApp::draw(){
     
     shadow.beginDepthPass();
     glEnable(GL_DEPTH_TEST);
-    renderScene();
+    renderScene(true);
     glDisable(GL_DEPTH_TEST);
     shadow.endDepthPass();
     
@@ -80,16 +80,20 @@ void ofApp::draw(){
     shadow.beginRenderPass( cam );
     cam.begin();
     glEnable(GL_DEPTH_TEST);
-    renderScene();
+    renderScene(false);
     glDisable(GL_DEPTH_TEST);
     cam.end();
     shadow.endRenderPass();
     
     
+    //move to its own window
+    gui.draw();
+    
+    
 }
 
 //--------------------------------------------------------------
-void ofApp::renderScene() {
+void ofApp::renderScene(bool isDepthPass) {
     
     ofBackground( 255,255,255 );
     
@@ -124,7 +128,9 @@ void ofApp::renderScene() {
         //make adjustable scale
         ofScale( 0.015, 0.015, 0.015 );
         //bunny.draw();
-        chairModel.drawFaces();
+        if(isDepthPass) {
+            chairModel.drawFaces();
+        }
         //chairMesh.draw();
     } ofPopMatrix();
     
@@ -144,8 +150,7 @@ void ofApp::renderScene() {
     ofDisableLighting();
     ofSetColor(255);
     
-    //move to its own window
-    gui.draw();
+
 }
 
 //--------------------------------------------------------------

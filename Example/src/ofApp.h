@@ -12,7 +12,7 @@ public:
     void update();
     void draw();
     
-    void renderScene();
+    void renderScene(bool isDepthPass);
     
     void keyPressed(int key);
     void keyReleased(int key);
