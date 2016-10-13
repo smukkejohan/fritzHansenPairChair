@@ -19,7 +19,7 @@ void ofApp::setup() {
     shadow.setRange( 10, 150 );
     shadow.setBias( 0.01 );
     
-    bunny.load( "lofi-bunny.ply" );
+    /*bunny.load( "lofi-bunny.ply" );
     
     vector< ofMeshFace > faces = bunny.getUniqueFaces();
     for( int i = 0; i < faces.size(); i++ ) {
@@ -31,14 +31,13 @@ void ofApp::setup() {
     bunny.setFromTriangles( faces );
     bunny.smoothNormals( 60 );
     cout << "Bunny normals = " << bunny.getNumNormals() << endl;
-    
+    */
     
     
     chairModel.loadModel("BH31_high_3D.obj");
     chairMesh = chairModel.getMesh(0);
     
     
-    /*
     vector< ofMeshFace > chairFaces = chairMesh.getUniqueFaces();
     for( int i = 0; i < chairFaces.size(); i++ ) {
         chairFaces[i].setVertex( 0, chairFaces[i].getVertex(0 ));
@@ -49,7 +48,7 @@ void ofApp::setup() {
     chairMesh.setFromTriangles( chairFaces );
     chairMesh.smoothNormals( 60 );
     cout << "Chair normals = " << chairMesh.getNumNormals() << endl;
-*/
+
 
     //gui.setup(params);
 
@@ -60,7 +59,12 @@ void ofApp::setup() {
 void ofApp::update(){
     
     //shadow.setLightPosition( ofVec3f(cos(ofGetElapsedTimef()*0.6) * 10, -30, -25) );
-    shadow.setLightPosition( ofVec3f(cos(ofGetElapsedTimef()*0.6) * 50, -30, -50) );
+    //shadow.setLightPosition( ofVec3f(cos(ofGetElapsedTimef()*0.6) * 50, -30, -50) );
+    shadow.setLightPosition(ofVec3f(cos(ofGetElapsedTimef()*0.6) * 50,
+                                    sin(ofGetElapsedTimef()*10) -30,
+                                    (sin(ofGetElapsedTimef()*0.7)*30)-50
+                                    )
+                            );
     shadow.setLightLookAt( ofVec3f(0,0,0), ofVec3f(0,-1,0) );
 }
 
@@ -121,8 +125,8 @@ void ofApp::renderScene() {
         //make adjustable scale
         ofScale( 0.015, 0.015, 0.015 );
         //bunny.draw();
-        chairModel.drawFaces();
-        //chairMesh.draw();
+        //chairModel.drawFaces();
+        chairMesh.draw();
     } ofPopMatrix();
     
     // floor //
