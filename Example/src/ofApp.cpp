@@ -8,7 +8,7 @@ void ofApp::setup() {
     cam.disableMouseInput();
     cam.setDistance( 10 );
     //cam.setPosition(0, 0, -10 );
-    cam.setPosition(0, -50, -10 );
+    cam.setPosition(0, -30, -10 );
     cam.lookAt( ofVec3f(0,0,0), ofVec3f(0,-1,0) );
     cam.setNearClip(1);
     cam.setFarClip(300);
