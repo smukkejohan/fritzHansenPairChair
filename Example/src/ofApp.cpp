@@ -125,8 +125,8 @@ void ofApp::renderScene() {
         //make adjustable scale
         ofScale( 0.015, 0.015, 0.015 );
         //bunny.draw();
-        //chairModel.drawFaces();
-        chairMesh.draw();
+        chairModel.drawFaces();
+        //chairMesh.draw();
     } ofPopMatrix();
     
     // floor //
