@@ -19,6 +19,9 @@ void ofApp::setup() {
     shadow.setRange( 10, 150 );
     shadow.setBias( 0.01 );
     
+    
+    outFbo.allocate(1920, 1080);
+    
     /*bunny.load( "lofi-bunny.ply" );
     
     vector< ofMeshFace > faces = bunny.getUniqueFaces();
@@ -70,11 +73,15 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
     
+    outFbo.begin();
+    
     shadow.beginDepthPass();
     glEnable(GL_DEPTH_TEST);
     renderScene(true);
     glDisable(GL_DEPTH_TEST);
     shadow.endDepthPass();
+    
+    
     
     
     shadow.beginRenderPass( cam );
@@ -86,6 +93,10 @@ void ofApp::draw(){
     shadow.endRenderPass();
     
     
+    outFbo.end();
+    
+    
+    outFbo.draw(0,0);
     //move to its own window
     gui.draw();
     

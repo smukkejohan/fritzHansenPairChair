@@ -6,7 +6,7 @@ int main( ){
     
 //    ofSetCurrentRenderer(ofGLProgrammableRenderer::TYPE);
 //    window.setGlutDisplayString("rgb double depth>=32 alpha");
-	ofSetupOpenGL(1024,768, OF_WINDOW);			// <-------- setup the GL context
+	ofSetupOpenGL(1920,1080, OF_WINDOW);			// <-------- setup the GL context
 
 	// this kicks off the running of my app
 	// can be OF_WINDOW or OF_FULLSCREEN

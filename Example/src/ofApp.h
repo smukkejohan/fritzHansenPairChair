@@ -30,6 +30,8 @@ public:
     ofxShadowSimple shadow;
     
     
+    ofFbo outFbo;
+    
     ofxAssimpModelLoader chairModel;
     ofMesh chairMesh;
     
