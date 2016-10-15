@@ -3,6 +3,7 @@
 #include "ofMain.h"
 #include "ofxAssimpModelLoader.h"
 #include "ofxGui.h"
+#include "ofxShadowSimple.h"
 
 
 class ofApp : public ofBaseApp{
@@ -23,31 +24,41 @@ class ofApp : public ofBaseApp{
 		void gotMessage(ofMessage msg);
     
     
+    ofxShadowSimple shadow;
+    ofFbo outFbo;
+    
+    void renderScene(bool isDepthPass);
+
     ofxAssimpModelLoader pairChairModel;
     ofMesh pairChairMesh;
     
     ofEasyCam cam;
     
-    ofLight light;
-    
     ofBoxPrimitive floor;
-    
     
     ofxPanel gui;
     
     ofParameter<ofVec3f> chairRotation {"rotation", ofVec3f(270,0,0), ofVec3f(0,0,0), ofVec3f(360,360,360)};
 
-    ofParameter<ofVec3f> chairOffset {"offset", ofVec3f(0,0,0), ofVec3f(-400,-400,-400), ofVec3f(400,400,400)};
+    ofParameter<ofVec3f> chairOffset {"offset", ofVec3f(0,0,0), ofVec3f(-4000,-4000,-4000), ofVec3f(4000,4000,4000)};
 
     ofParameterGroup chairParams {"chair",
         chairRotation,
         chairOffset
     };
     
-    ofParameter<ofVec3f> lightPosition {"pos", ofVec3f(0,0,0), ofVec3f(-400,-400,-400), ofVec3f(400,400,400)};
+    ofParameter<ofVec3f> lightPosition {"pos", ofVec3f(0,0,0), ofVec3f(-4000,-4000,-4000), ofVec3f(4000,4000,4000)};
+    
+    ofParameter<float> rangeMin {"rangeMin", 0, 0, 1000};
+    ofParameter<float> rangeMax {"rangeMax", 0, 0, 8000};
+    
+    ofParameter<float> shadowBias {"shadowBias", 0, 0, 0.1};
     
     ofParameterGroup lightParams {"light",
-        lightPosition
+        lightPosition,
+        rangeMin,
+        rangeMax,
+        shadowBias
     };
     
     ofParameterGroup params {"params",

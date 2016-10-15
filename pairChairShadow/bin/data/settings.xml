@@ -1,0 +1,13 @@
+<params>
+	<chair>
+		<rotation>270, 0, 0</rotation>
+		<offset>0, 0, 0</offset>
+	</chair>
+	<light>
+		<pos>-3122.03, 168.264, 3042.07</pos>
+		<rangeMin>1000</rangeMin>
+		<rangeMax>8000</rangeMax>
+		<shadowBias>0.0102041</shadowBias>
+	</light>
+<params/>
+</params>
