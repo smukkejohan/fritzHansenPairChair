@@ -167,8 +167,7 @@ void ofApp::renderScene(bool isDepthPass) {
         if(isDepthPass) { //true if displayModel is true
 
             if(explodeParts){
-                float time = ofGetElapsedTimef();    //Get time in seconds
-                float angle = time * 10; //Compute angle. We rotate at speed
+                float angle = (sin( ofGetElapsedTimef() ) * RAD_TO_DEG)/50; //Compute angle. We rotate at speed
 
                 for(int i = 0; i < nParts; i++){
                     chairParts[i].setPosition(chairPartsPos[i].x, chairPartsPos[i].y, chairPartsPos[i].z);
