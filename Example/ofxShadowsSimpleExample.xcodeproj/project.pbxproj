@@ -21,7 +21,6 @@
 		B728F13D1DAFD1B800B0272F /* ofxSlider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B728F1321DAFD1B800B0272F /* ofxSlider.cpp */; };
 		B728F13E1DAFD1B800B0272F /* ofxSliderGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B728F1341DAFD1B800B0272F /* ofxSliderGroup.cpp */; };
 		B728F13F1DAFD1B800B0272F /* ofxToggle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B728F1361DAFD1B800B0272F /* ofxToggle.cpp */; };
-		B79EE3D01DAFA97000E00840 /* ofxShadow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B79EE3CE1DAFA97000E00840 /* ofxShadow.cpp */; };
 		BBAB23CB13894F3D00AA2426 /* GLUT.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BBAB23BE13894E4700AA2426 /* GLUT.framework */; };
 		E4328149138ABC9F0047C5CB /* openFrameworksDebug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4328148138ABC890047C5CB /* openFrameworksDebug.a */; };
 		E45BE97B0E8CC7DD009D7055 /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9710E8CC7DD009D7055 /* AGL.framework */; };
@@ -147,8 +146,6 @@
 		B728F1351DAFD1B800B0272F /* ofxSliderGroup.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxSliderGroup.h; sourceTree = "<group>"; };
 		B728F1361DAFD1B800B0272F /* ofxToggle.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ofxToggle.cpp; sourceTree = "<group>"; };
 		B728F1371DAFD1B800B0272F /* ofxToggle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxToggle.h; sourceTree = "<group>"; };
-		B79EE3CE1DAFA97000E00840 /* ofxShadow.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ofxShadow.cpp; sourceTree = "<group>"; };
-		B79EE3CF1DAFA97000E00840 /* ofxShadow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxShadow.h; sourceTree = "<group>"; };
 		BBAB23BE13894E4700AA2426 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = ../../../libs/glut/lib/osx/GLUT.framework; sourceTree = "<group>"; };
 		E4328143138ABC890047C5CB /* openFrameworksLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = openFrameworksLib.xcodeproj; path = ../../../libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj; sourceTree = SOURCE_ROOT; };
 		E45BE9710E8CC7DD009D7055 /* AGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AGL.framework; path = /System/Library/Frameworks/AGL.framework; sourceTree = "<absolute>"; };
@@ -388,29 +385,10 @@
 			path = ../../../addons/ofxGui/src;
 			sourceTree = "<group>";
 		};
-		B79EE3CC1DAFA97000E00840 /* ofxShadow */ = {
-			isa = PBXGroup;
-			children = (
-				B79EE3CD1DAFA97000E00840 /* src */,
-			);
-			name = ofxShadow;
-			sourceTree = "<group>";
-		};
-		B79EE3CD1DAFA97000E00840 /* src */ = {
-			isa = PBXGroup;
-			children = (
-				B79EE3CE1DAFA97000E00840 /* ofxShadow.cpp */,
-				B79EE3CF1DAFA97000E00840 /* ofxShadow.h */,
-			);
-			name = src;
-			path = ../../../addons/ofxShadow/src;
-			sourceTree = "<group>";
-		};
 		BB4B014C10F69532006C3DED /* addons */ = {
 			isa = PBXGroup;
 			children = (
 				2E6436B51B71B1E900C4B4F5 /* ofxShadowSimple */,
-				B79EE3CC1DAFA97000E00840 /* ofxShadow */,
 				B728F0DC1DAFAD1500B0272F /* ofxAssimpModelLoader */,
 				B728F1251DAFD1B800B0272F /* ofxGui */,
 			);
@@ -586,7 +564,6 @@
 				04AD3C1B1DB0331D00BAE2E3 /* ofxShadowSimple.cpp in Sources */,
 				E4B69E200A3A1BDC003C02F2 /* main.cpp in Sources */,
 				B728F11F1DAFAD1500B0272F /* ofxAssimpMeshHelper.cpp in Sources */,
-				B79EE3D01DAFA97000E00840 /* ofxShadow.cpp in Sources */,
 				B728F1381DAFD1B800B0272F /* ofxBaseGui.cpp in Sources */,
 				B728F13B1DAFD1B800B0272F /* ofxLabel.cpp in Sources */,
 				E4B69E210A3A1BDC003C02F2 /* ofApp.cpp in Sources */,

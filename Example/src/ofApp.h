@@ -13,6 +13,7 @@ public:
     void draw();
     
     void renderScene(bool isDepthPass);
+    void prepareExplodedParts();
     
     void keyPressed(int key);
     void keyReleased(int key);
@@ -25,7 +26,6 @@ public:
     void gotMessage(ofMessage msg);
     
     ofEasyCam cam;
-    ofMesh bunny;
     
     ofxShadowSimple shadow;
     
@@ -34,25 +34,69 @@ public:
     
     ofxAssimpModelLoader chairModel;
     ofMesh chairMesh;
+
+    
+    //move to explode class
+    
+    ofxAssimpModelLoader chairBack;
+    ofxAssimpModelLoader chairSeat;
+    ofxAssimpModelLoader chairBase;
+    ofxAssimpModelLoader chairLegs;
+    ofxAssimpModelLoader chairFeet;
+    ofxAssimpModelLoader chairParts[5];
+    int nParts; //number of chair parts
+    ofPoint chairPartsPos[5];
+    ofVec3f chairPartsVec[5];
+    
+    
+    
+    
+    
+    //endmove
+    
     
     ofxPanel gui;
-    ofParameter<ofVec3f> chairRotation {"rotation",
-        ofVec3f(270,0,0), ofVec3f(0,0,0), ofVec3f(360,360,360)};
-        
-    ofParameter<ofVec3f> chairOffset {"offset",
+    ofParameter<ofVec3f> chairRotation {"Rotation", ofVec3f(20,0,0), ofVec3f(0,0,0), ofVec3f(360,360,360)};
+    
+    
+    ofParameter<ofVec3f> chairOffset {"Offset",
         ofVec3f(0,0,0),
         ofVec3f(-400,-400,-400),
         ofVec3f(400,400,400)
     };
-        
-    ofParameterGroup chairParams {"chair",
+
+    ofParameter<ofVec3f> chairScale {"Scale",
+        ofVec3f(0.015,0.015,0.015),
+        ofVec3f(-0.5,-0.5,-0.5),
+        ofVec3f(0.5,0.5,0.5)
+    };
+
+    
+    ofParameter<ofVec3f> lightOffset {"Offset",
+        ofVec3f(0,0,0),
+        ofVec3f(-400,-400,-400),
+        ofVec3f(400,400,400)
+    };
+    
+    ofParameterGroup chairParams {"Chair",
             chairRotation,
-            chairOffset
+            chairOffset,
+            chairScale
         };
     
-    ofParameterGroup params {"params",
-        chairParams
+    ofParameterGroup lightingParams {"Lighting",
+        lightOffset
     };
+    
+    ofxToggle displayModel, displayParts, explodeParts ;
+
+    ofParameterGroup params {"params",
+        chairParams,
+        lightingParams,
+    };
+    
+    
+    
 
 
 
