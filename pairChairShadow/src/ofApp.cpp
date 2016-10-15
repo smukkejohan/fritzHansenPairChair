@@ -33,11 +33,7 @@ void ofApp::setup(){
     
     gui.setup(params);
     
-    
-    // range of the shadow camera //
-    shadow.setRange( 10, 5000 );
-    shadow.setBias( 0.01 );
-    
+    gui.loadFromFile("settings.xml");
     
     outFbo.allocate(1920, 1080);
     
@@ -46,11 +42,18 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
+    
+    
+    shadow.setRange( rangeMin, rangeMax );
+
+    shadow.setBias(shadowBias);
     //light.setPosition(lightPosition);
     
     shadow.setLightPosition(lightPosition);
     
     shadow.setLightLookAt( ofVec3f(0,0,0), ofVec3f(0,-1,0) );
+    
+    
     
 }
 

@@ -26,20 +26,15 @@ class ofApp : public ofBaseApp{
     
     ofxShadowSimple shadow;
     ofFbo outFbo;
-
     
     void renderScene(bool isDepthPass);
 
-    
-    
     ofxAssimpModelLoader pairChairModel;
     ofMesh pairChairMesh;
     
     ofEasyCam cam;
     
-    
     ofBoxPrimitive floor;
-    
     
     ofxPanel gui;
     
@@ -54,8 +49,16 @@ class ofApp : public ofBaseApp{
     
     ofParameter<ofVec3f> lightPosition {"pos", ofVec3f(0,0,0), ofVec3f(-4000,-4000,-4000), ofVec3f(4000,4000,4000)};
     
+    ofParameter<float> rangeMin {"rangeMin", 0, 0, 1000};
+    ofParameter<float> rangeMax {"rangeMax", 0, 0, 8000};
+    
+    ofParameter<float> shadowBias {"shadowBias", 0, 0, 0.1};
+    
     ofParameterGroup lightParams {"light",
-        lightPosition
+        lightPosition,
+        rangeMin,
+        rangeMax,
+        shadowBias
     };
     
     ofParameterGroup params {"params",
