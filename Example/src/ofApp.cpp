@@ -44,23 +44,9 @@ void ofApp::setup() {
     chairParts[3] = chairLegs;
     chairParts[4] = chairFeet;
     nParts = 5;
-    float explosionRad = 10;
+    //float explosionRad = 5000;
     
-    //init explosion field
-    for (int i=0; i<nParts; i++) {     //Scan all the parts
-        ofPoint partCenter( ofRandom( -1, 1 ),
-                           ofRandom( -1, 1 ),
-                           ofRandom( -1, 1 ) );
-        partCenter.normalize(); //Normalize vector's length to 1
-        partCenter *= explosionRad;      //Now the center vector has
-        chairPartsPos[i] = partCenter;
-       
-        ofVec3f partVec(ofRandom( -1, 1 ),
-                        ofRandom( -1, 1 ),
-                        ofRandom( -1, 1 ));
-        partVec.normalize();
-        chairPartsVec[i] = partVec;
-    }
+    prepareExplodedParts();
     //endmove
     
     /*
@@ -82,6 +68,8 @@ void ofApp::setup() {
     gui.add(displayModel.setup("display model", false) );
     gui.add(displayParts.setup("display parts", false) );
     gui.add(explodeParts.setup("explode parts", false) );
+    gui.add(explosionRadius.setup("explode radius", 1000, 10, 5000));
+
 
 }
 
@@ -134,56 +122,63 @@ void ofApp::renderScene(bool isDepthPass) {
     
     
     ofSetColor( 241,238,162 );
-    ofPushMatrix(); {
-        ofRotateX( cos( ofGetElapsedTimef() * 2.3) * sin( ofGetElapsedTimef() ) * RAD_TO_DEG );
-        ofRotateY( sin( ofGetElapsedTimef() ) * RAD_TO_DEG );
+        //ofRotateX( cos( ofGetElapsedTimef() * 2.3) * sin( ofGetElapsedTimef() ) * RAD_TO_DEG );
+        //ofRotateY( sin( ofGetElapsedTimef() ) * RAD_TO_DEG );
         //ofTranslate(chairOffset.get());
         
-        
+        /*
         if(explodeParts){
             for(int i = 0; i < nParts; i++){
 
-                /*
-                float time = ofGetElapsedTimef();    //Get time in seconds
-                float angle = time * 10; //Compute angle. We rotate at speed
+                ofPushMatrix();
+         
+                //float time = ofGetElapsedTimef();    //Get time in seconds
+                //float angle = time * 10; //Compute angle. We rotate at speed
                 //10 degrees per second
-                ofRotate( angle, 0, 1, 0 );    //Rotate the coordinate system
-                */
+                //ofRotate( angle, 0, 1, 0 );    //Rotate the coordinate system
+         
                  
+                ofTranslate(chairPartsPos[i].x, chairPartsPos[i].y);
                 chairParts[i].drawFaces();
+                ofPopMatrix();
             }
         }else{
             chairModel.drawFaces();
-        }
+        }*/
         
-        
-    }
-    ofPopMatrix();
-    
-    ofSetColor( 241,221,113 );
-    
-    
-    
-    
-    
     
     ofSetColor( 241,212,55 );
     ofPushMatrix(); {
         ofTranslate(5, 0, 0 );
         //ofRotate(180, 1, 0, 0 );
         
-        ofTranslate(chairOffset.get());
+        ofTranslate(guiChairOffset.get());
         //ofRotateX( cos( ofGetElapsedTimef() * 2.3) * sin( ofGetElapsedTimef() ) * RAD_TO_DEG );
         //ofRotateY( sin( ofGetElapsedTimef() ) * RAD_TO_DEG );
         
-        ofRotateX(chairRotation.get().x);
-        ofRotateY(chairRotation.get().y);
-        ofRotateZ(chairRotation.get().z);
+        ofRotateX(guiChairRotation.get().x);
+        ofRotateY(guiChairRotation.get().y);
+        ofRotateZ(guiChairRotation.get().z);
         //make adjustable scale
         //ofScale( 0.015, 0.015, 0.015 );
-        ofScale(chairScale.get().x, chairScale.get().y, chairScale.get().z);
+        ofScale(guiChairScale.get().x, guiChairScale.get().y, guiChairScale.get().z);
 
-        if(isDepthPass) {
+        
+        if(isDepthPass) { //true if displayModel is true
+
+            if(explodeParts){
+                float time = ofGetElapsedTimef();    //Get time in seconds
+                float angle = time * 10; //Compute angle. We rotate at speed
+
+                for(int i = 0; i < nParts; i++){
+                    chairParts[i].setPosition(chairPartsPos[i].x, chairPartsPos[i].y, chairPartsPos[i].z);
+                    //ofPoint axis = ofPoint(1.0, 0.0, 0.0);
+                    int numRotation = chairParts[i].getNumRotations();
+                    chairParts[i].setRotation(numRotation, angle, chairPartsVec[i].x, chairPartsVec[i].y, chairPartsVec[i].z);
+                    
+                }
+            }
+            
             if(displayParts){
                 for(int i = 0; i < nParts; i++){
                     chairParts[i].drawFaces();
@@ -203,9 +198,10 @@ void ofApp::renderScene(bool isDepthPass) {
     //ofDrawBox(0, -8, 10, 80, 30, 2 );
     
     
+    //add spheres of light for debugging
     //ofDrawSphere( light.getPosition(), 1 );
     
-    //cam.end();
+    cam.end();
 
     ofSetColor(255);
     
@@ -215,13 +211,29 @@ void ofApp::renderScene(bool isDepthPass) {
 //--------------------------------------------------------------
 void ofApp::prepareExplodedParts() {
     
-
+    //init explosion field
+    for (int i=0; i<nParts; i++) {     //Scan all the parts
+        ofPoint partCenter( ofRandom( -1, 1 ),
+                           ofRandom( -1, 1 ),
+                           ofRandom( -1, 1 ) );
+        partCenter.normalize(); //Normalize vector's length to 1
+        partCenter *= explosionRadius;      //Now the center vector has
+        chairPartsPos[i] = partCenter;
+        
+        ofVec3f partVec(ofRandom( -1, 1 ),
+                        ofRandom( -1, 1 ),
+                        ofRandom( -1, 1 ));
+        partVec.normalize();
+        chairPartsVec[i] = partVec;
+    }
     
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-    
+    if(key == ' '){
+        prepareExplodedParts();
+    }
 }
 
 //--------------------------------------------------------------

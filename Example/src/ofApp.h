@@ -56,16 +56,16 @@ public:
     
     
     ofxPanel gui;
-    ofParameter<ofVec3f> chairRotation {"Rotation", ofVec3f(20,0,0), ofVec3f(0,0,0), ofVec3f(360,360,360)};
+    ofParameter<ofVec3f> guiChairRotation {"Rotation", ofVec3f(20,0,0), ofVec3f(0,0,0), ofVec3f(360,360,360)};
     
     
-    ofParameter<ofVec3f> chairOffset {"Offset",
+    ofParameter<ofVec3f> guiChairOffset {"Offset",
         ofVec3f(0,0,0),
         ofVec3f(-400,-400,-400),
         ofVec3f(400,400,400)
     };
 
-    ofParameter<ofVec3f> chairScale {"Scale",
+    ofParameter<ofVec3f> guiChairScale {"Scale",
         ofVec3f(0.015,0.015,0.015),
         ofVec3f(-0.5,-0.5,-0.5),
         ofVec3f(0.5,0.5,0.5)
@@ -78,10 +78,13 @@ public:
         ofVec3f(400,400,400)
     };
     
+    ofxFloatSlider explosionRadius;
+    
+    
     ofParameterGroup chairParams {"Chair",
-            chairRotation,
-            chairOffset,
-            chairScale
+            guiChairRotation,
+            guiChairOffset,
+            guiChairScale
         };
     
     ofParameterGroup lightingParams {"Lighting",
