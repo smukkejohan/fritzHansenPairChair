@@ -4,13 +4,13 @@
 		<offset>0, 0, 0</offset>
 	</chair>
 	<light>
-		<pos>-2455.64, 917.951, 4000</pos>
+		<pos>-456.477, 793.003, 4000</pos>
 		<rangeMin>1000</rangeMin>
 		<rangeMax>8000</rangeMax>
-		<shadowBias>0.00153061</shadowBias>
+		<shadowBias>0.000306122</shadowBias>
 	<shadowIntensity>1</shadowIntensity>
-		<Min_area>10</Min_area>
-		<Max_area>200</Max_area>
+		<Min_area>25.2449</Min_area>
+		<Max_area>456.719</Max_area>
 		<Threshold>128</Threshold>
 		<UnknownName>1</UnknownName>
 	</light>

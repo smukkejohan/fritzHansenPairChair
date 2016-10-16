@@ -83,13 +83,14 @@ void ofApp::drawTunnel() {
     for(int i=0; i<10; i++) {
         for (auto & c : contourFinder.getPolylines()) {
             ofPushMatrix();
+            
             ofTranslate(c.getCentroid2D());
             ofScale(
                     (i+1)/10.0,
                     (i+1)/10.0,
                     (i+1)/10.0);
             ofTranslate(-c.getCentroid2D());
-            c.draw();
+            c.getSmoothed((i+1)*20*ofNoise(ofGetElapsedTimef() + i)).draw();
             ofPopMatrix();
         }
     }
