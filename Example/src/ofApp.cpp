@@ -27,40 +27,36 @@ void ofApp::setup() {
     outFbo.allocate(1920, 1080);
     
     
-    chairModel.loadModel("BH30.obj");
+    chairModel.loadModel("BH30originToBase.obj");
     chairMesh = chairModel.getMesh(0);
     
 
     //move to another method
-    chairBack.loadModel("BH31_back.obj");
-    chairSeat.loadModel("BH31_seat.obj");
-    chairBase.loadModel("BH31_base.obj");
-    chairLegs.loadModel("BH20_legs.obj");
-    chairFeet.loadModel("BH20_feet.obj");
+    chairBack.loadModel("BH20_back_baseOrigin.obj");
+    chairSeat.loadModel("BH20_seat_baseOrigin.obj");
+    chairBase.loadModel("BH20_base_baseOrigin.obj");
+    chairLegs.loadModel("BH20_legs_baseOrigin.obj");
+    chairFeet.loadModel("BH20_feet_baseOrigin.obj");
     
-    chairParts[0] = chairBack;
-    chairParts[1] = chairSeat;
-    chairParts[2] = chairBase;
-    chairParts[3] = chairLegs;
-    chairParts[4] = chairFeet;
+    parts[0] = chairBack;
+    parts[1] = chairSeat;
+    parts[2] = chairBase;
+    parts[3] = chairLegs;
+    parts[4] = chairFeet;
     nParts = 5;
-    //float explosionRad = 5000;
     
+    for(int i;i<nParts;i ++){
+        ofPoint partCenter(0,0,0);
+        partsPos[i] = partCenter;
+        partsPosInit[i]= partCenter;
+
+        ofVec3f tempVector(0,0,0);
+        partsVec[i] = tempVector;
+        partsVecInit[i] = tempVector;
+    }
     prepareExplodedParts();
     //endmove
-    
-    /*
-    vector< ofMeshFace > chairFaces = chairMesh.getUniqueFaces();
-    for( int i = 0; i < chairFaces.size(); i++ ) {
-        chairFaces[i].setVertex( 0, chairFaces[i].getVertex(0 ));
-        chairFaces[i].setNormal(0, chairFaces[i].getFaceNormal() );
-        chairFaces[i].setNormal(1, chairFaces[i].getFaceNormal() );
-        chairFaces[i].setNormal(2, chairFaces[i].getFaceNormal() );
-    }
-    chairMesh.setFromTriangles( chairFaces );
-    chairMesh.smoothNormals( 60 );
-    cout << "Chair normals = " << chairMesh.getNumNormals() << endl;
-    */
+
 
     
     //gui setups
@@ -69,6 +65,7 @@ void ofApp::setup() {
     gui.add(displayParts.setup("display parts", false) );
     gui.add(explodeParts.setup("explode parts", false) );
     gui.add(explosionRadius.setup("explode radius", 1000, 10, 5000));
+    gui.add(explosionSpeed.setup("explosion interperlation", 0.01, 0, 1));
 
 
 }
@@ -166,21 +163,41 @@ void ofApp::renderScene(bool isDepthPass) {
         
         if(isDepthPass) { //true if displayModel is true
 
+            //move out of this block?
             if(explodeParts){
                 float angle = (sin( ofGetElapsedTimef() ) * RAD_TO_DEG)/50; //Compute angle. We rotate at speed
 
                 for(int i = 0; i < nParts; i++){
-                    chairParts[i].setPosition(chairPartsPos[i].x, chairPartsPos[i].y, chairPartsPos[i].z);
+                    ofVec3f tempVec = partsPos[i].getInterpolated(partsPosExplode[i], explosionSpeed);
+                    //chairParts[i].setPosition(chairPartsPos[i].x, chairPartsPos[i].y, chairPartsPos[i].z);
+                    parts[i].setPosition(tempVec.x, tempVec.y, tempVec.z);
+                    partsPos[i] = tempVec;
+                    
                     //ofPoint axis = ofPoint(1.0, 0.0, 0.0);
-                    int numRotation = chairParts[i].getNumRotations();
-                    chairParts[i].setRotation(numRotation, angle, chairPartsVec[i].x, chairPartsVec[i].y, chairPartsVec[i].z);
+                    int numRotation = parts[i].getNumRotations();
+                    parts[i].setRotation(numRotation, angle, partsVecExplode[i].x, partsVecExplode[i].y, partsVecExplode[i].z);
                     
                 }
+            }else{
+
+                //put the parts back together
+                float angle = 10; //Compute angle. We rotate at speed
+                for(int i = 0; i < nParts; i++){
+                    ofVec3f tempVec = partsPos[i].getInterpolated(partsPosInit[i], explosionSpeed);
+                    //chairParts[i].setPosition(chairPartsPos[i].x, chairPartsPos[i].y, chairPartsPos[i].z);
+                    parts[i].setPosition(tempVec.x, tempVec.y, tempVec.z);
+                    partsPos[i] = tempVec;
+                    
+                    //ofPoint axis = ofPoint(1.0, 0.0, 0.0);
+                    int numRotation = parts[i].getNumRotations();
+                    parts[i].setRotation(numRotation, angle, partsVecInit[i].x, partsVecInit[i].y, partsVecInit[i].z);
+                }
+                    
             }
             
             if(displayParts){
                 for(int i = 0; i < nParts; i++){
-                    chairParts[i].drawFaces();
+                    parts[i].drawFaces();
                 }
             }else{
                 chairModel.drawFaces();
@@ -212,18 +229,18 @@ void ofApp::prepareExplodedParts() {
     
     //init explosion field
     for (int i=0; i<nParts; i++) {     //Scan all the parts
-        ofPoint partCenter( ofRandom( -1, 1 ),
+        ofPoint partExpCenter( ofRandom( -1, 1 ),
                            ofRandom( -1, 1 ),
                            ofRandom( -1, 1 ) );
-        partCenter.normalize(); //Normalize vector's length to 1
-        partCenter *= explosionRadius;      //Now the center vector has
-        chairPartsPos[i] = partCenter;
+        partExpCenter.normalize(); //Normalize vector's length to 1
+        partExpCenter *= explosionRadius;      //Now the center vector has
+        partsPosExplode[i] = partExpCenter;
         
-        ofVec3f partVec(ofRandom( -1, 1 ),
+        ofVec3f partExpVec(ofRandom( -1, 1 ),
                         ofRandom( -1, 1 ),
                         ofRandom( -1, 1 ));
-        partVec.normalize();
-        chairPartsVec[i] = partVec;
+        partExpVec.normalize();
+        partsVecExplode[i] = partExpVec;
     }
     
 }

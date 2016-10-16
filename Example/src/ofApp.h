@@ -36,21 +36,25 @@ public:
     ofMesh chairMesh;
 
     
-    //move to explode class
+    //move or refactor into a seperate class
     
     ofxAssimpModelLoader chairBack;
     ofxAssimpModelLoader chairSeat;
     ofxAssimpModelLoader chairBase;
     ofxAssimpModelLoader chairLegs;
     ofxAssimpModelLoader chairFeet;
-    ofxAssimpModelLoader chairParts[5];
-    int nParts; //number of chair parts
-    ofPoint chairPartsPos[5];
-    ofVec3f chairPartsVec[5];
+    int nParts = 5; //number of chair parts
     
+    //gah, how to make nParts a static constant?
+    ofxAssimpModelLoader parts[5];
+    ofPoint partsPos[5]; //current postions of the parts
+    ofVec3f partsVec[5];
     
+    ofPoint partsPosExplode[5];
+    ofVec3f partsVecExplode[5];
     
-    
+    ofPoint partsPosInit[5];
+    ofVec3f partsVecInit[5];
     
     //endmove
     
@@ -79,6 +83,7 @@ public:
     };
     
     ofxFloatSlider explosionRadius;
+    ofxFloatSlider explosionSpeed;
     
     
     ofParameterGroup chairParams {"Chair",
