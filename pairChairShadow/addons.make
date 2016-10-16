@@ -1,5 +1,8 @@
 ofxAssimpModelLoader
 ofxBiquadFilter
+ofxCv
 ofxGui
+ofxOpenCv
 ofxOsc
+ofxShadowSimple
 ofxXmlSettings

@@ -5,6 +5,7 @@
 #include "ofxGui.h"
 #include "ofxShadowSimple.h"
 
+#include "ofxCv.h"
 
 class ofApp : public ofBaseApp{
 
@@ -38,6 +39,12 @@ class ofApp : public ofBaseApp{
     
     ofxPanel gui;
     
+    ofxCv::ContourFinder contourFinder;
+    ofParameter<float> minArea {"Min area", 10, 1, 100}, maxArea {"Max area", 200, 1, 500}, threshold {"Threshold", 128, 0, 255};
+    ofParameter<bool> holes {"holes"};
+    
+    
+    
     ofParameter<ofVec3f> chairRotation {"rotation", ofVec3f(270,0,0), ofVec3f(0,0,0), ofVec3f(360,360,360)};
 
     ofParameter<ofVec3f> chairOffset {"offset", ofVec3f(0,0,0), ofVec3f(-4000,-4000,-4000), ofVec3f(4000,4000,4000)};
@@ -51,14 +58,20 @@ class ofApp : public ofBaseApp{
     
     ofParameter<float> rangeMin {"rangeMin", 0, 0, 1000};
     ofParameter<float> rangeMax {"rangeMax", 0, 0, 8000};
-    
     ofParameter<float> shadowBias {"shadowBias", 0, 0, 0.1};
+    
+    ofParameter<float> shadowIntensity {"shadowIntensity", 0, 0, 1};
     
     ofParameterGroup lightParams {"light",
         lightPosition,
         rangeMin,
         rangeMax,
-        shadowBias
+        shadowBias,
+        shadowIntensity,
+        minArea,
+        maxArea,
+        threshold,
+        holes
     };
     
     ofParameterGroup params {"params",

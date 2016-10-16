@@ -37,16 +37,15 @@ void ofApp::setup(){
     
     outFbo.allocate(1920, 1080);
     
-    
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
     
-    
     shadow.setRange( rangeMin, rangeMax );
 
     shadow.setBias(shadowBias);
+    shadow.setIntensity(shadowIntensity);
     //light.setPosition(lightPosition);
     
     shadow.setLightPosition(lightPosition);
@@ -54,6 +53,15 @@ void ofApp::update(){
     shadow.setLightLookAt( ofVec3f(0,0,0), ofVec3f(0,-1,0) );
     
     
+    ofPixels pixels;
+    
+    outFbo.readToPixels(pixels);
+    
+    contourFinder.setMinAreaRadius(minArea);
+    contourFinder.setMaxAreaRadius(maxArea);
+    contourFinder.setThreshold(threshold);
+    contourFinder.findContours(pixels);
+    contourFinder.setFindHoles(holes);
     
 }
 
@@ -62,14 +70,12 @@ void ofApp::draw(){
     
     
     ofEnableDepthTest();
-
-    
-    outFbo.begin();
-
     
     shadow.beginDepthPass();
     renderScene(true);
     shadow.endDepthPass();
+    
+    outFbo.begin();
     
     shadow.beginRenderPass( cam );
     cam.begin();
@@ -86,6 +92,11 @@ void ofApp::draw(){
     
     outFbo.draw(0,0);
     
+    contourFinder.draw();
+    
+    shadow.getDepthTexture().draw(0,0,192,108);
+    
+    
     // move to its own window
     gui.draw();
 
@@ -98,17 +109,22 @@ void ofApp::renderScene(bool isDepthPass) {
 
     floor.draw();
     
-    ofPushMatrix();
     
-    ofTranslate(chairOffset.get());
+    if(isDepthPass) {
     
-    ofRotateX(chairRotation.get().x);
-    ofRotateY(chairRotation.get().y);
-    ofRotateZ(chairRotation.get().z);
+        ofPushMatrix(); {
     
-    pairChairModel.drawFaces();
+        ofTranslate(chairOffset.get());
     
-    ofPopMatrix();
+            ofRotateX(chairRotation.get().x);
+            ofRotateY(chairRotation.get().y);
+            ofRotateZ(chairRotation.get().z);
+    
+            pairChairModel.drawFaces();
+    
+        } ofPopMatrix();
+        
+    }
     
 }
 
