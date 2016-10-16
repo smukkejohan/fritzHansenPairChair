@@ -39,6 +39,12 @@ void ofApp::setup(){
     
 }
 
+
+ofPoint  reflect(ofPoint vector, ofPoint normal)
+{
+    return vector - 2 * normal.dot(vector) * normal;
+}
+
 //--------------------------------------------------------------
 void ofApp::update(){
     
@@ -54,7 +60,6 @@ void ofApp::update(){
     
     
     ofPixels pixels;
-    
     outFbo.readToPixels(pixels);
     
     contourFinder.setMinAreaRadius(minArea);
@@ -63,7 +68,35 @@ void ofApp::update(){
     contourFinder.findContours(pixels);
     contourFinder.setFindHoles(holes);
     
+    
+    //borders = contourFinder.getPolyline(0);
+    
 }
+
+void ofApp::drawReflections() {
+}
+
+void ofApp::drawTunnel() {
+    
+    
+    ofSetColor(0,0,0);
+    for(int i=0; i<10; i++) {
+        for (auto & c : contourFinder.getPolylines()) {
+            ofPushMatrix();
+            ofTranslate(c.getCentroid2D());
+            ofScale(
+                    (i+1)/10.0,
+                    (i+1)/10.0,
+                    (i+1)/10.0);
+            ofTranslate(-c.getCentroid2D());
+            c.draw();
+            ofPopMatrix();
+        }
+    }
+    
+}
+
+
 
 //--------------------------------------------------------------
 void ofApp::draw(){
@@ -82,17 +115,24 @@ void ofApp::draw(){
     renderScene(false);
     cam.end();
     shadow.endRenderPass();
-
+    
     outFbo.end();
 
+    // rename outFbo to shadefbo
+    
+    // create new fbo for output
+    
     
     ofDisableDepthTest();
     
     ofSetColor(255);
     
-    outFbo.draw(0,0);
+    //outFbo.draw(0,0);
     
-    contourFinder.draw();
+    //contourFinder.draw();
+    
+    drawTunnel();
+    
     
     shadow.getDepthTexture().draw(0,0,192,108);
     

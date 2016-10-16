@@ -7,7 +7,12 @@
 		<pos>-2455.64, 917.951, 4000</pos>
 		<rangeMin>1000</rangeMin>
 		<rangeMax>8000</rangeMax>
-		<shadowBias>0.0102041</shadowBias>
+		<shadowBias>0.00153061</shadowBias>
+	<shadowIntensity>1</shadowIntensity>
+		<Min_area>10</Min_area>
+		<Max_area>200</Max_area>
+		<Threshold>128</Threshold>
+		<UnknownName>1</UnknownName>
 	</light>
 <params/>
 </params>
