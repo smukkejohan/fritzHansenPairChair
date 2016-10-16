@@ -58,6 +58,7 @@ void ofApp::setup() {
     //endmove
 
 
+    goExplode.addListener(this, &ofApp::explodeButtonPressed);
     
     //gui setups
     gui.setup(params);
@@ -66,6 +67,7 @@ void ofApp::setup() {
     gui.add(explodeParts.setup("explode parts", false) );
     gui.add(explosionRadius.setup("explode radius", 1000, 10, 5000));
     gui.add(explosionSpeed.setup("explosion interperlation", 0.01, 0, 1));
+    gui.add(goExplode.setup("Change explosion now tnks"));
 
 
 }
@@ -218,7 +220,7 @@ void ofApp::renderScene(bool isDepthPass) {
     //add spheres of light for debugging
     //ofDrawSphere( light.getPosition(), 1 );
     
-    cam.end();
+    
 
     ofSetColor(255);
     
@@ -253,6 +255,18 @@ void ofApp::keyPressed(int key){
     }
 }
 
+            
+//--------------------------------------------------------------
+void ofApp::explodeButtonPressed(){
+    prepareExplodedParts();
+}
+
+//--------------------------------------------------------------
+void ofApp::exit(){
+    goExplode.removeListener(this, &ofApp::explodeButtonPressed);
+}
+            
+            
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
 
