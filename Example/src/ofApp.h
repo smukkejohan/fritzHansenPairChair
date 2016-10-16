@@ -15,6 +15,9 @@ public:
     void renderScene(bool isDepthPass);
     void prepareExplodedParts();
     
+    void explodeButtonPressed();
+    void exit();
+    
     void keyPressed(int key);
     void keyReleased(int key);
     void mouseMoved(int x, int y);
@@ -55,6 +58,8 @@ public:
     
     ofPoint partsPosInit[5];
     ofVec3f partsVecInit[5];
+    
+    ofxButton goExplode;
     
     //endmove
     
