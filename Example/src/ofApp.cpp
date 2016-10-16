@@ -168,7 +168,6 @@ void ofApp::renderScene(bool isDepthPass) {
                 float angle = (sin( ofGetElapsedTimef() ) * RAD_TO_DEG)/50; //Compute angle. We rotate at speed
 
                 for(int i = 0; i < nParts; i++){
-                    
                     ofVec3f tempVec = partsPos[i].getInterpolated(partsPosExplode[i], explosionSpeed);
                     //chairParts[i].setPosition(chairPartsPos[i].x, chairPartsPos[i].y, chairPartsPos[i].z);
                     parts[i].setPosition(tempVec.x, tempVec.y, tempVec.z);
@@ -179,6 +178,21 @@ void ofApp::renderScene(bool isDepthPass) {
                     parts[i].setRotation(numRotation, angle, partsVecExplode[i].x, partsVecExplode[i].y, partsVecExplode[i].z);
                     
                 }
+            }else{
+
+                //put the parts back together
+                float angle = 10; //Compute angle. We rotate at speed
+                for(int i = 0; i < nParts; i++){
+                    ofVec3f tempVec = partsPos[i].getInterpolated(partsPosInit[i], explosionSpeed);
+                    //chairParts[i].setPosition(chairPartsPos[i].x, chairPartsPos[i].y, chairPartsPos[i].z);
+                    parts[i].setPosition(tempVec.x, tempVec.y, tempVec.z);
+                    partsPos[i] = tempVec;
+                    
+                    //ofPoint axis = ofPoint(1.0, 0.0, 0.0);
+                    int numRotation = parts[i].getNumRotations();
+                    parts[i].setRotation(numRotation, angle, partsVecInit[i].x, partsVecInit[i].y, partsVecInit[i].z);
+                }
+                    
             }
             
             if(displayParts){
