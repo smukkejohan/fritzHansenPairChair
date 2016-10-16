@@ -25,6 +25,10 @@ class ofApp : public ofBaseApp{
 		void gotMessage(ofMessage msg);
     
     
+    void drawReflections();
+    void drawTunnel();
+    
+    
     ofxShadowSimple shadow;
     ofFbo outFbo;
     
@@ -38,6 +42,12 @@ class ofApp : public ofBaseApp{
     ofBoxPrimitive floor;
     
     ofxPanel gui;
+    
+    
+    vector < ofPolyline > lines;
+    ofPolyline borders;
+
+    
     
     ofxCv::ContourFinder contourFinder;
     ofParameter<float> minArea {"Min area", 10, 1, 100}, maxArea {"Max area", 200, 1, 500}, threshold {"Threshold", 128, 0, 255};
@@ -58,7 +68,7 @@ class ofApp : public ofBaseApp{
     
     ofParameter<float> rangeMin {"rangeMin", 0, 0, 1000};
     ofParameter<float> rangeMax {"rangeMax", 0, 0, 8000};
-    ofParameter<float> shadowBias {"shadowBias", 0, 0, 0.1};
+    ofParameter<float> shadowBias {"shadowBias", 0, 0, 0.02};
     
     ofParameter<float> shadowIntensity {"shadowIntensity", 0, 0, 1};
     
