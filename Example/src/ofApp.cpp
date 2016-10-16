@@ -27,16 +27,16 @@ void ofApp::setup() {
     outFbo.allocate(1920, 1080);
     
     
-    chairModel.loadModel("BH30originToBase.obj");
+    chairModel.loadModel("BH30_baseOrigin.obj");
     chairMesh = chairModel.getMesh(0);
     
 
     //move to another method
-    chairBack.loadModel("BH20_back_baseOrigin.obj");
-    chairSeat.loadModel("BH20_seat_baseOrigin.obj");
-    chairBase.loadModel("BH20_base_baseOrigin.obj");
-    chairLegs.loadModel("BH20_legs_baseOrigin.obj");
-    chairFeet.loadModel("BH20_feet_baseOrigin.obj");
+    chairBack.loadModel("BH30_back_baseOrigin.obj");
+    chairSeat.loadModel("BH30_seat_baseOrigin.obj");
+    chairBase.loadModel("BH30_base_baseOrigin.obj");
+    chairLegs.loadModel("BH30_legs_baseOrigin.obj");
+    chairFeet.loadModel("BH30_feet_baseOrigin.obj");
     
     parts[0] = chairBack;
     parts[1] = chairSeat;
@@ -190,7 +190,8 @@ void ofApp::renderScene(bool isDepthPass) {
                     
                     //ofPoint axis = ofPoint(1.0, 0.0, 0.0);
                     int numRotation = parts[i].getNumRotations();
-                    parts[i].setRotation(numRotation, angle, partsVecInit[i].x, partsVecInit[i].y, partsVecInit[i].z);
+                    parts[i].stopAllAnimations();
+                    
                 }
                     
             }
