@@ -127,9 +127,6 @@ void ofApp::update(){
 
 void ofApp::drawReflections() {
     
-    
-    
-    
     if (ofGetMousePressed())ofBackground(0);
     
     cout << ofGetFrameRate() << endl;
