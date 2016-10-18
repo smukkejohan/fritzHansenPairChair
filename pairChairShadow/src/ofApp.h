@@ -30,7 +30,8 @@ class ofApp : public ofBaseApp{
     
     
     ofxShadowSimple shadow;
-    ofFbo outFbo;
+    ofFbo shadeFbo;
+    ofFbo reflectFbo;
     
     void renderScene(bool isDepthPass);
 
@@ -46,14 +47,13 @@ class ofApp : public ofBaseApp{
     
     vector < ofPolyline > lines;
     ofPolyline borders;
+    ofPolyline borders2;
 
-    
+    ofPoint randomPtForSize(ofRectangle b, int side);
     
     ofxCv::ContourFinder contourFinder;
     ofParameter<float> minArea {"Min area", 10, 1, 100}, maxArea {"Max area", 200, 1, 500}, threshold {"Threshold", 128, 0, 255};
     ofParameter<bool> holes {"holes"};
-    
-    
     
     ofParameter<ofVec3f> chairRotation {"rotation", ofVec3f(270,0,0), ofVec3f(0,0,0), ofVec3f(360,360,360)};
 
@@ -88,8 +88,11 @@ class ofApp : public ofBaseApp{
         chairParams,
         lightParams
     };
-
-
+    
+    
+    
+    
+    
     
     
 };
