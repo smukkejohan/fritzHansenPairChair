@@ -16,20 +16,30 @@ public:
     ofVec3f explosionFactor;
     ofVec3f explosionDirection;
     
+    ofVec3f partRotationOffset;
+    ofVec3f autoRotationOffsetVelocity;
+    
+    float autoRotationFactor = autoRotationOffsetVelocity.x;
+    
     void customDraw() {
         
+        partRotationOffset += autoRotationOffsetVelocity * explosionDirection;
+    
         ofPushMatrix();
         
         //ofTranslate(mesh.getCentroid());
         //ofScale(0.5, 0.5, 0.5);
         //ofTranslate(-mesh.getCentroid());
         
-        ofTranslate( explosionFactor * explosionDirection);
+        ofTranslate( explosionFactor * explosionDirection );
+        
+        ofRotateX(partRotationOffset.x * autoRotationFactor);
+        ofRotateY(partRotationOffset.y * autoRotationFactor);
+        ofRotateZ(partRotationOffset.z * autoRotationFactor);
         
         mesh.draw();
         
         ofPopMatrix();
-        
     }
     
 };
@@ -52,7 +62,6 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
     
-    
     void drawReflections();
     void drawTunnel();
     
@@ -62,13 +71,14 @@ class ofApp : public ofBaseApp{
     ofFbo shadeFbo;
     ofFbo reflectFbo;
     
-    void renderScene(bool isDepthPass);
+    void renderFloor();
+    void renderModels();
 
     ofxAssimpModelLoader pairChairModel;
     
     ofNode chairNode;
     
-    ofEasyCam cam;
+    ofCamera cam;
     
     ofBoxPrimitive floor;
     
@@ -82,13 +92,13 @@ class ofApp : public ofBaseApp{
     
     ofxCv::ContourFinder contourFinder;
     ofParameter<float> minArea {"Min area", 10, 1, 100}, maxArea {"Max area", 200, 1, 500}, threshold {"Threshold", 128, 0, 255};
-    ofParameter<bool> holes {"holes"};
+    ofParameter<bool> holes {"holes" , true};
     
     ofParameter<ofVec3f> chairRotation {"rotation", ofVec3f(270,0,0), ofVec3f(0,0,0), ofVec3f(360,360,360)};
+    
+    ofParameter<ofVec3f> autoRotationOffsetVelocity  {"auto rotation", ofVec3f(0,0,0), ofVec3f(0,0,0), ofVec3f(20,20,20)};
 
     ofParameter<ofVec3f> chairOffset {"offset", ofVec3f(0,0,0), ofVec3f(-4000,-4000,-4000), ofVec3f(4000,4000,4000)};
-
-    
     
     ofParameter<ofVec3f> lightPosition {"pos", ofVec3f(0,0,0), ofVec3f(-4000,-4000,-4000), ofVec3f(4000,4000,4000)};
     
@@ -98,14 +108,45 @@ class ofApp : public ofBaseApp{
     
     ofParameter<float> shadowIntensity {"shadowIntensity", 0, 0, 1};
     
-    ofParameter<float> explodeAmount {"explode", 0, 0, 4000};
+    ofParameter<float> explodeAmount {"explode", 0, 0, 3000};
+    ofParameter<float> autoRotationFactor {"autoRotateFactor", 0, 0,1};
+    
+    ofParameter<ofVec3f> camPos {"camPos", ofVec3f(0,0,-4000), ofVec3f(-1000,-1000,2000), ofVec3f(1000,1000,6000)};
+    
+    ofParameter<float> camFov {"fov", 26, 0, 170};
+
+    
+    ofParameter<bool> renderChair {"render chair", false};
+    
+    
+    ofParameter<bool> renderTunnel {"render tunnel", false};
+    
+    ofParameter<bool> renderReflection {"render reflection", false};
+
+    
+    ofParameter<bool> renderShade {"render sahde", true};
+
+    
+    
+    ofParameterGroup camParams {"camera",
+        camPos,
+        camFov,
+    };
+    
+    ofParameterGroup renderParams {"render",
+        renderChair,
+        renderTunnel,
+        renderReflection,
+        renderShade
+    };
     
     ofParameterGroup chairParams {"chair",
         chairRotation,
         chairOffset,
-        explodeAmount
+        explodeAmount,
+        autoRotationOffsetVelocity,
+        autoRotationFactor
     };
-    
     
     ofParameterGroup lightParams {"light",
         lightPosition,
@@ -119,7 +160,10 @@ class ofApp : public ofBaseApp{
         holes
     };
     
+    
     ofParameterGroup params {"params",
+        renderParams,
+        camParams,
         chairParams,
         lightParams
     };

@@ -18,6 +18,11 @@ void ofApp::setup(){
     cam.enableMouseInput();
 */
     
+    cam.setAspectRatio(16./9.);
+
+
+    
+    
     pairChairModel.loadModel("chair.dae");
     //pairChairMesh = pairChairModel.getMesh(0);
     
@@ -41,7 +46,7 @@ void ofApp::setup(){
     
     
     // lets say our units are mm
-    floor.set(4000, 4000, 10);
+    floor.set(3325, 2845, 10);
     
     // rotate chair to stand on the floor
     // set the scale of the chair
@@ -96,6 +101,14 @@ ofPoint  reflect(ofPoint vector, ofPoint normal)
 //--------------------------------------------------------------
 void ofApp::update(){
     
+    cam.setFov(camFov); //	benq mh741 throw ratio 1.15-1.49
+    cam.setPosition(camPos);
+//    cam.lookAt(ofVec3f(0,0,0));
+    
+    //cam.setupOffAxisViewPortal(ofVec3f(-1860/2, -3330/2, 0), ofVec3f(-1860/2, 3330/2, 0), ofVec3f(1860/2, 3330/2, 0));
+    cam.lookAt(ofVec3f(0,0,0));
+    
+    
     shadow.setRange( rangeMin, rangeMax );
 
     shadow.setBias(shadowBias);
@@ -114,7 +127,6 @@ void ofApp::update(){
     contourFinder.setThreshold(threshold);
     contourFinder.findContours(pixels);
     contourFinder.setFindHoles(holes);
-    
     
     /*for (int i = 0; i < chars.size(); i++){
         vector < ofPolyline > temp = chars[i].getOutline();
@@ -140,8 +152,9 @@ void ofApp::update(){
     
     for(auto & p : parts) {
         p.explosionFactor = ofVec3f(explodeAmount,explodeAmount,explodeAmount);
+        p.autoRotationOffsetVelocity = autoRotationOffsetVelocity;
+        p.autoRotationFactor = autoRotationFactor;
     }
-    
     
 }
 
@@ -309,7 +322,8 @@ void ofApp::draw(){
     ofEnableDepthTest();
     
     shadow.beginDepthPass();
-    renderScene(true);
+    renderFloor();
+    renderModels();
     shadow.endDepthPass();
     
     shadeFbo.begin();
@@ -318,7 +332,7 @@ void ofApp::draw(){
     
     shadow.beginRenderPass( cam );
     cam.begin();
-    renderScene(false);
+    renderFloor();
     cam.end();
     shadow.endRenderPass();
     
@@ -328,32 +342,56 @@ void ofApp::draw(){
     
     // create new fbo for output
     
+    
     ofDisableDepthTest();
+    
+    
     
     ofSetColor(255);
     
-    shadeFbo.draw(0,0);
     
-    contourFinder.draw();
+    if(renderShade) {
+       shadeFbo.draw(0,0);
+    }
     
-    //drawTunnel();
+    //contourFinder.draw();
     
+    if(renderTunnel) {
+        drawTunnel();
+    }
+    
+    
+    if(renderReflection) {
     reflectFbo.begin();
     
     ofSetColor(255);
-    //drawReflections();
+    drawReflections();
     
     reflectFbo.end();
     
     ofSetColor(255);
-    //reflectFbo.draw(0,0);
     
+    reflectFbo.draw(0,0);
+        
+    }
     
     /*for(auto & c : lines) {
         
         c.draw();
         
     }*/
+    
+    
+    if(renderChair) {
+        ofEnableDepthTest();
+        shadow.beginRenderPass( cam );
+        cam.begin();
+        renderModels();
+        cam.end();
+        shadow.endRenderPass();
+        ofDisableDepthTest();
+
+    }
     
     ofSetColor(255);
     shadow.getDepthTexture().draw(0,0,192,108);
@@ -363,25 +401,21 @@ void ofApp::draw(){
 
 }
 
-void ofApp::renderScene(bool isDepthPass) {
-    
-    ofBackground(0,0,0);
-    ofSetColor(255);
 
+void ofApp::renderFloor() {
+    ofSetColor(255);
     floor.draw();
-    
-    //if(isDepthPass) {
-    
-        ofPushMatrix(); {
-            
-            for(auto & p : parts) {
-                p.draw();
-            }
-    
-        } ofPopMatrix();
+}
+
+void ofApp::renderModels() {
+    ofSetColor(255);
+    ofPushMatrix(); {
         
-    //}
-    
+        for(auto & p : parts) {
+            p.draw();
+        }
+        
+    } ofPopMatrix();
 }
 
 //--------------------------------------------------------------
