@@ -7,6 +7,34 @@
 
 #include "ofxCv.h"
 
+
+class Part : public ofNode {
+public:
+    
+    ofMesh mesh;
+    
+    ofVec3f explosionFactor;
+    ofVec3f explosionDirection;
+    
+    void customDraw() {
+        
+        ofPushMatrix();
+        
+        //ofTranslate(mesh.getCentroid());
+        //ofScale(0.5, 0.5, 0.5);
+        //ofTranslate(-mesh.getCentroid());
+        
+        ofTranslate( explosionFactor * explosionDirection);
+        
+        mesh.draw();
+        
+        ofPopMatrix();
+        
+    }
+    
+};
+
+
 class ofApp : public ofBaseApp{
 
 	public:
@@ -28,6 +56,7 @@ class ofApp : public ofBaseApp{
     void drawReflections();
     void drawTunnel();
     
+    vector<Part> parts;
     
     ofxShadowSimple shadow;
     ofFbo shadeFbo;
@@ -36,14 +65,14 @@ class ofApp : public ofBaseApp{
     void renderScene(bool isDepthPass);
 
     ofxAssimpModelLoader pairChairModel;
-    ofMesh pairChairMesh;
+    
+    ofNode chairNode;
     
     ofEasyCam cam;
     
     ofBoxPrimitive floor;
     
     ofxPanel gui;
-    
     
     vector < ofPolyline > lines;
     ofPolyline borders;
@@ -59,10 +88,7 @@ class ofApp : public ofBaseApp{
 
     ofParameter<ofVec3f> chairOffset {"offset", ofVec3f(0,0,0), ofVec3f(-4000,-4000,-4000), ofVec3f(4000,4000,4000)};
 
-    ofParameterGroup chairParams {"chair",
-        chairRotation,
-        chairOffset
-    };
+    
     
     ofParameter<ofVec3f> lightPosition {"pos", ofVec3f(0,0,0), ofVec3f(-4000,-4000,-4000), ofVec3f(4000,4000,4000)};
     
@@ -71,6 +97,15 @@ class ofApp : public ofBaseApp{
     ofParameter<float> shadowBias {"shadowBias", 0, 0, 0.02};
     
     ofParameter<float> shadowIntensity {"shadowIntensity", 0, 0, 1};
+    
+    ofParameter<float> explodeAmount {"explode", 0, 0, 4000};
+    
+    ofParameterGroup chairParams {"chair",
+        chairRotation,
+        chairOffset,
+        explodeAmount
+    };
+    
     
     ofParameterGroup lightParams {"light",
         lightPosition,

@@ -1,7 +1,7 @@
 <params>
 	<chair>
-		<rotation>270, 0, 0</rotation>
-		<offset>0, 0, 0</offset>
+		<rotation>91.9867, 0, 0</rotation>
+		<offset>0, 0, 418.159</offset>
 	</chair>
 	<light>
 		<pos>-456.477, 793.003, 4000</pos>

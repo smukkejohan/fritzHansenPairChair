@@ -18,8 +18,22 @@ void ofApp::setup(){
     cam.enableMouseInput();
 */
     
-    pairChairModel.loadModel("BH31_high_3D.obj");
-    pairChairMesh = pairChairModel.getMesh(0);
+    pairChairModel.loadModel("chair.dae");
+    //pairChairMesh = pairChairModel.getMesh(0);
+    
+    for(auto & n : pairChairModel.getMeshNames()) {
+        Part p;
+        p.mesh = pairChairModel.getMesh(n);
+        
+        p.explosionDirection = ofVec3f(ofRandom(-1, 1),ofRandom(0.01,0.5),ofRandom(-1,1));
+        
+        p.setParent(chairNode);
+        
+        parts.push_back(p);
+    }
+
+    
+    // parts
     
     
     //light.setAreaLight(100, 100);
@@ -51,7 +65,6 @@ void ofApp::setup(){
     
     borders2 = borders;
     borders2 = borders2.getResampledByCount(ofGetWidth());
-    
     
 }
 
@@ -122,12 +135,17 @@ void ofApp::update(){
         lines[i] = lines[i].getSmoothed(10);
     }
     
+    chairNode.setOrientation(chairRotation);
+    chairNode.setPosition(chairOffset);
+    
+    for(auto & p : parts) {
+        p.explosionFactor = ofVec3f(explodeAmount,explodeAmount,explodeAmount);
+    }
+    
     
 }
 
 void ofApp::drawReflections() {
-    
-    
     
     
     if (ofGetMousePressed())ofBackground(0);
@@ -311,33 +329,32 @@ void ofApp::draw(){
     
     // create new fbo for output
     
-    
     ofDisableDepthTest();
     
     ofSetColor(255);
     
-    //shadeFbo.draw(0,0);
+    shadeFbo.draw(0,0);
     
     contourFinder.draw();
     
-    drawTunnel();
+    //drawTunnel();
     
     reflectFbo.begin();
     
     ofSetColor(255);
-    drawReflections();
+    //drawReflections();
     
     reflectFbo.end();
     
     ofSetColor(255);
-    reflectFbo.draw(0,0);
+    //reflectFbo.draw(0,0);
     
     
-    for(auto & c : lines) {
+    /*for(auto & c : lines) {
         
         c.draw();
         
-    }
+    }*/
     
     ofSetColor(255);
     shadow.getDepthTexture().draw(0,0,192,108);
@@ -354,22 +371,17 @@ void ofApp::renderScene(bool isDepthPass) {
 
     floor.draw();
     
-    
-    if(isDepthPass) {
+    //if(isDepthPass) {
     
         ofPushMatrix(); {
-    
-        ofTranslate(chairOffset.get());
-    
-            ofRotateX(chairRotation.get().x);
-            ofRotateY(chairRotation.get().y);
-            ofRotateZ(chairRotation.get().z);
-    
-            pairChairModel.drawFaces();
+            
+            for(auto & p : parts) {
+                p.draw();
+            }
     
         } ofPopMatrix();
         
-    }
+    //}
     
 }
 
