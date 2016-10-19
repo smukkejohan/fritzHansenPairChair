@@ -109,8 +109,21 @@ void ofApp::draw(){
         shadow.endRenderPass();
     outFbo.end();
 
+    
+    
+    fragShader.begin();
+    fragShader.setUniform1f("u_width", 800.0);
+    fragShader.setUniform1f("u_height", 600.0);
+    fragShader.setUniform1f("u_time", ofGetElapsedTimef());
+
+    //fragShader.setUniformTexture("mask", outFbo.getTextureReference(), 1 );
+    //fragShader.setUniformTexture("u_projView", outFbo.getTextureReference(), 1 );
+    //fragShader.setUniformTexture(<#const string &name#>, <#const ofTexture &img#>, <#int textureLocation#>)
+    
+    
     outFbo.draw(0,0);
     
+    fragShader.end();
 
 
     //move to its own window
@@ -210,13 +223,7 @@ void ofApp::renderScene(bool isDepthPass) {
     // floor //
     ofSetColor( 142,187,151 );
 
-    fragShader.begin();
-    fragShader.setUniform1f("u_width", 800.0);
-    fragShader.setUniform1f("u_height", 600.0);
-    fragShader.setUniform1f("u_time", ofGetElapsedTimef());
-
     ofDrawBox( 0, 5, 0, 250, 2, 250 );
-    fragShader.end();
     
     
     // wall //
@@ -275,13 +282,13 @@ void ofApp::keyPressed(int key){
 void ofApp::explodeButtonPressed(){
     prepareExplodedParts();
 }
-
+//--------------------------------------------------------------
 
 //--------------------------------------------------------------
-ofShader ofApp::initFragShader(){
+ofShader ofApp::initFragShader(){ //need to rename to initSplatterShader
 
     ofShader fragShader;
-    string initString = STRINGIFY(
+    string initFragString = STRINGIFY(
 
           #ifdef GL_ES
           precision mediump float;
@@ -293,6 +300,14 @@ ofShader ofApp::initFragShader(){
           uniform float u_time;
           uniform float u_width;
           uniform float u_height;
+          //uniform sampler2DRect mask; //http://openframeworks.cc/ofBook/chapters/shaders.html
+                                  
+          //https://github.com/mattdesl/lwjgl-basics/wiki/ShaderLesson2
+          uniform sampler2D u_texture;
+          //"in" varyings from our vertex shader
+          varying vec4 vColor;
+          varying vec2 vTexCoord;
+                                  
                                   
           vec2 random2(vec2 st){
               st = vec2( dot(st,vec2(127.1,311.7)),
@@ -321,6 +336,11 @@ ofShader ofApp::initFragShader(){
               st.x *= u_width/u_height;
               vec3 color = vec3(0.0);
               
+              //FROM GIT
+              vec4 texColor = texture2D(u_texture, vTexCoord);
+              
+              
+              
               float t = 1.0;
               // Uncomment to animate
               t = abs(1.0-sin(u_time*.1))*5.;
@@ -330,11 +350,53 @@ ofShader ofApp::initFragShader(){
               color += smoothstep(.15,.2,noise(st*10.)); // Black splatter
               color -= smoothstep(.35,.4,noise(st*10.)); // Holes on splatter
               
-              gl_FragColor = vec4(1.-color,0.5);
+              gl_FragColor = vec4(1.-color,0.5) * texColor;
           }
 
     );
-    fragShader.setupShaderFromSource( GL_FRAGMENT_SHADER, initString);
+    fragShader.setupShaderFromSource( GL_FRAGMENT_SHADER, initFragString);
+    
+    string initVertPassString = STRINGIFY(
+        /*
+          //#version 150
+          // these are for the programmable pipeline system and are passed in
+          // by default from OpenFrameworks
+          uniform mat4 modelViewMatrix;
+          uniform mat4 projectionMatrix;
+          uniform mat4 textureMatrix;
+          uniform mat4 modelViewProjectionMatrix;
+          
+          in vec4 position;
+          in vec4 color;
+          in vec4 normal;
+          in vec2 texcoord;
+          // this is the end of the default functionality
+          
+          // this is something we're creating for this shader
+          out vec2 varyingtexcoord;
+          
+          // this is coming from our C++ code
+          uniform float mouseX;
+          
+          void main(){
+                // here we move the texture coordinates
+                varyingtexcoord = vec2(texcoord.x + mouseX, texcoord.y);
+                
+                // send the vertices to the fragment shader
+                gl_Position = modelViewProjectionMatrix * position;
+           }
+        */
+                                          
+                                          uniform mat4 modelViewProjectionMatrix;
+                                          in vec4 position;
+                                          
+                                          void main(){
+                                              gl_Position = modelViewProjectionMatrix * position;
+                                          }
+    );
+    fragShader.setupShaderFromSource( GL_VERTEX_SHADER, initVertPassString);
+
+    
     fragShader.linkProgram();
     
     return fragShader;
