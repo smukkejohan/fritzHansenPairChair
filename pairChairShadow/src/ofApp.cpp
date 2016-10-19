@@ -18,6 +18,11 @@ void ofApp::setup(){
     cam.enableMouseInput();
 */
     
+    cam.setAspectRatio(16./9.);
+
+
+    
+    
     pairChairModel.loadModel("chair.dae");
     //pairChairMesh = pairChairModel.getMesh(0);
     
@@ -41,7 +46,7 @@ void ofApp::setup(){
     
     
     // lets say our units are mm
-    floor.set(4000, 4000, 10);
+    floor.set(3330, 1860, 10);
     
     // rotate chair to stand on the floor
     // set the scale of the chair
@@ -96,6 +101,14 @@ ofPoint  reflect(ofPoint vector, ofPoint normal)
 //--------------------------------------------------------------
 void ofApp::update(){
     
+    cam.setFov(camFov); //	benq mh741 throw ratio 1.15-1.49
+    cam.setPosition(camPos);
+//    cam.lookAt(ofVec3f(0,0,0));
+    
+    //cam.setupOffAxisViewPortal(ofVec3f(-1860/2, -3330/2, 0), ofVec3f(-1860/2, 3330/2, 0), ofVec3f(1860/2, 3330/2, 0));
+    cam.lookAt(ofVec3f(0,0,0));
+    
+    
     shadow.setRange( rangeMin, rangeMax );
 
     shadow.setBias(shadowBias);
@@ -143,7 +156,6 @@ void ofApp::update(){
         p.autoRotationOffsetVelocity = autoRotationOffsetVelocity;
         p.autoRotationFactor = autoRotationFactor;
     }
-    
     
 }
 

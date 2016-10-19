@@ -1,10 +1,13 @@
 <params>
 	<chair>
-		<rotation>91.9867, 0, 0</rotation>
-		<offset>0, 0, 418.159</offset>
+		<rotation>91.9867, 360, 211.937</rotation>
+		<offset>-956.265, -289.876, 418.159</offset>
+	<explode>0</explode>
+		<auto_rotation>0, 0, 0</auto_rotation>
+		<autoRotateFactor>0</autoRotateFactor>
 	</chair>
 	<light>
-		<pos>-456.477, 793.003, 4000</pos>
+		<pos>-2955.43, -2622.24, 4000</pos>
 		<rangeMin>1000</rangeMin>
 		<rangeMax>8000</rangeMax>
 		<shadowBias>0.000306122</shadowBias>
@@ -13,6 +16,10 @@
 		<Max_area>456.719</Max_area>
 		<Threshold>128</Threshold>
 		<UnknownName>1</UnknownName>
+	<holes>1</holes>
 	</light>
 <params/>
+<camera>
+		<camPos>0, 0, 4000.84</camPos>
+	</camera>
 </params>
