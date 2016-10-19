@@ -23,9 +23,7 @@ void ofApp::setup() {
     shadow.setRange( 10, 150 );
     shadow.setBias( 0.01 );
     
-    
     outFbo.allocate(1920, 1080);
-    
     
     chairModel.loadModel("BH30_baseOrigin.obj");
     chairMesh = chairModel.getMesh(0);
@@ -71,10 +69,8 @@ void ofApp::setup() {
     gui.add(explosionRadius.setup("explode radius", 1000, 10, 5000));
     gui.add(explosionSpeed.setup("explosion interperlation", 0.01, 0, 1));
     gui.add(goExplode.setup("Change explosion now tnks"));
-
     
     fragShader = initFragShader();
-    
 
 }
 
@@ -112,8 +108,10 @@ void ofApp::draw(){
             cam.end();
         shadow.endRenderPass();
     outFbo.end();
-    
+
     outFbo.draw(0,0);
+    
+
 
     //move to its own window
     gui.draw();
@@ -179,7 +177,6 @@ void ofApp::renderScene(bool isDepthPass) {
                     part.draw();
                 }
             }else{
-
                 //put the parts back together
                 /*
                 float angle = 10; //Compute angle. We rotate at speed
@@ -195,7 +192,6 @@ void ofApp::renderScene(bool isDepthPass) {
                     
                 }
                  */
-                    
             }
             
             if(displayParts){
@@ -218,7 +214,6 @@ void ofApp::renderScene(bool isDepthPass) {
     fragShader.setUniform1f("u_width", 800.0);
     fragShader.setUniform1f("u_height", 600.0);
     fragShader.setUniform1f("u_time", ofGetElapsedTimef());
-    
 
     ofDrawBox( 0, 5, 0, 250, 2, 250 );
     fragShader.end();
@@ -233,7 +228,7 @@ void ofApp::renderScene(bool isDepthPass) {
     
     
 
-    ofSetColor(255);
+    ofSetColor(172);
     
 
 }
@@ -332,59 +327,13 @@ ofShader ofApp::initFragShader(){
               // Comment and uncomment the following lines:
               st += noise(st*2.)*t; // Animate the coordinate space
               color = vec3(1.) * smoothstep(.18,.2,noise(st)); // Big black drops
-              //color += smoothstep(.15,.2,noise(st*10.)); // Black splatter
+              color += smoothstep(.15,.2,noise(st*10.)); // Black splatter
               color -= smoothstep(.35,.4,noise(st*10.)); // Holes on splatter
               
-              gl_FragColor = vec4(1.-color,1.0);
+              gl_FragColor = vec4(1.-color,0.5);
           }
 
     );
-    /*
-    
-    //redefine the initString with a simple example
-    initString = STRINGIFY(
- //        uniform vec2 u_resolution;
-                           uniform float u_width;
-                           uniform float u_height;
-//       uniform float u_time;
-          
-          void main(){
-              vec2 st = vec2(gl_FragCoord.x/u_width, gl_FragCoord.y/u_height);
-              //st.x *= width/height;
-              st.x *= u_width/u_height;
-              vec3 color = vec3(0.0);
-              float d = 0.0;
-              
-              // Remap the space to -1. to 1.
-              st = st *2.-1.;
-              
-              // Make the distance field
-              d = length( abs(st)-.3 );
-              // d = length( min(abs(st)-.3,0.) );
-              // d = length( max(abs(st)-.3,0.) );
-              
-              // Visualize the distance field
-              gl_FragColor = vec4(vec3(fract(d*10.0)),1);
-          }
-
-    );
-    initString = STRINGIFY(
-           uniform float myWidth;
-           uniform float myHeight;
-           
-           void main(){
-                float windowWidth = myWidth;
-                float windowHeight = myHeight;
-                
-                float r = gl_FragCoord.x / windowWidth;
-                float g = gl_FragCoord.y / windowHeight;
-                float b = 0.7;
-                float a = 0.5;
-                gl_FragColor = vec4(r, g, b, a);
-           }
-    );
-    */
-    
     fragShader.setupShaderFromSource( GL_FRAGMENT_SHADER, initString);
     fragShader.linkProgram();
     
@@ -392,6 +341,7 @@ ofShader ofApp::initFragShader(){
 }
 
 //--------------------------------------------------------------
+// move uniform init variables to here?
 ofShader ofApp::beginFragShader(ofShader fragShader){
     fragShader.begin();
     //fragShader.setUniform1f("u_time", ofGetElapsedTimef() );
