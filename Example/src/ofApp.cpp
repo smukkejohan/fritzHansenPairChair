@@ -37,7 +37,7 @@ void ofApp::setup() {
     };
 
     //move to another method
-    parts.push_back(chairBack.loadModel("BH30_back_baseOrigin.obj"));
+    //parts.push_back(chairBack.loadModel("BH30_back_baseOrigin.obj"));
     chairSeat.loadModel("BH30_seat_baseOrigin.obj");
     chairBase.loadModel("BH30_base_baseOrigin.obj");
     chairLegs.loadModel("BH30_legs_baseOrigin.obj");
@@ -72,6 +72,9 @@ void ofApp::setup() {
     gui.add(explosionSpeed.setup("explosion interperlation", 0.01, 0, 1));
     gui.add(goExplode.setup("Change explosion now tnks"));
 
+    
+    fragShader = initFragShader();
+    
 
 }
 
@@ -110,8 +113,8 @@ void ofApp::draw(){
         shadow.endRenderPass();
     outFbo.end();
     
-    
     outFbo.draw(0,0);
+
     //move to its own window
     gui.draw();
     
@@ -206,9 +209,20 @@ void ofApp::renderScene(bool isDepthPass) {
         //chairMesh.draw();
     } ofPopMatrix();
     
+
+    
     // floor //
     ofSetColor( 142,187,151 );
+
+    fragShader.begin();
+    fragShader.setUniform1f("u_width", 800.0);
+    fragShader.setUniform1f("u_height", 600.0);
+    fragShader.setUniform1f("u_time", ofGetElapsedTimef());
+    
+
     ofDrawBox( 0, 5, 0, 250, 2, 250 );
+    fragShader.end();
+    
     
     // wall //
     //ofDrawBox(0, -8, 10, 80, 30, 2 );
@@ -245,7 +259,6 @@ void ofApp::prepareExplodedParts() {
     }
 
 */
-    
     for(auto & part : parts ){
         ofPoint partExpCenter( ofRandom( -1, 1 ),
                               ofRandom( -1, 1 ),
@@ -253,13 +266,6 @@ void ofApp::prepareExplodedParts() {
         
         part.offset = partExpCenter;
     }
-
-    
-                              
-                              
-                          
-    
-    
 }
 
 //--------------------------------------------------------------
@@ -273,6 +279,123 @@ void ofApp::keyPressed(int key){
 //--------------------------------------------------------------
 void ofApp::explodeButtonPressed(){
     prepareExplodedParts();
+}
+
+
+//--------------------------------------------------------------
+ofShader ofApp::initFragShader(){
+
+    ofShader fragShader;
+    string initString = STRINGIFY(
+
+          #ifdef GL_ES
+          precision mediump float;
+          #endif
+          
+          //uniform vec2 u_resolution;
+                                  
+          //uniform vec2 u_mouse;
+          uniform float u_time;
+          uniform float u_width;
+          uniform float u_height;
+                                  
+          vec2 random2(vec2 st){
+              st = vec2( dot(st,vec2(127.1,311.7)),
+                        dot(st,vec2(269.5,183.3)) );
+              return -1.0 + 2.0*fract(sin(st)*43758.5453123);
+          }
+          
+          // Value Noise by Inigo Quilez - iq/2013
+          // https://www.shadertoy.com/view/lsf3WH
+          float noise(vec2 st) {
+              vec2 i = floor(st);
+              vec2 f = fract(st);
+              
+              vec2 u = f*f*(3.0-2.0*f);
+              
+              return mix( mix( dot( random2(i + vec2(0.0,0.0) ), f - vec2(0.0,0.0) ),
+                              dot( random2(i + vec2(1.0,0.0) ), f - vec2(1.0,0.0) ), u.x),
+                         mix( dot( random2(i + vec2(0.0,1.0) ), f - vec2(0.0,1.0) ), 
+                             dot( random2(i + vec2(1.0,1.0) ), f - vec2(1.0,1.0) ), u.x), u.y);
+          }
+          
+          void main() {
+              //vec2 st = gl_FragCoord.xy/u_resolution.xy;
+              vec2 st = vec2(gl_FragCoord.x/u_width, gl_FragCoord.y/u_height);
+              //st.x *= u_resolution.x/u_resolution.y;
+              st.x *= u_width/u_height;
+              vec3 color = vec3(0.0);
+              
+              float t = 1.0;
+              // Uncomment to animate
+              t = abs(1.0-sin(u_time*.1))*5.;
+              // Comment and uncomment the following lines:
+              st += noise(st*2.)*t; // Animate the coordinate space
+              color = vec3(1.) * smoothstep(.18,.2,noise(st)); // Big black drops
+              //color += smoothstep(.15,.2,noise(st*10.)); // Black splatter
+              color -= smoothstep(.35,.4,noise(st*10.)); // Holes on splatter
+              
+              gl_FragColor = vec4(1.-color,1.0);
+          }
+
+    );
+    /*
+    
+    //redefine the initString with a simple example
+    initString = STRINGIFY(
+ //        uniform vec2 u_resolution;
+                           uniform float u_width;
+                           uniform float u_height;
+//       uniform float u_time;
+          
+          void main(){
+              vec2 st = vec2(gl_FragCoord.x/u_width, gl_FragCoord.y/u_height);
+              //st.x *= width/height;
+              st.x *= u_width/u_height;
+              vec3 color = vec3(0.0);
+              float d = 0.0;
+              
+              // Remap the space to -1. to 1.
+              st = st *2.-1.;
+              
+              // Make the distance field
+              d = length( abs(st)-.3 );
+              // d = length( min(abs(st)-.3,0.) );
+              // d = length( max(abs(st)-.3,0.) );
+              
+              // Visualize the distance field
+              gl_FragColor = vec4(vec3(fract(d*10.0)),1);
+          }
+
+    );
+    initString = STRINGIFY(
+           uniform float myWidth;
+           uniform float myHeight;
+           
+           void main(){
+                float windowWidth = myWidth;
+                float windowHeight = myHeight;
+                
+                float r = gl_FragCoord.x / windowWidth;
+                float g = gl_FragCoord.y / windowHeight;
+                float b = 0.7;
+                float a = 0.5;
+                gl_FragColor = vec4(r, g, b, a);
+           }
+    );
+    */
+    
+    fragShader.setupShaderFromSource( GL_FRAGMENT_SHADER, initString);
+    fragShader.linkProgram();
+    
+    return fragShader;
+}
+
+//--------------------------------------------------------------
+ofShader ofApp::beginFragShader(ofShader fragShader){
+    fragShader.begin();
+    //fragShader.setUniform1f("u_time", ofGetElapsedTimef() );
+    return fragShader;
 }
 
 //--------------------------------------------------------------
