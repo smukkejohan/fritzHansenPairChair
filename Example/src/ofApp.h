@@ -45,6 +45,11 @@ public:
     void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
     
+    
+    ofShader initFragShader();
+    ofShader beginFragShader(ofShader shader);
+    ofShader fragShader;
+    
     ofEasyCam cam;
     
     ofxShadowSimple shadow;
