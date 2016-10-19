@@ -62,7 +62,6 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
     
-    
     void drawReflections();
     void drawTunnel();
     
@@ -116,16 +115,30 @@ class ofApp : public ofBaseApp{
     
     ofParameter<float> camFov {"fov", 26, 0, 170};
 
+    
+    ofParameter<bool> renderChair {"render chair", false};
+    
+    
+    ofParameter<bool> renderTunnel {"render tunnel", false};
+    
+    ofParameter<bool> renderReflection {"render reflection", false};
+
+    
+    ofParameter<bool> renderShade {"render sahde", true};
+
+    
+    
     ofParameterGroup camParams {"camera",
         camPos,
         camFov,
     };
     
-    ofParameterGroup renderParams {"camera",
-        camPos,
-        camFov,
+    ofParameterGroup renderParams {"render",
+        renderChair,
+        renderTunnel,
+        renderReflection,
+        renderShade
     };
-    
     
     ofParameterGroup chairParams {"chair",
         chairRotation,
@@ -147,7 +160,9 @@ class ofApp : public ofBaseApp{
         holes
     };
     
+    
     ofParameterGroup params {"params",
+        renderParams,
         camParams,
         chairParams,
         lightParams

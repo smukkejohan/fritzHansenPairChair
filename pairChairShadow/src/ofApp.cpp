@@ -46,7 +46,7 @@ void ofApp::setup(){
     
     
     // lets say our units are mm
-    floor.set(3330, 1860, 10);
+    floor.set(3325, 2845, 10);
     
     // rotate chair to stand on the floor
     // set the scale of the chair
@@ -349,26 +349,31 @@ void ofApp::draw(){
     
     ofSetColor(255);
     
-    shadeFbo.draw(0,0);
     
-    contourFinder.draw();
+    if(renderShade) {
+       shadeFbo.draw(0,0);
+    }
+    
+    //contourFinder.draw();
+    
+    if(renderTunnel) {
+        drawTunnel();
+    }
     
     
-    
-    
-    
-    //drawTunnel();
-    
+    if(renderReflection) {
     reflectFbo.begin();
     
     ofSetColor(255);
-    //drawReflections();
+    drawReflections();
     
     reflectFbo.end();
     
     ofSetColor(255);
-    //reflectFbo.draw(0,0);
     
+    reflectFbo.draw(0,0);
+        
+    }
     
     /*for(auto & c : lines) {
         
@@ -377,14 +382,16 @@ void ofApp::draw(){
     }*/
     
     
-    ofEnableDepthTest();
-    cam.begin();
-    renderModels();
-    cam.end();
-    ofDisableDepthTest();
+    if(renderChair) {
+        ofEnableDepthTest();
+        shadow.beginRenderPass( cam );
+        cam.begin();
+        renderModels();
+        cam.end();
+        shadow.endRenderPass();
+        ofDisableDepthTest();
 
-    
-    
+    }
     
     ofSetColor(255);
     shadow.getDepthTexture().draw(0,0,192,108);
