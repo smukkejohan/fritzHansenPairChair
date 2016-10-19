@@ -5,6 +5,23 @@
 #include "ofxAssimpModelLoader.h"
 #include "ofxGui.h"
 
+class MyChairPart {
+public:
+    ofVec3f offset;
+    ofMesh mesh;
+    
+    MyChairPart(ofMesh m) {
+        mesh = m;
+    }
+
+    void draw(){
+        ofPushMatrix();
+        ofTranslate(offset);
+        mesh.draw();
+        ofPopMatrix();
+    };
+    
+};
 
 class ofApp : public ofBaseApp{
 public:
@@ -49,7 +66,9 @@ public:
     int nParts = 5; //number of chair parts
     
     //gah, how to make nParts a static constant?
-    ofxAssimpModelLoader parts[5];
+    //ofxAssimpModelLoader parts[5];
+    vector<MyChairPart> parts;
+    
     ofPoint partsPos[5]; //current postions of the parts
     ofVec3f partsVec[5];
     

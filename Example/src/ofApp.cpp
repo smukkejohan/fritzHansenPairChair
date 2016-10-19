@@ -30,19 +30,22 @@ void ofApp::setup() {
     chairModel.loadModel("BH30_baseOrigin.obj");
     chairMesh = chairModel.getMesh(0);
     
+    for(int i=0 ; i< chairModel.getNumMeshes(); i++){
+        MyChairPart m = MyChairPart(chairModel.getMesh(i));
+        parts.push_back(m);
+        
+    };
 
     //move to another method
-    chairBack.loadModel("BH30_back_baseOrigin.obj");
+    parts.push_back(chairBack.loadModel("BH30_back_baseOrigin.obj"));
     chairSeat.loadModel("BH30_seat_baseOrigin.obj");
     chairBase.loadModel("BH30_base_baseOrigin.obj");
     chairLegs.loadModel("BH30_legs_baseOrigin.obj");
     chairFeet.loadModel("BH30_feet_baseOrigin.obj");
     
-    parts[0] = chairBack;
-    parts[1] = chairSeat;
-    parts[2] = chairBase;
-    parts[3] = chairLegs;
-    parts[4] = chairFeet;
+    /*    parts[0] = chairBack;    parts[1] = chairSeat;    parts[2] = chairBase;    parts[3] = chairLegs;    parts[4] = chairFeet;
+    */
+    
     nParts = 5;
     
     for(int i;i<nParts;i ++){
@@ -167,22 +170,15 @@ void ofApp::renderScene(bool isDepthPass) {
 
             //move out of this block?
             if(explodeParts){
-                float angle = (sin( ofGetElapsedTimef() ) * RAD_TO_DEG)/50; //Compute angle. We rotate at speed
+                //float angle = (sin( ofGetElapsedTimef() ) * RAD_TO_DEG)/50; //Compute angle. We rotate at speed
 
-                for(int i = 0; i < nParts; i++){
-                    ofVec3f tempVec = partsPos[i].getInterpolated(partsPosExplode[i], explosionSpeed);
-                    //chairParts[i].setPosition(chairPartsPos[i].x, chairPartsPos[i].y, chairPartsPos[i].z);
-                    parts[i].setPosition(tempVec.x, tempVec.y, tempVec.z);
-                    partsPos[i] = tempVec;
-                    
-                    //ofPoint axis = ofPoint(1.0, 0.0, 0.0);
-                    int numRotation = parts[i].getNumRotations();
-                    parts[i].setRotation(numRotation, angle, partsVecExplode[i].x, partsVecExplode[i].y, partsVecExplode[i].z);
-                    
+                for(auto & part : parts){
+                    part.draw();
                 }
             }else{
 
                 //put the parts back together
+                /*
                 float angle = 10; //Compute angle. We rotate at speed
                 for(int i = 0; i < nParts; i++){
                     ofVec3f tempVec = partsPos[i].getInterpolated(partsPosInit[i], explosionSpeed);
@@ -195,15 +191,16 @@ void ofApp::renderScene(bool isDepthPass) {
                     parts[i].stopAllAnimations();
                     
                 }
+                 */
                     
             }
             
             if(displayParts){
                 for(int i = 0; i < nParts; i++){
-                    parts[i].drawFaces();
+                  //  parts[i].drawFaces();
                 }
             }else{
-                chairModel.drawFaces();
+              //  chairModel.drawFaces();
             }
         }
         //chairMesh.draw();
@@ -229,7 +226,7 @@ void ofApp::renderScene(bool isDepthPass) {
 
 //--------------------------------------------------------------
 void ofApp::prepareExplodedParts() {
-    
+/*
     //init explosion field
     for (int i=0; i<nParts; i++) {     //Scan all the parts
         ofPoint partExpCenter( ofRandom( -1, 1 ),
@@ -239,12 +236,29 @@ void ofApp::prepareExplodedParts() {
         partExpCenter *= explosionRadius;      //Now the center vector has
         partsPosExplode[i] = partExpCenter;
         
+        
         ofVec3f partExpVec(ofRandom( -1, 1 ),
                         ofRandom( -1, 1 ),
                         ofRandom( -1, 1 ));
         partExpVec.normalize();
         partsVecExplode[i] = partExpVec;
     }
+
+*/
+    
+    for(auto & part : parts ){
+        ofPoint partExpCenter( ofRandom( -1, 1 ),
+                              ofRandom( -1, 1 ),
+                              ofRandom( -1, 1 ) );
+        
+        part.offset = partExpCenter;
+    }
+
+    
+                              
+                              
+                          
+    
     
 }
 
