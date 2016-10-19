@@ -140,6 +140,8 @@ void ofApp::update(){
     
     for(auto & p : parts) {
         p.explosionFactor = ofVec3f(explodeAmount,explodeAmount,explodeAmount);
+        p.autoRotationOffsetVelocity = autoRotationOffsetVelocity;
+        p.autoRotationFactor = autoRotationFactor;
     }
     
     

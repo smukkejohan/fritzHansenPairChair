@@ -16,7 +16,14 @@ public:
     ofVec3f explosionFactor;
     ofVec3f explosionDirection;
     
+    ofVec3f partRotationOffset;
+    ofVec3f autoRotationOffsetVelocity;
+    
+    float autoRotationFactor = autoRotationOffsetVelocity.x;
+    
     void customDraw() {
+        
+        partRotationOffset += autoRotationOffsetVelocity * explosionDirection;
         
         ofPushMatrix();
         
@@ -25,6 +32,10 @@ public:
         //ofTranslate(-mesh.getCentroid());
         
         ofTranslate( explosionFactor * explosionDirection);
+        
+        ofRotateX(partRotationOffset.x * autoRotationFactor);
+        ofRotateY(partRotationOffset.y * autoRotationFactor);
+        ofRotateZ(partRotationOffset.z * autoRotationFactor);
         
         mesh.draw();
         
@@ -85,6 +96,8 @@ class ofApp : public ofBaseApp{
     ofParameter<bool> holes {"holes"};
     
     ofParameter<ofVec3f> chairRotation {"rotation", ofVec3f(270,0,0), ofVec3f(0,0,0), ofVec3f(360,360,360)};
+    
+    ofParameter<ofVec3f> autoRotationOffsetVelocity  {"auto rotation", ofVec3f(0,0,0), ofVec3f(0,0,0), ofVec3f(20,20,20)};
 
     ofParameter<ofVec3f> chairOffset {"offset", ofVec3f(0,0,0), ofVec3f(-4000,-4000,-4000), ofVec3f(4000,4000,4000)};
 
@@ -98,12 +111,17 @@ class ofApp : public ofBaseApp{
     
     ofParameter<float> shadowIntensity {"shadowIntensity", 0, 0, 1};
     
-    ofParameter<float> explodeAmount {"explode", 0, 0, 4000};
+    ofParameter<float> explodeAmount {"explode", 0, 0, 3000};
+    ofParameter<float> autoRotationFactor {"autoRotateFactor", 0, 0,1};
+    
+    
     
     ofParameterGroup chairParams {"chair",
         chairRotation,
         chairOffset,
-        explodeAmount
+        explodeAmount,
+        autoRotationOffsetVelocity,
+        autoRotationFactor
     };
     
     
