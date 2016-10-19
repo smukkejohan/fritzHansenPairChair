@@ -128,7 +128,6 @@ void ofApp::update(){
     contourFinder.findContours(pixels);
     contourFinder.setFindHoles(holes);
     
-    
     /*for (int i = 0; i < chars.size(); i++){
         vector < ofPolyline > temp = chars[i].getOutline();
         lines.insert(lines.end(), temp.begin(), temp.end());
@@ -323,7 +322,8 @@ void ofApp::draw(){
     ofEnableDepthTest();
     
     shadow.beginDepthPass();
-    renderScene(true);
+    renderFloor();
+    renderModels();
     shadow.endDepthPass();
     
     shadeFbo.begin();
@@ -332,7 +332,7 @@ void ofApp::draw(){
     
     shadow.beginRenderPass( cam );
     cam.begin();
-    renderScene(false);
+    renderFloor();
     cam.end();
     shadow.endRenderPass();
     
@@ -342,13 +342,20 @@ void ofApp::draw(){
     
     // create new fbo for output
     
+    
     ofDisableDepthTest();
+    
+    
     
     ofSetColor(255);
     
     shadeFbo.draw(0,0);
     
     contourFinder.draw();
+    
+    
+    
+    
     
     //drawTunnel();
     
@@ -369,6 +376,16 @@ void ofApp::draw(){
         
     }*/
     
+    
+    ofEnableDepthTest();
+    cam.begin();
+    renderModels();
+    cam.end();
+    ofDisableDepthTest();
+
+    
+    
+    
     ofSetColor(255);
     shadow.getDepthTexture().draw(0,0,192,108);
     
@@ -377,25 +394,21 @@ void ofApp::draw(){
 
 }
 
-void ofApp::renderScene(bool isDepthPass) {
-    
-    ofBackground(0,0,0);
-    ofSetColor(255);
 
+void ofApp::renderFloor() {
+    ofSetColor(255);
     floor.draw();
-    
-    //if(isDepthPass) {
-    
-        ofPushMatrix(); {
-            
-            for(auto & p : parts) {
-                p.draw();
-            }
-    
-        } ofPopMatrix();
+}
+
+void ofApp::renderModels() {
+    ofSetColor(255);
+    ofPushMatrix(); {
         
-    //}
-    
+        for(auto & p : parts) {
+            p.draw();
+        }
+        
+    } ofPopMatrix();
 }
 
 //--------------------------------------------------------------

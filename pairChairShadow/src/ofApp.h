@@ -31,7 +31,7 @@ public:
         //ofScale(0.5, 0.5, 0.5);
         //ofTranslate(-mesh.getCentroid());
         
-        ofTranslate( explosionFactor * explosionDirection);
+        ofTranslate( explosionFactor * explosionDirection );
         
         ofRotateX(partRotationOffset.x * autoRotationFactor);
         ofRotateY(partRotationOffset.y * autoRotationFactor);
@@ -72,7 +72,8 @@ class ofApp : public ofBaseApp{
     ofFbo shadeFbo;
     ofFbo reflectFbo;
     
-    void renderScene(bool isDepthPass);
+    void renderFloor();
+    void renderModels();
 
     ofxAssimpModelLoader pairChairModel;
     
@@ -111,13 +112,16 @@ class ofApp : public ofBaseApp{
     ofParameter<float> explodeAmount {"explode", 0, 0, 3000};
     ofParameter<float> autoRotationFactor {"autoRotateFactor", 0, 0,1};
     
-    
     ofParameter<ofVec3f> camPos {"camPos", ofVec3f(0,0,-4000), ofVec3f(-1000,-1000,2000), ofVec3f(1000,1000,6000)};
     
     ofParameter<float> camFov {"fov", 26, 0, 170};
 
-    
     ofParameterGroup camParams {"camera",
+        camPos,
+        camFov,
+    };
+    
+    ofParameterGroup renderParams {"camera",
         camPos,
         camFov,
     };
@@ -130,7 +134,6 @@ class ofApp : public ofBaseApp{
         autoRotationOffsetVelocity,
         autoRotationFactor
     };
-    
     
     ofParameterGroup lightParams {"light",
         lightPosition,
