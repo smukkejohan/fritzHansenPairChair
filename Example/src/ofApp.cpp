@@ -346,7 +346,7 @@ ofShader ofApp::initFragShader(){ //need to rename to initSplatterShader
               vec3 color = vec3(0.0);
               
               //FROM GIT
-              //vec4 texColor = texture2D(u_texture, vTexCoord);
+              vec4 texColor = texture2D(u_texture, vTexCoord);
               
               
               
@@ -359,7 +359,7 @@ ofShader ofApp::initFragShader(){ //need to rename to initSplatterShader
               color += smoothstep(.15,.2,noise(st*10.)); // Black splatter
               color -= smoothstep(.35,.4,noise(st*10.)); // Holes on splatter
               
-              gl_FragColor = vec4(1.-color,1.0);// * texColor;
+              gl_FragColor = vec4(1.-color,1.0); * texColor;
           }
 
     );
@@ -403,7 +403,7 @@ ofShader ofApp::initFragShader(){ //need to rename to initSplatterShader
                                               gl_Position = modelViewProjectionMatrix * position;
                                           }
     );
-    //fragShader.setupShaderFromSource( GL_VERTEX_SHADER, initVertPassString);
+    fragShader.setupShaderFromSource( GL_VERTEX_SHADER, initVertPassString);
 
     
     fragShader.linkProgram();
