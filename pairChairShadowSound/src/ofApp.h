@@ -7,6 +7,7 @@
 #include "ofxEasing.h"
 #include "ofxCv.h"
 #include "ofxParameterFader.hpp"
+#include "soundscape.hpp"
 
 #define DURATION 120
 
@@ -184,7 +185,7 @@ class ofApp : public ofBaseApp{
     ofShader fragShader;
     
     
-    
+    Soundscape soundscape;
     
     
     

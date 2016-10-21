@@ -141,6 +141,8 @@ void ofApp::setup(){
     borders2 = borders;
     borders2 = borders2.getResampledByCount(ofGetWidth());
     
+    soundscape.setup();
+    
 }
 
 ofPoint ofApp::randomPtForSize(ofRectangle rect, int side){
@@ -285,6 +287,8 @@ void ofApp::update(){
         p.autoRotationOffsetVelocity = autoRotationOffsetVelocity;
         p.autoRotationFactor = autoRotationFactor;
     }
+    
+    soundscape.update();
 }
 
 void ofApp::drawReflections() {
@@ -507,6 +511,7 @@ void ofApp::draw(){
     
     // move to its own window
     gui.draw();
+    soundscape.draw();
 }//end ofApp::draw()
 
 
