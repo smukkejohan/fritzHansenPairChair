@@ -12,10 +12,9 @@ void ofApp::setup(){
     soundPlayerClick.load("55Hz.wav");
     soundPlayerClick.setMultiPlay(true);
 
+    //add more plucks?
     soundPlayerPluck.load("pluck.wav");
     soundPlayerPluck.setMultiPlay(true);
-    
-
     
     /*
     gui.setup();
@@ -28,7 +27,6 @@ void ofApp::setup(){
     goDroneHigh.addListener(this, &ofApp::droneHighButtonPressed);
     goClick.addListener(this, &ofApp::clickButtonPressed);
     goPluck.addListener(this, &ofApp::pluckButtonPressed);
-
 
     //soundGui.setup(soundParams);
     soundGui.setup();
@@ -56,15 +54,11 @@ void ofApp::update(){
     //if(droneLowStart && !soundPlayerDroneLow.isPlaying()){
     //    droneLowButtonPressed();
     //}
-
     
      soundPlayerDroneLow.setVolume(droneLowVol);
      soundPlayerDroneHigh.setVolume(droneHighVol);
      soundPlayerClick.setVolume(clickVol);
      soundPlayerPluck.setVolume(pluckVol);
-    
-    
-    
 }
 
 //--------------------------------------------------------------
