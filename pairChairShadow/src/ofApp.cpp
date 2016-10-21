@@ -111,7 +111,7 @@ void ofApp::setup(){
     cam.setAspectRatio(16./9.);
 
 
-    fadeManager = make_shared<ofxParameterFadeManager>();
+    //fadeManager = make_shared<ofxParameterFadeManager>();
     
     pairChairModel.loadModel("chair.dae");
     //pairChairMesh = pairChairModel.getMesh(0);
