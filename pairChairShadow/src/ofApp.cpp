@@ -14,9 +14,13 @@ uniform float u_time;
 uniform float u_width;
 uniform float u_height;
 
+uniform float noiseFadeIn;
+
+uniform float invert;
+
+
 varying vec2 texCoordVarying;
 uniform sampler2DRect tex0;
-
 
 vec2 random2(vec2 st){
     st = vec2( dot(st,vec2(127.1,311.7)),
@@ -39,26 +43,30 @@ float noise(vec2 st) {
 }
 
 void main() {
-    //vec2 st = gl_FragCoord.xy/u_resolution.xy;
     vec2 st = vec2(gl_FragCoord.x/u_width, gl_FragCoord.y/u_height);
-    //st.x *= u_resolution.x/u_resolution.y;
     st.x *= u_width/u_height;
     vec3 color = vec3(0.0);
     
+    vec4 texel0 = texture2DRect(tex0, texCoordVarying);
+
     
-    float t = 1.0;
+    float t = texel0.r ;
     // Uncomment to animate
-    t = abs(1.0-sin(u_time*.1))*5.;
+    t = abs(1.0-sin(u_time*.1 (+ texel0.r +  texel0.g +  texel0.b)/4)) * 5.;
     // Comment and uncomment the following lines:
     st += noise(st*2.)*t; // Animate the coordinate space
     color = vec3(1.) * smoothstep(.18,.2,noise(st)); // Big black drops
-    //color += smoothstep(.15,.2,noise(st*10.)); // Black splatter
+    color += smoothstep(.15,.2,noise(st*10.)); // Black splatter
     //color -= smoothstep(.35,.4,noise(st*10.)); // Holes on splatter
     
     //gl_FragColor = vec4(1.-color,0.5);
-    vec4 texel0 = texture2DRect(tex0, texCoordVarying);
-
-    gl_FragColor =  vec4((1-texel0.rgb) * (1-color.rgb), 1);
+    
+    
+    gl_FragColor =  vec4( (invert - (texel0.rgb * (1 - noiseFadeIn))) + (invert - color.rgb * noiseFadeIn), 1);
+    
+    
+    
+    
     //gl_FragColor = texel0;
     
     /*if(texel0.r > 0.5) {
@@ -222,6 +230,8 @@ void ofApp::update(){
 
         ofVec3f nv = lightPosition.get();
         
+        blur.setScale(1.2);
+        
         nv.x = ofxeasing::map_clamp(t, 13, 26, -10, 1376, ofxeasing::quart::easeInOut);
         nv.y = ofxeasing::map_clamp(t, 10, 20, -10, 626, ofxeasing::quart::easeInOut);
         nv.z = ofxeasing::map_clamp(t, 0, 10, -940, 200, ofxeasing::quart::easeInOut);
@@ -264,6 +274,8 @@ void ofApp::update(){
         nv.z = ofxeasing::map_clamp(st, 0, 1, ofMap(sin(t*t), -1, 1, -8, 100), 4000, ofxeasing::quart::easeOut);
 
         lightPosition.set(nv);
+        
+        float b = ofxeasing::map_clamp(t, 13, 26, -10, 1376, ofxeasing::quart::easeInOut);
         
     }
         
@@ -528,26 +540,27 @@ void ofApp::draw(){
     
     if(renderShade) {
         
-        /*fragShader.begin();
+        fragShader.begin();
         
         fragShader.setUniform1f("u_width", 1920);
         fragShader.setUniform1f("u_height", 1080);
         fragShader.setUniform1f("u_time", time.get());
-        fragShader.setUniformTexture("tex0", fboBlurTwoPass, 1);
+        fragShader.setUniform1f("noiseFadeIn", noiseFadeIn.get());
+        
+        fragShader.setUniformTexture("tex0", blur.getTextureReference(), 1);
        
-        fboBlurTwoPass.draw(0,0);
+        blur.draw();
         //ofDrawRectangle(0, 0, ofGetWidth(), ofGetHeight());
         //cam.begin();
         //floor.draw();
         //cam.end();
         
         
-        fragShader.end();*/
+        fragShader.end();
         
 
 
         
-        blur.draw();
 
         
 

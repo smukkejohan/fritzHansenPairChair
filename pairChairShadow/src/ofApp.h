@@ -122,6 +122,8 @@ class ofApp : public ofBaseApp{
     
     ofParameter<float> blurShadeScale {"blur", 0, 0, 10};
     ofParameter<float> blurShadeRotation {"blurRot", 0, 0, PI};
+    
+    ofParameter<float> noiseFadeIn {"noiseIn", 0, 0, 1};
 
     
     
@@ -161,6 +163,7 @@ class ofApp : public ofBaseApp{
     ofParameterGroup lightParams {"light",
         blurShadeScale,
         blurShadeRotation,
+        noiseFadeIn,
         lightPosition,
         rangeMin,
         rangeMax,
