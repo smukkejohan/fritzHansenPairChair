@@ -181,9 +181,6 @@ class ofApp : public ofBaseApp{
     
     
     
-    shared_ptr<ofxParameterFadeManager> fadeManager;
-    
-    
     ofShader fragShader;
     
     
