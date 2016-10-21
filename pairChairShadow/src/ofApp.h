@@ -4,9 +4,11 @@
 #include "ofxAssimpModelLoader.h"
 #include "ofxGui.h"
 #include "ofxShadowSimple.h"
-
+#include "ofxEasing.h"
 #include "ofxCv.h"
+#include "ofxParameterFader.hpp"
 
+#define DURATION 120
 
 class Part : public ofNode {
 public:
@@ -38,7 +40,6 @@ public:
         ofRotateZ(partRotationOffset.z * autoRotationFactor);
         
         mesh.draw();
-        
         ofPopMatrix();
     }
     
@@ -114,19 +115,23 @@ class ofApp : public ofBaseApp{
     ofParameter<ofVec3f> camPos {"camPos", ofVec3f(0,0,-4000), ofVec3f(-1000,-1000,2000), ofVec3f(1000,1000,6000)};
     
     ofParameter<float> camFov {"fov", 26, 0, 170};
-
     
     ofParameter<bool> renderChair {"render chair", false};
-    
-    
     ofParameter<bool> renderTunnel {"render tunnel", false};
-    
     ofParameter<bool> renderReflection {"render reflection", false};
-
     
     ofParameter<bool> renderShade {"render sahde", true};
-
     
+    
+    ofParameter<ofFloatColor> bgColor {"Background color",
+        ofFloatColor(1,1,1,1),
+    ofFloatColor(0,0,0,0),
+        ofFloatColor(1,1,1,1)};
+    
+    ofParameter<float> time {"time", 0, 0, DURATION};
+    
+    ofParameter<bool> pause {"pause" , false};
+
     
     ofParameterGroup camParams {"camera",
         camPos,
@@ -134,10 +139,13 @@ class ofApp : public ofBaseApp{
     };
     
     ofParameterGroup renderParams {"render",
+        time,
+        pause,
         renderChair,
         renderTunnel,
         renderReflection,
-        renderShade
+        renderShade,
+        bgColor
     };
     
     ofParameterGroup chairParams {"chair",
@@ -160,13 +168,21 @@ class ofApp : public ofBaseApp{
         holes
     };
     
-    
     ofParameterGroup params {"params",
         renderParams,
         camParams,
         chairParams,
         lightParams
     };
+    
+    
+    
+    
+    shared_ptr<ofxParameterFadeManager> fadeManager;
+    
+    
+    ofShader fragShader;
+    
     
     
     
