@@ -21,8 +21,8 @@ void ofApp::setup(){
     gui.add(droneLowStart.setup("Drone Low", 0.0, 0.0, 1000));
     gui.add(droneLowGroup);
     */
-
     //goDroneLow.addListener(this, &ofApp::droneLowButtonPressed);
+
     goDroneLow.addListener(this, &ofApp::droneLowButtonPressed);
     goDroneHigh.addListener(this, &ofApp::droneHighButtonPressed);
     goClick.addListener(this, &ofApp::clickButtonPressed);
@@ -40,7 +40,6 @@ void ofApp::setup(){
     soundGui.add(pluckGroup);
     soundGui.add(goPluck.setup("Pluck"));
     
-
     vector<ofSoundPlayer> sounds;
     sounds.push_back(soundPlayerDroneLow);
     sounds.push_back(soundPlayerDroneHigh);
