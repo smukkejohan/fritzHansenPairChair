@@ -59,9 +59,14 @@ void main() {
     vec4 texel0 = texture2DRect(tex0, texCoordVarying);
 
     gl_FragColor =  vec4((1-texel0.rgb) * (1-color.rgb), 1);
-
+    //gl_FragColor = texel0;
+    
+    /*if(texel0.r > 0.5) {
+        gl_FragColor = vec4(color, 1);
+    } else {
+        gl_FragColor = texel0;
+    }*/
 }
-
 
 )";
 
@@ -81,21 +86,27 @@ void main()
 )";
 
 
+
+
 //--------------------------------------------------------------
 void ofApp::setup(){
     ofEnableAlphaBlending();
 
-    ofSetBackgroundAuto(false);
+    ofSetBackgroundAuto(true);
 
     ofSetBoxResolution( 100, 100, 30 );
-    
     
     fragShader.setupShaderFromSource( GL_VERTEX_SHADER, vertextShaderSrc);
     fragShader.setupShaderFromSource( GL_FRAGMENT_SHADER, fragShaderSrc);
     
    // fragShader.bindDefaults();
     fragShader.linkProgram();
+    
 
+    blur.setup(1920, 1080, 10, .4, 4);
+    
+    //fboBlurOnePass.allocate(image.getWidth(), image.getHeight());
+    //fboBlurTwoPass.allocate(image.getWidth(), image.getHeight());
     
     /*
     cam.disableMouseInput();
@@ -109,7 +120,6 @@ void ofApp::setup(){
 */
     
     cam.setAspectRatio(16./9.);
-
 
     fadeManager = make_shared<ofxParameterFadeManager>();
     
@@ -126,13 +136,10 @@ void ofApp::setup(){
         
         parts.push_back(p);
     }
-
     
     // parts
-    
     //light.setAreaLight(100, 100);
     //light.enable();
-    
     
     // lets say our units are mm
     floor.set(3325, 2845, 10);
@@ -144,7 +151,16 @@ void ofApp::setup(){
     
     gui.loadFromFile("settings.xml");
     
-    shadeFbo.allocate(1920, 1080);
+    ofFbo::Settings fboSettings;
+    
+    //TODO: Fix MSAA for FBOs
+    fboSettings.numSamples = 1;
+    fboSettings.useDepth = true;
+    fboSettings.width = 1920;
+    fboSettings.height = 1080;
+    fboSettings.internalformat = GL_RGB;
+    
+    shadeFbo.allocate(fboSettings);
     
     reflectFbo.allocate(1920, 1080);
     reflectFbo.begin();
@@ -258,16 +274,15 @@ void ofApp::update(){
     
     
     
+    blur.setScale(blurShadeScale);
+    blur.setRotation(blurShadeRotation);
+    
     
     // to leg
     // 831, 84
     
     // light pos to
     // ofVec3f lightTo(-10, -10, 1251);
-    
-    
-
-    
     
     //fadeManager->add(new ParameterFade<int>(p, msg.getArgAsInt32(0), fadeTime, easeFn));
 
@@ -480,14 +495,13 @@ void ofApp::drawTunnel() {
 //--------------------------------------------------------------
 void ofApp::draw(){
     
-    ofBackground(bgColor.get());
+    ofDrawRectangle(0, 0, 1920, 1080);
+
     
     ofEnableDepthTest();
     
     shadow.beginDepthPass();
     renderFloor();
-    
-    
     renderModels();
     shadow.endDepthPass();
     
@@ -495,7 +509,6 @@ void ofApp::draw(){
     ofClear(0,0,0);
     shadow.beginRenderPass( cam );
     cam.begin();
-
     
     renderFloor();
     
@@ -505,32 +518,38 @@ void ofApp::draw(){
 
     ofDisableDepthTest();
     
-    
-    
     ofSetColor(255);
+    
+    
+    blur.begin();
+    shadeFbo.draw(0,0);
+    blur.end();
+    
+    
     
     
     if(renderShade) {
         
+        /*fragShader.begin();
         
-        cam.begin();
-        
-        fragShader.begin();
         fragShader.setUniform1f("u_width", 1920);
         fragShader.setUniform1f("u_height", 1080);
         fragShader.setUniform1f("u_time", time.get());
-        fragShader.setUniformTexture("tex0", shadeFbo, 1);
-
+        fragShader.setUniformTexture("tex0", fboBlurTwoPass, 1);
        
-        //shadeFbo.draw(0,0);
+        fboBlurTwoPass.draw(0,0);
         //ofDrawRectangle(0, 0, ofGetWidth(), ofGetHeight());
-        floor.draw();
+        //cam.begin();
+        //floor.draw();
+        //cam.end();
         
-        fragShader.end();
         
-        cam.end();
+        fragShader.end();*/
+        
 
 
+        
+        blur.draw();
 
         
 

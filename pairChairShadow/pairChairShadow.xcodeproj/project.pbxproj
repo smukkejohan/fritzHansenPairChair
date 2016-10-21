@@ -38,6 +38,7 @@
 		856AA354D08AB4B323081444 /* ofxBaseGui.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9604B925D32EE39065747725 /* ofxBaseGui.cpp */; };
 		879A251454401BC0B6E4F238 /* OscTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D9BFFBBF4CC43DEE890B3C3E /* OscTypes.cpp */; };
 		8CEF1F831DB956B400F2F8B9 /* ofxParameterFader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CEF1F811DB956B400F2F8B9 /* ofxParameterFader.cpp */; };
+		8CEF1FC01DBA71EA00F2F8B9 /* ofxBlur.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CEF1FBE1DBA71EA00F2F8B9 /* ofxBlur.cpp */; };
 		8DED5056525646FA71980866 /* ofxAssimpModelLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EDE55D82BD962DAC0E94B708 /* ofxAssimpModelLoader.cpp */; };
 		8F5205AEF8861EF234F0651A /* ofxOscSender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 81967292BFC87A0144BD32C6 /* ofxOscSender.cpp */; };
 		933A2227713C720CEFF80FD9 /* tinyxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B40EDA85BEB63E46785BC29 /* tinyxml.cpp */; };
@@ -250,6 +251,8 @@
 		8CEF1F7E1DB9525E00F2F8B9 /* ofxEasing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxEasing.h; sourceTree = "<group>"; };
 		8CEF1F811DB956B400F2F8B9 /* ofxParameterFader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ofxParameterFader.cpp; sourceTree = "<group>"; };
 		8CEF1F821DB956B400F2F8B9 /* ofxParameterFader.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ofxParameterFader.hpp; sourceTree = "<group>"; };
+		8CEF1FBE1DBA71EA00F2F8B9 /* ofxBlur.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ofxBlur.cpp; sourceTree = "<group>"; };
+		8CEF1FBF1DBA71EA00F2F8B9 /* ofxBlur.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxBlur.h; sourceTree = "<group>"; };
 		8DB45DE3BD6BB97E34BDB411 /* nn_index.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = nn_index.h; path = ../../../addons/ofxOpenCv/libs/opencv/include/opencv2/flann/nn_index.h; sourceTree = SOURCE_ROOT; };
 		8E79CF8911DFABAFE23EA45B /* ofxCvConstants.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxCvConstants.h; path = ../../../addons/ofxOpenCv/src/ofxCvConstants.h; sourceTree = SOURCE_ROOT; };
 		8FB4573CDB2FB9658ACF87AA /* gpu_test.hpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = gpu_test.hpp; path = ../../../addons/ofxOpenCv/libs/opencv/include/opencv2/ts/gpu_test.hpp; sourceTree = SOURCE_ROOT; };
@@ -908,6 +911,24 @@
 			path = ../../../addons/ofxParameterFader/src;
 			sourceTree = "<group>";
 		};
+		8CEF1FBC1DBA71EA00F2F8B9 /* ofxBlur */ = {
+			isa = PBXGroup;
+			children = (
+				8CEF1FBD1DBA71EA00F2F8B9 /* src */,
+			);
+			name = ofxBlur;
+			sourceTree = "<group>";
+		};
+		8CEF1FBD1DBA71EA00F2F8B9 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				8CEF1FBE1DBA71EA00F2F8B9 /* ofxBlur.cpp */,
+				8CEF1FBF1DBA71EA00F2F8B9 /* ofxBlur.h */,
+			);
+			name = src;
+			path = ../../../addons/ofxBlur/src;
+			sourceTree = "<group>";
+		};
 		90D509C72729D1998E28A98F /* libs */ = {
 			isa = PBXGroup;
 			children = (
@@ -1050,6 +1071,7 @@
 				1F4FB5C423662B96ADFDCC0B /* ofxXmlSettings */,
 				8CEF1F7B1DB9525E00F2F8B9 /* ofxEasing */,
 				8CEF1F7F1DB956B400F2F8B9 /* ofxParameterFader */,
+				8CEF1FBC1DBA71EA00F2F8B9 /* ofxBlur */,
 			);
 			name = addons;
 			sourceTree = "<group>";
@@ -1422,6 +1444,7 @@
 				856AA354D08AB4B323081444 /* ofxBaseGui.cpp in Sources */,
 				5CBB2AB3A60F65431D7B555D /* ofxButton.cpp in Sources */,
 				B266578FC55D23BFEBC042E7 /* ofxGuiGroup.cpp in Sources */,
+				8CEF1FC01DBA71EA00F2F8B9 /* ofxBlur.cpp in Sources */,
 				483908258D00B98B4BE69F07 /* ofxLabel.cpp in Sources */,
 				F285EB3169F1566CA3D93C20 /* ofxPanel.cpp in Sources */,
 				837220E80EB56CD44AD27F2A /* ofxSlider.cpp in Sources */,

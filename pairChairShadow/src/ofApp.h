@@ -7,6 +7,9 @@
 #include "ofxEasing.h"
 #include "ofxCv.h"
 #include "ofxParameterFader.hpp"
+#include "ofxBlur.h"
+
+
 
 #define DURATION 120
 
@@ -72,17 +75,15 @@ class ofApp : public ofBaseApp{
     ofFbo shadeFbo;
     ofFbo reflectFbo;
     
+    ofxBlur blur;
+    
     void renderFloor();
     void renderModels();
 
     ofxAssimpModelLoader pairChairModel;
-    
     ofNode chairNode;
-    
     ofCamera cam;
-    
     ofBoxPrimitive floor;
-    
     ofxPanel gui;
     
     vector < ofPolyline > lines;
@@ -100,15 +101,11 @@ class ofApp : public ofBaseApp{
     ofParameter<ofVec3f> autoRotationOffsetVelocity  {"auto rotation", ofVec3f(0,0,0), ofVec3f(0,0,0), ofVec3f(20,20,20)};
 
     ofParameter<ofVec3f> chairOffset {"offset", ofVec3f(0,0,0), ofVec3f(-4000,-4000,-4000), ofVec3f(4000,4000,4000)};
-    
     ofParameter<ofVec3f> lightPosition {"pos", ofVec3f(0,0,0), ofVec3f(-4000,-4000,-4000), ofVec3f(4000,4000,4000)};
-    
     ofParameter<float> rangeMin {"rangeMin", 0, 0, 1000};
     ofParameter<float> rangeMax {"rangeMax", 0, 0, 8000};
     ofParameter<float> shadowBias {"shadowBias", 0, 0, 0.02};
-    
     ofParameter<float> shadowIntensity {"shadowIntensity", 0, 0, 1};
-    
     ofParameter<float> explodeAmount {"explode", 0, 0, 3000};
     ofParameter<float> autoRotationFactor {"autoRotateFactor", 0, 0,1};
     
@@ -120,7 +117,12 @@ class ofApp : public ofBaseApp{
     ofParameter<bool> renderTunnel {"render tunnel", false};
     ofParameter<bool> renderReflection {"render reflection", false};
     
-    ofParameter<bool> renderShade {"render sahde", true};
+    ofParameter<bool> renderShade {"render shade", true};
+    
+    
+    ofParameter<float> blurShadeScale {"blur", 0, 0, 10};
+    ofParameter<float> blurShadeRotation {"blurRot", 0, 0, PI};
+
     
     
     ofParameter<ofFloatColor> bgColor {"Background color",
@@ -157,6 +159,8 @@ class ofApp : public ofBaseApp{
     };
     
     ofParameterGroup lightParams {"light",
+        blurShadeScale,
+        blurShadeRotation,
         lightPosition,
         rangeMin,
         rangeMax,
@@ -174,7 +178,6 @@ class ofApp : public ofBaseApp{
         chairParams,
         lightParams
     };
-    
     
     
     
