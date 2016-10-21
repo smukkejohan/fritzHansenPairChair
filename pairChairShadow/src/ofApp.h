@@ -124,6 +124,7 @@ class ofApp : public ofBaseApp{
     ofParameter<float> blurShadeRotation {"blurRot", 0, 0, PI};
     
     ofParameter<float> noiseFadeIn {"noiseIn", 0, 0, 1};
+    ofParameter<float> invertNoise {"noiseInvert", 0, 0, 1};
 
     
     

@@ -15,8 +15,7 @@ uniform float u_width;
 uniform float u_height;
 
 uniform float noiseFadeIn;
-
-uniform float invert;
+uniform float invertNoise;
 
 
 varying vec2 texCoordVarying;
@@ -50,9 +49,9 @@ void main() {
     vec4 texel0 = texture2DRect(tex0, texCoordVarying);
 
     
-    float t = texel0.r ;
+    float t = 0.0;
     // Uncomment to animate
-    t = abs(1.0-sin(u_time*.1 (+ texel0.r +  texel0.g +  texel0.b)/4)) * 5.;
+    t = abs(1.0-sin(u_time*.1 + (texel0.r +  texel0.g +  texel0.b)/4)) * 5.;
     // Comment and uncomment the following lines:
     st += noise(st*2.)*t; // Animate the coordinate space
     color = vec3(1.) * smoothstep(.18,.2,noise(st)); // Big black drops
@@ -62,7 +61,7 @@ void main() {
     //gl_FragColor = vec4(1.-color,0.5);
     
     
-    gl_FragColor =  vec4( (invert - (texel0.rgb * (1 - noiseFadeIn))) + (invert - color.rgb * noiseFadeIn), 1);
+    gl_FragColor =  vec4( ( (texel0.rgb * (1 - noiseFadeIn))) + ( color.rgb * noiseFadeIn), 1);
     
     
     
@@ -100,7 +99,7 @@ void main()
 void ofApp::setup(){
     ofEnableAlphaBlending();
 
-    ofSetBackgroundAuto(true);
+    ofSetBackgroundAuto(false);
 
     ofSetBoxResolution( 100, 100, 30 );
     
@@ -546,6 +545,8 @@ void ofApp::draw(){
         fragShader.setUniform1f("u_height", 1080);
         fragShader.setUniform1f("u_time", time.get());
         fragShader.setUniform1f("noiseFadeIn", noiseFadeIn.get());
+        fragShader.setUniform1f("invertNoise", invertNoise.get());
+        
         
         fragShader.setUniformTexture("tex0", blur.getTextureReference(), 1);
        
