@@ -180,7 +180,6 @@ class ofApp : public ofBaseApp{
     };
     
     
-    
     ofShader fragShader;
     
     
