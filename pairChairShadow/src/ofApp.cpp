@@ -1,82 +1,80 @@
 #include "ofApp.h"
 
 string fragShaderSrc = R"(
-#version 120
+    #version 120
 
-#ifdef GL_ES
-precision mediump float;
-#endif
+    #ifdef GL_ES
+    precision mediump float;
+    #endif
 
-//uniform vec2 u_resolution;
+    //uniform vec2 u_resolution;
 
-//uniform vec2 u_mouse;
-uniform float u_time;
-uniform float u_width;
-uniform float u_height;
+    //uniform vec2 u_mouse;
+    uniform float u_time;
+    uniform float u_width;
+    uniform float u_height;
 
-varying vec2 texCoordVarying;
-uniform sampler2DRect tex0;
-
-
-vec2 random2(vec2 st){
-    st = vec2( dot(st,vec2(127.1,311.7)),
-              dot(st,vec2(269.5,183.3)) );
-    return -1.0 + 2.0*fract(sin(st)*43758.5453123);
-}
-
-// Value Noise by Inigo Quilez - iq/2013
-// https://www.shadertoy.com/view/lsf3WH
-float noise(vec2 st) {
-    vec2 i = floor(st);
-    vec2 f = fract(st);
-    
-    vec2 u = f*f*(3.0-2.0*f);
-    
-    return mix( mix( dot( random2(i + vec2(0.0,0.0) ), f - vec2(0.0,0.0) ),
-                    dot( random2(i + vec2(1.0,0.0) ), f - vec2(1.0,0.0) ), u.x),
-               mix( dot( random2(i + vec2(0.0,1.0) ), f - vec2(0.0,1.0) ),
-                   dot( random2(i + vec2(1.0,1.0) ), f - vec2(1.0,1.0) ), u.x), u.y);
-}
-
-void main() {
-    //vec2 st = gl_FragCoord.xy/u_resolution.xy;
-    vec2 st = vec2(gl_FragCoord.x/u_width, gl_FragCoord.y/u_height);
-    //st.x *= u_resolution.x/u_resolution.y;
-    st.x *= u_width/u_height;
-    vec3 color = vec3(0.0);
-    
-    
-    float t = 1.0;
-    // Uncomment to animate
-    t = abs(1.0-sin(u_time*.1))*5.;
-    // Comment and uncomment the following lines:
-    st += noise(st*2.)*t; // Animate the coordinate space
-    color = vec3(1.) * smoothstep(.18,.2,noise(st)); // Big black drops
-    //color += smoothstep(.15,.2,noise(st*10.)); // Black splatter
-    //color -= smoothstep(.35,.4,noise(st*10.)); // Holes on splatter
-    
-    //gl_FragColor = vec4(1.-color,0.5);
-    vec4 texel0 = texture2DRect(tex0, texCoordVarying);
-
-    gl_FragColor =  vec4((1-texel0.rgb) * (1-color.rgb), 1);
-
-}
+    varying vec2 texCoordVarying;
+    uniform sampler2DRect tex0;
 
 
+    vec2 random2(vec2 st){
+        st = vec2( dot(st,vec2(127.1,311.7)),
+                  dot(st,vec2(269.5,183.3)) );
+        return -1.0 + 2.0*fract(sin(st)*43758.5453123);
+    }
+
+    // Value Noise by Inigo Quilez - iq/2013
+    // https://www.shadertoy.com/view/lsf3WH
+    float noise(vec2 st) {
+        vec2 i = floor(st);
+        vec2 f = fract(st);
+        
+        vec2 u = f*f*(3.0-2.0*f);
+        
+        return mix( mix( dot( random2(i + vec2(0.0,0.0) ), f - vec2(0.0,0.0) ),
+                        dot( random2(i + vec2(1.0,0.0) ), f - vec2(1.0,0.0) ), u.x),
+                   mix( dot( random2(i + vec2(0.0,1.0) ), f - vec2(0.0,1.0) ),
+                       dot( random2(i + vec2(1.0,1.0) ), f - vec2(1.0,1.0) ), u.x), u.y);
+    }
+
+    void main() {
+        //vec2 st = gl_FragCoord.xy/u_resolution.xy;
+        vec2 st = vec2(gl_FragCoord.x/u_width, gl_FragCoord.y/u_height);
+        //st.x *= u_resolution.x/u_resolution.y;
+        st.x *= u_width/u_height;
+        vec3 color = vec3(0.0);
+        
+        
+        float t = 1.0;
+        // Uncomment to animate
+        t = abs(1.0-sin(u_time*.1))*5.;
+        // Comment and uncomment the following lines:
+        st += noise(st*2.)*t; // Animate the coordinate space
+        color = vec3(1.) * smoothstep(.18,.2,noise(st)); // Big black drops
+        //color += smoothstep(.15,.2,noise(st*10.)); // Black splatter
+        //color -= smoothstep(.35,.4,noise(st*10.)); // Holes on splatter
+        
+        //gl_FragColor = vec4(1.-color,0.5);
+        vec4 texel0 = texture2DRect(tex0, texCoordVarying);
+
+        gl_FragColor =  vec4((1-texel0.rgb) * (1-color.rgb), 1);
+
+    }
 )";
 
 
 
 string vertextShaderSrc = R"(
-#version 120
+    #version 120
 
-varying vec2 texCoordVarying;
+    varying vec2 texCoordVarying;
 
-void main()
-{
-    texCoordVarying = gl_MultiTexCoord0.xy;
-    gl_Position = ftransform();
-}
+    void main()
+    {
+        texCoordVarying = gl_MultiTexCoord0.xy;
+        gl_Position = ftransform();
+    }
 
 )";
 
@@ -89,27 +87,12 @@ void ofApp::setup(){
 
     ofSetBoxResolution( 100, 100, 30 );
     
-    
     fragShader.setupShaderFromSource( GL_VERTEX_SHADER, vertextShaderSrc);
     fragShader.setupShaderFromSource( GL_FRAGMENT_SHADER, fragShaderSrc);
-    
-   // fragShader.bindDefaults();
+    //fragShader.bindDefaults();
     fragShader.linkProgram();
-
-    
-    /*
-    cam.disableMouseInput();
-    cam.setDistance( 10 );
-    //cam.setPosition(0, 0, -10 );
-    cam.setPosition(0, -30, -10 );
-    cam.lookAt( ofVec3f(0,0,0), ofVec3f(0,-1,0) );
-    cam.setNearClip(1);
-    cam.setFarClip(300);
-    cam.enableMouseInput();
-*/
     
     cam.setAspectRatio(16./9.);
-
 
     //fadeManager = make_shared<ofxParameterFadeManager>();
     
@@ -127,12 +110,8 @@ void ofApp::setup(){
         parts.push_back(p);
     }
 
-    
-    // parts
-    
     //light.setAreaLight(100, 100);
     //light.enable();
-    
     
     // lets say our units are mm
     floor.set(3325, 2845, 10);
@@ -195,88 +174,75 @@ void ofApp::update(){
     
     
     if(!pause) {
-    
-    float t = time.get();
+        
+        float t = time.get();
 
-    time.set(t + ofGetLastFrameTime() );
-    if(t > time.getMax()) { // loop
-        time.set(time.getMin());
+        time.set(t + ofGetLastFrameTime() );
+        if(t > time.getMax()) { // loop
+            time.set(time.getMin());
+        }
+        
+        
+        if(t < 36) {
+
+            ofVec3f nv = lightPosition.get();
+            
+            nv.x = ofxeasing::map_clamp(t, 13, 26, -10, 1376, ofxeasing::quart::easeInOut);
+            nv.y = ofxeasing::map_clamp(t, 10, 20, -10, 626, ofxeasing::quart::easeInOut);
+            nv.z = ofxeasing::map_clamp(t, 0, 10, -940, 200, ofxeasing::quart::easeInOut);
+            
+            if( t > 26 ) {
+                nv.x = ofxeasing::map_clamp(t, 26, 28, 1376, 834, ofxeasing::quart::easeInOut);
+                nv.y = ofxeasing::map_clamp(t, 26, 28, 626, -414, ofxeasing::quart::easeInOut);
+                
+            }
+            
+            if(t > 29) {
+                nv.x = ofxeasing::map_clamp(t, 29, 33, 834, -2289, ofxeasing::quart::easeInOut);
+                nv.y = ofxeasing::map_clamp(t, 30, 32, -414, -997, ofxeasing::quart::easeInOut);
+                nv.z = ofxeasing::map_clamp(t, 29, 34, 200, ofMap(sin(t*10), -1, 1, -8, 20), ofxeasing::exp::easeIn);
+
+            }
+            
+            
+            if(t > 33) {
+                
+                nv.x = ofxeasing::map_clamp(t, 33, 34, -2289, -831, ofxeasing::bounce::easeOut);
+                nv.y = ofxeasing::map_clamp(t, 33, 34, -997, 84, ofxeasing::bounce::easeOut);
+                
+            }
+            
+            if(t > 34) {
+                nv.z = ofxeasing::map_clamp(t, 34, 36, ofMap(sin(t*10), -1, 1, -8, 20), ofMap(sin(t*t), -1, 1, -8, 100), ofxeasing::quart::easeOut);
+            }
+            
+            lightPosition.set(nv);
+            
+        } else if(t < 46) {
+            
+            float st = t-36;
+            
+            ofVec3f nv = lightPosition.get();
+            
+            //nv.x = ofxeasing::map_clamp(st, 13, 26, -10, 1376, ofxeasing::quart::easeInOut);
+            //nv.y = ofxeasing::map_clamp(st, 10, 20, -10, 626, ofxeasing::quart::easeInOut);
+            nv.z = ofxeasing::map_clamp(st, 0, 1, ofMap(sin(t*t), -1, 1, -8, 100), 4000, ofxeasing::quart::easeOut);
+
+            lightPosition.set(nv);
+        }
     }
     
     
-    if(t < 36) {
-
-        ofVec3f nv = lightPosition.get();
-        
-        nv.x = ofxeasing::map_clamp(t, 13, 26, -10, 1376, ofxeasing::quart::easeInOut);
-        nv.y = ofxeasing::map_clamp(t, 10, 20, -10, 626, ofxeasing::quart::easeInOut);
-        nv.z = ofxeasing::map_clamp(t, 0, 10, -940, 200, ofxeasing::quart::easeInOut);
-        
-        if( t > 26 ) {
-            nv.x = ofxeasing::map_clamp(t, 26, 28, 1376, 834, ofxeasing::quart::easeInOut);
-            nv.y = ofxeasing::map_clamp(t, 26, 28, 626, -414, ofxeasing::quart::easeInOut);
-            
-        }
-        
-        if(t > 29) {
-            nv.x = ofxeasing::map_clamp(t, 29, 33, 834, -2289, ofxeasing::quart::easeInOut);
-            nv.y = ofxeasing::map_clamp(t, 30, 32, -414, -997, ofxeasing::quart::easeInOut);
-            nv.z = ofxeasing::map_clamp(t, 29, 34, 200, ofMap(sin(t*10), -1, 1, -8, 20), ofxeasing::exp::easeIn);
-
-        }
-        
-        
-        if(t > 33) {
-            
-            nv.x = ofxeasing::map_clamp(t, 33, 34, -2289, -831, ofxeasing::bounce::easeOut);
-            nv.y = ofxeasing::map_clamp(t, 33, 34, -997, 84, ofxeasing::bounce::easeOut);
-            
-        }
-        
-        if(t > 34) {
-            nv.z = ofxeasing::map_clamp(t, 34, 36, ofMap(sin(t*10), -1, 1, -8, 20), ofMap(sin(t*t), -1, 1, -8, 100), ofxeasing::quart::easeOut);
-        }
-        
-        lightPosition.set(nv);
-        
-    } else if(t < 46) {
-        
-        float st = t-36;
-        
-        ofVec3f nv = lightPosition.get();
-        
-        //nv.x = ofxeasing::map_clamp(st, 13, 26, -10, 1376, ofxeasing::quart::easeInOut);
-        //nv.y = ofxeasing::map_clamp(st, 10, 20, -10, 626, ofxeasing::quart::easeInOut);
-        nv.z = ofxeasing::map_clamp(st, 0, 1, ofMap(sin(t*t), -1, 1, -8, 100), 4000, ofxeasing::quart::easeOut);
-
-        lightPosition.set(nv);
-        
-    }
-        
-        
-    }
-    
-    
-    
-    
-    // to leg
-    // 831, 84
+    // to leg // 831, 84
     
     // light pos to
     // ofVec3f lightTo(-10, -10, 1251);
     
-    
-
-    
-    
     //fadeManager->add(new ParameterFade<int>(p, msg.getArgAsInt32(0), fadeTime, easeFn));
 
-    
-    
     cam.setFov(camFov); //	benq mh741 throw ratio 1.15-1.49
     cam.setPosition(camPos);
-//    cam.lookAt(ofVec3f(0,0,0));
-    
+    //cam.lookAt(ofVec3f(0,0,0));
     //cam.setupOffAxisViewPortal(ofVec3f(-1860/2, -3330/2, 0), ofVec3f(-1860/2, 3330/2, 0), ofVec3f(1860/2, 3330/2, 0));
     cam.lookAt(ofVec3f(0,0,0));
     
@@ -299,17 +265,14 @@ void ofApp::update(){
     contourFinder.setThreshold(threshold);
     contourFinder.findContours(pixels);
     contourFinder.setFindHoles(holes);
-
     
     lines = contourFinder.getPolylines();
     
     for (int i= 0; i < lines.size(); i++){
         for (int j = 0; j < lines[i].size(); j++){
             //lines[i][j] += ofPoint(100, 500);
-            
             //lines[i][j] = lines[i]
         }
-        
         lines[i] = lines[i].getResampledBySpacing(4.0);
         lines[i] = lines[i].getSmoothed(10);
     }
@@ -322,7 +285,6 @@ void ofApp::update(){
         p.autoRotationOffsetVelocity = autoRotationOffsetVelocity;
         p.autoRotationFactor = autoRotationFactor;
     }
-    
 }
 
 void ofApp::drawReflections() {
@@ -399,8 +361,6 @@ void ofApp::drawReflections() {
                     //ofLine(a,b);
                     bNoMoreIntersects = true;
                 } else {
-                    
-                    
                     ofMesh temp;
                     temp.setMode(OF_PRIMITIVE_LINES);
                     temp.addColor(ofColor(0,0,0,10));
@@ -408,7 +368,6 @@ void ofApp::drawReflections() {
                     temp.addColor(ofColor(0,0,0,10));
                     temp.addVertex(pos);
                     temp.draw();
-                    
                     
                     //ofLine(a, pos);
                     
@@ -434,8 +393,6 @@ void ofApp::drawReflections() {
                 }
                 
                 count++;
-                
-                
             }
             
             //        
@@ -447,16 +404,10 @@ void ofApp::drawReflections() {
             //            ofLine(a,b);
             //        }
         }
-    
     //ofDisableBlendMode();
-
-    
-    
 }
 
 void ofApp::drawTunnel() {
-    
-    
     ofSetColor(0,0,0);
     for(int i=0; i<10; i++) {
         for (auto & c : contourFinder.getPolylines()) {
@@ -472,7 +423,6 @@ void ofApp::drawTunnel() {
             ofPopMatrix();
         }
     }
-    
 }
 
 
@@ -487,7 +437,6 @@ void ofApp::draw(){
     shadow.beginDepthPass();
     renderFloor();
     
-    
     renderModels();
     shadow.endDepthPass();
     
@@ -496,7 +445,6 @@ void ofApp::draw(){
     shadow.beginRenderPass( cam );
     cam.begin();
 
-    
     renderFloor();
     
     cam.end();
@@ -504,15 +452,10 @@ void ofApp::draw(){
     shadeFbo.end();
 
     ofDisableDepthTest();
-    
-    
-    
+
     ofSetColor(255);
     
-    
     if(renderShade) {
-        
-        
         cam.begin();
         
         fragShader.begin();
@@ -521,7 +464,6 @@ void ofApp::draw(){
         fragShader.setUniform1f("u_time", time.get());
         fragShader.setUniformTexture("tex0", shadeFbo, 1);
 
-       
         //shadeFbo.draw(0,0);
         //ofDrawRectangle(0, 0, ofGetWidth(), ofGetHeight());
         floor.draw();
@@ -529,11 +471,6 @@ void ofApp::draw(){
         fragShader.end();
         
         cam.end();
-
-
-
-        
-
     }
     
     //contourFinder.draw();
@@ -542,14 +479,10 @@ void ofApp::draw(){
         drawTunnel();
     }
     
-    
    //glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
    // glBlendFuncSeparate(GL_ONE, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
 
-    
     if(renderReflection) {
-        
-    
         reflectFbo.begin();
         drawReflections();
         reflectFbo.end();
@@ -559,12 +492,7 @@ void ofApp::draw(){
     }
     
     
-    
-
-    
     if(renderChair) {
-        
-        
         ofEnableDepthTest();
         shadow.beginRenderPass( cam );
         cam.begin();
@@ -572,8 +500,6 @@ void ofApp::draw(){
         cam.end();
         shadow.endRenderPass();
         ofDisableDepthTest();
-
-        
     }
     
     //ofSetColor(255);
@@ -581,8 +507,7 @@ void ofApp::draw(){
     
     // move to its own window
     gui.draw();
-
-}
+}//end ofApp::draw()
 
 
 void ofApp::renderFloor() {
