@@ -17,9 +17,19 @@
 		<Threshold>128</Threshold>
 		<UnknownName>1</UnknownName>
 	<holes>1</holes>
+		<blur>1.3</blur>
 	</light>
 <params/>
 <camera>
 		<camPos>0, 0, 4000.84</camPos>
+	<fov>26</fov>
 	</camera>
+<render>
+		<render_chair>0</render_chair>
+		<render_tunnel>0</render_tunnel>
+		<render_reflection>0</render_reflection>
+		<Background_color>0, 0, 0, 1</Background_color>
+		<shadeOpacity>0</shadeOpacity>
+		<reflectOpacity>255</reflectOpacity>
+	</render>
 </params>
