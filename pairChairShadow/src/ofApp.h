@@ -10,7 +10,6 @@
 #include "ofxBlur.h"
 
 
-
 #define DURATION 120
 
 class Part : public ofNode {
@@ -126,7 +125,9 @@ class ofApp : public ofBaseApp{
     ofParameter<float> noiseFadeIn {"noiseIn", 0, 0, 1};
     ofParameter<float> invertNoise {"noiseInvert", 0, 0, 1};
 
-    
+    ofParameter<ofVec3f> reflectionSrc {"reflectSrc", ofVec3f(0,0,0), ofVec3f(-4000,-4000,-4000), ofVec3f(4000,4000,4000)};
+
+    ofParameter<ofVec3f> reflectionTarget {"reflectTarget", ofVec3f(0,0,0), ofVec3f(-4000,-4000,-4000), ofVec3f(4000,4000,4000)};
     
     ofParameter<ofFloatColor> bgColor {"Background color",
         ofFloatColor(1,1,1,1),
@@ -136,7 +137,7 @@ class ofApp : public ofBaseApp{
     ofParameter<float> time {"time", 0, 0, DURATION};
     
     ofParameter<bool> pause {"pause" , false};
-
+    
     
     ofParameterGroup camParams {"camera",
         camPos,
@@ -162,6 +163,8 @@ class ofApp : public ofBaseApp{
     };
     
     ofParameterGroup lightParams {"light",
+        reflectionSrc,
+        reflectionTarget,
         blurShadeScale,
         blurShadeRotation,
         noiseFadeIn,
@@ -183,14 +186,7 @@ class ofApp : public ofBaseApp{
         lightParams
     };
     
-    
     ofShader fragShader;
-    
-    
-    
-    
-    
-    
     
     
 };

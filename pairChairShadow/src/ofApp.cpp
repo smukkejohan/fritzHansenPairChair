@@ -64,7 +64,9 @@ void main() {
     gl_FragColor =  vec4( ( (texel0.rgb * (1 - noiseFadeIn))) + ( color.rgb * noiseFadeIn), 1);
     
     
-    
+    // if invert
+    // gl_FragColor= vec4( 1.0 - color.r, 1.0 - color.g, 1.0 - color.b, color.a );
+
     
     //gl_FragColor = texel0;
     
@@ -109,7 +111,6 @@ void ofApp::setup(){
    // fragShader.bindDefaults();
     fragShader.linkProgram();
     
-
     blur.setup(1920, 1080, 10, .4, 4);
     
     //fboBlurOnePass.allocate(image.getWidth(), image.getHeight());
@@ -353,30 +354,32 @@ void ofApp::drawReflections() {
     
     //ofEnableBlendMode(OF_BLENDMODE_ALPHA);
     //ofClear(0,0,0,0.1);
-    //ofSetColor(0,0,0,1);
+    //ofSetColor(0,0,0,5);
     //ofDrawRectangle(0, 0, ofGetWidth(), ofGetHeight());
     
     ofRectangle rect(0,0,ofGetWidth(), ofGetHeight());
     
-    
     ofSetColor(255);
     
-    for (int z = 0; z < 100; z ++){
+    ofPoint a = reflectionSrc.get();
+    ofPoint b = reflectionTarget.get();
+    
+    for (int z = 0; z < 10; z ++){
         
-            //ofPoint a = borders2[ (mouseX+borders2.size()/2) % borders2.size() ]; // //borders2[ mouseX % borders2.size() ];; //borders2[  ]; //ofPoint(0, mouseY); ///randomPtForSize(rect, side);
+          //ofPoint a = borders2[ (mouseX+borders2.size()/2) % borders2.size() ]; // //borders2[ mouseX % borders2.size() ];; //borders2[  ]; //ofPoint(0, mouseY); ///randomPtForSize(rect, side);
             
-            ofPoint a = borders2[ (mouseX+borders2.size()/2) % borders2.size() ]; // //borders2[ mouseX % borders2.size() ];; //borders2[  ]; //ofPoint(0, mouseY); ///randomPtForSize(rect, side);
+            //ofPoint a = borders2[ (mouseX+borders2.size()/2) % borders2.size() ]; // //borders2[ mouseX % borders2.size() ];; //borders2[  ]; //ofPoint(0, mouseY); ///randomPtForSize(rect, side);
         
-            ofPoint b = ofPoint(ofGetWidth(), mouseY); ///randomPtForSize(rect, sideb);
+            /*ofPoint b = ofPoint(mouseX, mouseY); ///randomPtForSize(rect, sideb);
 
-            /*if(lines.size() > 0) {
-                b = lines[0].getCentroid2D();
+            if(lines.size() > 0) {
+                a = lines[0].getCentroid2D();
             }*/
             
         
             bool bNoMoreIntersects = false;
             int count = 0;
-            while (!bNoMoreIntersects && count < 100){
+            while (!bNoMoreIntersects && count < 10){
                 
                 bool bIntersectsWord = false;
                 float minDistance = 10000000;
@@ -414,9 +417,9 @@ void ofApp::drawReflections() {
                     
                     ofMesh temp;
                     temp.setMode(OF_PRIMITIVE_LINES);
-                    temp.addColor(ofColor(0,0,0,10));
+                    temp.addColor(ofColor(255,255,255,100));
                     temp.addVertex(a);
-                    temp.addColor(ofColor(0,0,0,10));
+                    temp.addColor(ofColor(255,255,255,10));
                     temp.addVertex(b);
                     temp.draw();
                     
@@ -427,9 +430,9 @@ void ofApp::drawReflections() {
                     
                     ofMesh temp;
                     temp.setMode(OF_PRIMITIVE_LINES);
-                    temp.addColor(ofColor(0,0,0,10));
+                    temp.addColor(ofColor(255,255,255,100));
                     temp.addVertex(a);
-                    temp.addColor(ofColor(0,0,0,10));
+                    temp.addColor(ofColor(255,255,255,100));
                     temp.addVertex(pos);
                     temp.draw();
                     
@@ -480,7 +483,6 @@ void ofApp::drawReflections() {
 
 void ofApp::drawTunnel() {
     
-    
     ofSetColor(0,0,0);
     for(int i=0; i<10; i++) {
         for (auto & c : contourFinder.getPolylines()) {
@@ -506,7 +508,6 @@ void ofApp::draw(){
     
     ofDrawRectangle(0, 0, 1920, 1080);
 
-    
     ofEnableDepthTest();
     
     shadow.beginDepthPass();
@@ -534,9 +535,6 @@ void ofApp::draw(){
     shadeFbo.draw(0,0);
     blur.end();
     
-    
-    
-    
     if(renderShade) {
         
         fragShader.begin();
@@ -556,14 +554,7 @@ void ofApp::draw(){
         //floor.draw();
         //cam.end();
         
-        
         fragShader.end();
-        
-
-
-        
-
-        
 
     }
     
@@ -574,27 +565,24 @@ void ofApp::draw(){
     }
     
     
-   //glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-   // glBlendFuncSeparate(GL_ONE, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
+    //glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+    //glBlendFuncSeparate(GL_ONE, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
 
     
     if(renderReflection) {
         
-    
         reflectFbo.begin();
         drawReflections();
         reflectFbo.end();
     
         ofSetColor(255);
+        //ofEnableBlendMode(OF_BLENDMODE_ADD);
         reflectFbo.draw(0,0);
+        //ofDisableBlendMode();
     }
     
     
-    
-
-    
     if(renderChair) {
-        
         
         ofEnableDepthTest();
         shadow.beginRenderPass( cam );
@@ -624,7 +612,6 @@ void ofApp::renderFloor() {
 void ofApp::renderModels() {
     ofSetColor(255);
     ofPushMatrix(); {
-        
         for(auto & p : parts) {
             p.draw();
         }
