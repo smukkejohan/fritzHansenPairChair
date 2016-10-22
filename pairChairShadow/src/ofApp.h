@@ -96,11 +96,10 @@ class ofApp : public ofBaseApp{
     ofParameter<bool> holes {"holes" , true};
     
     ofParameter<ofVec3f> chairRotation {"rotation", ofVec3f(270,0,0), ofVec3f(0,0,0), ofVec3f(360,360,360)};
-    
     ofParameter<ofVec3f> autoRotationOffsetVelocity  {"auto rotation", ofVec3f(0,0,0), ofVec3f(0,0,0), ofVec3f(20,20,20)};
 
     ofParameter<ofVec3f> chairOffset {"offset", ofVec3f(0,0,0), ofVec3f(-4000,-4000,-4000), ofVec3f(4000,4000,4000)};
-    ofParameter<ofVec3f> lightPosition {"pos", ofVec3f(0,0,0), ofVec3f(-4000,-4000,-4000), ofVec3f(4000,4000,4000)};
+    ofParameter<ofVec3f> lightPosition {"pos", ofVec3f(0,0,0), ofVec3f(-8000,-8000,-8000), ofVec3f(8000,8000,8000)};
     ofParameter<float> rangeMin {"rangeMin", 0, 0, 1000};
     ofParameter<float> rangeMax {"rangeMax", 0, 0, 8000};
     ofParameter<float> shadowBias {"shadowBias", 0, 0, 0.02};
@@ -115,8 +114,6 @@ class ofApp : public ofBaseApp{
     ofParameter<bool> renderChair {"render chair", false};
     ofParameter<bool> renderTunnel {"render tunnel", false};
     ofParameter<bool> renderReflection {"render reflection", false};
-    
-    ofParameter<bool> renderShade {"render shade", true};
     
     
     ofParameter<float> blurShadeScale {"blur", 0, 0, 10};
@@ -134,10 +131,17 @@ class ofApp : public ofBaseApp{
     ofFloatColor(0,0,0,0),
         ofFloatColor(1,1,1,1)};
     
+    
+    ofParameter<float> shadeOpacity {"shadeOpacity", 255
+        , 0, 255};
+    ofParameter<float> reflectOpacity {"reflectOpacity", 255, 0, 255};
+
+
+    
+    
     ofParameter<float> time {"time", 0, 0, DURATION};
     
     ofParameter<bool> pause {"pause" , false};
-    
     
     ofParameterGroup camParams {"camera",
         camPos,
@@ -150,8 +154,9 @@ class ofApp : public ofBaseApp{
         renderChair,
         renderTunnel,
         renderReflection,
-        renderShade,
-        bgColor
+        bgColor,
+        shadeOpacity,
+        reflectOpacity
     };
     
     ofParameterGroup chairParams {"chair",
@@ -187,6 +192,12 @@ class ofApp : public ofBaseApp{
     };
     
     ofShader fragShader;
+    
+    
+    int sceneNumber = -1;
+
+    
+    
     
     
 };

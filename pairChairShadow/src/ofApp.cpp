@@ -135,7 +135,6 @@ void ofApp::setup(){
     for(auto & n : pairChairModel.getMeshNames()) {
         Part p;
         p.mesh = pairChairModel.getMesh(n);
-        
         p.explosionDirection = ofVec3f(ofRandom(-1, 1),ofRandom(0.01,0.5),ofRandom(-1,1));
         
         p.setParent(chairNode);
@@ -227,10 +226,22 @@ void ofApp::update(){
     
     
     if(t < 36) {
+        
+        if(sceneNumber != 0) {
+            sceneNumber = 0;
+            
+            reflectFbo.begin();
+            ofClear(0,0,0,0);
+            reflectFbo.end();
+            
+        }
+        
+        renderReflection.set(false);
 
+        
         ofVec3f nv = lightPosition.get();
         
-        blur.setScale(1.2);
+        blurShadeScale.set(1.3);
         
         nv.x = ofxeasing::map_clamp(t, 13, 26, -10, 1376, ofxeasing::quart::easeInOut);
         nv.y = ofxeasing::map_clamp(t, 10, 20, -10, 626, ofxeasing::quart::easeInOut);
@@ -239,19 +250,15 @@ void ofApp::update(){
         if( t > 26 ) {
             nv.x = ofxeasing::map_clamp(t, 26, 28, 1376, 834, ofxeasing::quart::easeInOut);
             nv.y = ofxeasing::map_clamp(t, 26, 28, 626, -414, ofxeasing::quart::easeInOut);
-            
         }
         
         if(t > 29) {
             nv.x = ofxeasing::map_clamp(t, 29, 33, 834, -2289, ofxeasing::quart::easeInOut);
             nv.y = ofxeasing::map_clamp(t, 30, 32, -414, -997, ofxeasing::quart::easeInOut);
             nv.z = ofxeasing::map_clamp(t, 29, 34, 200, ofMap(sin(t*10), -1, 1, -8, 20), ofxeasing::exp::easeIn);
-
         }
         
-        
         if(t > 33) {
-            
             nv.x = ofxeasing::map_clamp(t, 33, 34, -2289, -831, ofxeasing::bounce::easeOut);
             nv.y = ofxeasing::map_clamp(t, 33, 34, -997, 84, ofxeasing::bounce::easeOut);
             
@@ -262,8 +269,22 @@ void ofApp::update(){
         }
         
         lightPosition.set(nv);
+       
         
     } else if(t < 46) {
+        
+        if(sceneNumber != 1) {
+            sceneNumber = 1;
+            
+            reflectFbo.begin();
+            ofClear(0,0,0,0);
+            reflectFbo.end();
+            
+            
+        }
+        
+        renderReflection.set(true);
+
         
         float st = t-36;
         
@@ -272,10 +293,22 @@ void ofApp::update(){
         //nv.x = ofxeasing::map_clamp(st, 13, 26, -10, 1376, ofxeasing::quart::easeInOut);
         //nv.y = ofxeasing::map_clamp(st, 10, 20, -10, 626, ofxeasing::quart::easeInOut);
         nv.z = ofxeasing::map_clamp(st, 0, 1, ofMap(sin(t*t), -1, 1, -8, 100), 4000, ofxeasing::quart::easeOut);
-
-        lightPosition.set(nv);
         
-        float b = ofxeasing::map_clamp(t, 13, 26, -10, 1376, ofxeasing::quart::easeInOut);
+        
+        //float b = ofxeasing::map_clamp(t, 13, 26, -10, 1376, ofxeasing::quart::easeInOut);
+        
+        
+        
+        float so = ofxeasing::map_clamp(t, 13, 26, -10, 1376, ofxeasing::quart::easeInOut);
+        
+
+        
+        
+        lightPosition.set(nv);
+
+        
+        
+        
         
     }
         
@@ -292,19 +325,13 @@ void ofApp::update(){
     // 831, 84
     
     // light pos to
-    // ofVec3f lightTo(-10, -10, 1251);
-    
-    //fadeManager->add(new ParameterFade<int>(p, msg.getArgAsInt32(0), fadeTime, easeFn));
 
-    
-    
     cam.setFov(camFov); //	benq mh741 throw ratio 1.15-1.49
     cam.setPosition(camPos);
 //    cam.lookAt(ofVec3f(0,0,0));
     
     //cam.setupOffAxisViewPortal(ofVec3f(-1860/2, -3330/2, 0), ofVec3f(-1860/2, 3330/2, 0), ofVec3f(1860/2, 3330/2, 0));
     cam.lookAt(ofVec3f(0,0,0));
-    
     
     shadow.setRange( rangeMin, rangeMax );
 
@@ -324,14 +351,12 @@ void ofApp::update(){
     contourFinder.setThreshold(threshold);
     contourFinder.findContours(pixels);
     contourFinder.setFindHoles(holes);
-
     
     lines = contourFinder.getPolylines();
     
     for (int i= 0; i < lines.size(); i++){
         for (int j = 0; j < lines[i].size(); j++){
             //lines[i][j] += ofPoint(100, 500);
-            
             //lines[i][j] = lines[i]
         }
         
@@ -361,25 +386,52 @@ void ofApp::drawReflections() {
     
     ofSetColor(255);
     
-    ofPoint a = reflectionSrc.get();
-    ofPoint b = reflectionTarget.get();
     
-    for (int z = 0; z < 10; z ++){
+    for (int z = 0; z < 8; z ++){
         
           //ofPoint a = borders2[ (mouseX+borders2.size()/2) % borders2.size() ]; // //borders2[ mouseX % borders2.size() ];; //borders2[  ]; //ofPoint(0, mouseY); ///randomPtForSize(rect, side);
             
             //ofPoint a = borders2[ (mouseX+borders2.size()/2) % borders2.size() ]; // //borders2[ mouseX % borders2.size() ];; //borders2[  ]; //ofPoint(0, mouseY); ///randomPtForSize(rect, side);
         
-            /*ofPoint b = ofPoint(mouseX, mouseY); ///randomPtForSize(rect, sideb);
+            //ofPoint b = ofPoint(mouseX, mouseY); ///randomPtForSize(rect, sideb);
 
-            if(lines.size() > 0) {
+            /*if(lines.size() > 0) {
                 a = lines[0].getCentroid2D();
             }*/
-            
+        
+        
+        
+        ofPoint a = ofPoint(ofMap(sin(time.get() + 1), -1, 1, 0, ofGetWidth()),
+                            ofGetHeight());
+        
+        if(ofRandom(1) > 0.5) {
+            a = ofPoint(ofMap(sin(time.get() + 15), -1, 1, 0, ofGetWidth()), ofGetHeight());
+        }
+        
+        
+        
+        //reflectionSrc.get(), ofMap(ofSignedNoise(time.get()), 0, 1, 0, ofGetHeight()); //reflectionSrc.get());
+        
+        
+        ofPoint b = ofPoint(ofMap(sin(time.get() + 15), -1, 1, 0, ofGetWidth()), 0);
+
+        
+        
+        
+        if(lines.size() > 0) {
+            a = lines[0].getCentroid2D();
+        }
+        
+        
+        //ofDrawCircle(a.x, a.y, 10);
+        //ofDrawCircle(b.x, b.y, 10);
+        
+        //reflectionSrc.get(), ofMap(ofSignedNoise(time.get()), 0, 1, 0, ofGetHeight());//reflectionTarget.get();
+        
         
             bool bNoMoreIntersects = false;
             int count = 0;
-            while (!bNoMoreIntersects && count < 10){
+            while (!bNoMoreIntersects && count < 8){
                 
                 bool bIntersectsWord = false;
                 float minDistance = 10000000;
@@ -400,7 +452,7 @@ void ofApp::drawReflections() {
                                     minDistance = distance;
                                     pos = intersection;
                                     bIntersectsWord = true;
-                                    
+
                                     
                                     ofPoint diff = lines[i][j+1] - lines[i][j];
                                     //ofPoint perp;
@@ -413,13 +465,19 @@ void ofApp::drawReflections() {
                     }
                 }
                 
+                ofColor c = ofColor(255,255,255,ofRandom(200,255));
+                if(ofRandom(1) < 0.05) {
+                    c = ofColor(255,0,0,255);
+                }
+                
+                
                 if (bIntersectsWord == false){
                     
                     ofMesh temp;
                     temp.setMode(OF_PRIMITIVE_LINES);
-                    temp.addColor(ofColor(255,255,255,100));
+                    temp.addColor(c);
                     temp.addVertex(a);
-                    temp.addColor(ofColor(255,255,255,10));
+                    temp.addColor(c);
                     temp.addVertex(b);
                     temp.draw();
                     
@@ -427,15 +485,13 @@ void ofApp::drawReflections() {
                     bNoMoreIntersects = true;
                 } else {
                     
-                    
                     ofMesh temp;
                     temp.setMode(OF_PRIMITIVE_LINES);
-                    temp.addColor(ofColor(255,255,255,100));
+                    temp.addColor(c);
                     temp.addVertex(a);
-                    temp.addColor(ofColor(255,255,255,100));
+                    temp.addColor(c);
                     temp.addVertex(pos);
                     temp.draw();
-                    
                     
                     //ofLine(a, pos);
                     
@@ -476,9 +532,6 @@ void ofApp::drawReflections() {
         }
     
     //ofDisableBlendMode();
-
-    
-    
 }
 
 void ofApp::drawTunnel() {
@@ -498,15 +551,13 @@ void ofApp::drawTunnel() {
             ofPopMatrix();
         }
     }
-    
 }
-
 
 
 //--------------------------------------------------------------
 void ofApp::draw(){
     
-    ofDrawRectangle(0, 0, 1920, 1080);
+    ofBackground(bgColor.get());
 
     ofEnableDepthTest();
     
@@ -519,9 +570,7 @@ void ofApp::draw(){
     ofClear(0,0,0);
     shadow.beginRenderPass( cam );
     cam.begin();
-    
     renderFloor();
-    
     cam.end();
     shadow.endRenderPass();
     shadeFbo.end();
@@ -530,24 +579,43 @@ void ofApp::draw(){
     
     ofSetColor(255);
     
+
+    
+    if(renderReflection) {
+        
+        reflectFbo.begin();
+        drawReflections();
+        reflectFbo.end();
+        
+        ofSetColor(255);
+        
+        //ofEnableBlendMode(OF_BLENDMODE_ADD);
+        
+        //ofDisableBlendMode();
+    }
+    
     
     blur.begin();
-    shadeFbo.draw(0,0);
-    blur.end();
+    ofBackground(bgColor.get());
+
     
-    if(renderShade) {
-        
+    ofSetColor(255,shadeOpacity.get());
+    shadeFbo.draw(0,0);
+    
+    ofSetColor(255,reflectOpacity.get());
+    reflectFbo.draw(0,0);
+    
+    blur.end();
+
         fragShader.begin();
-        
         fragShader.setUniform1f("u_width", 1920);
         fragShader.setUniform1f("u_height", 1080);
         fragShader.setUniform1f("u_time", time.get());
         fragShader.setUniform1f("noiseFadeIn", noiseFadeIn.get());
         fragShader.setUniform1f("invertNoise", invertNoise.get());
-        
-        
         fragShader.setUniformTexture("tex0", blur.getTextureReference(), 1);
-       
+    
+        ofSetColor(255);
         blur.draw();
         //ofDrawRectangle(0, 0, ofGetWidth(), ofGetHeight());
         //cam.begin();
@@ -556,7 +624,6 @@ void ofApp::draw(){
         
         fragShader.end();
 
-    }
     
     //contourFinder.draw();
     
@@ -569,17 +636,7 @@ void ofApp::draw(){
     //glBlendFuncSeparate(GL_ONE, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
 
     
-    if(renderReflection) {
-        
-        reflectFbo.begin();
-        drawReflections();
-        reflectFbo.end();
-    
-        ofSetColor(255);
-        //ofEnableBlendMode(OF_BLENDMODE_ADD);
-        reflectFbo.draw(0,0);
-        //ofDisableBlendMode();
-    }
+ 
     
     
     if(renderChair) {
@@ -591,7 +648,6 @@ void ofApp::draw(){
         cam.end();
         shadow.endRenderPass();
         ofDisableDepthTest();
-
         
     }
     
@@ -605,12 +661,12 @@ void ofApp::draw(){
 
 
 void ofApp::renderFloor() {
-    ofSetColor(bgColor.get());
+    //ofSetColor(bgColor.get());
     floor.draw();
 }
 
 void ofApp::renderModels() {
-    ofSetColor(255);
+    ofSetColor(255,255,255,255);
     ofPushMatrix(); {
         for(auto & p : parts) {
             p.draw();
