@@ -195,7 +195,10 @@ class ofApp : public ofBaseApp{
     
     
     int sceneNumber = -1;
-
+    ofParameterGroup stp;
+    
+    
+    ofVec3f fromOffset;
     
     
     
