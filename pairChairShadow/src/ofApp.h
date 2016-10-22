@@ -122,9 +122,7 @@ class ofApp : public ofBaseApp{
     ofParameter<float> noiseFadeIn {"noiseIn", 0, 0, 1};
     ofParameter<float> invertNoise {"noiseInvert", 0, 0, 1};
 
-    ofParameter<ofVec3f> reflectionSrc {"reflectSrc", ofVec3f(0,0,0), ofVec3f(-4000,-4000,-4000), ofVec3f(4000,4000,4000)};
 
-    ofParameter<ofVec3f> reflectionTarget {"reflectTarget", ofVec3f(0,0,0), ofVec3f(-4000,-4000,-4000), ofVec3f(4000,4000,4000)};
     
     ofParameter<ofFloatColor> bgColor {"Background color",
         ofFloatColor(1,1,1,1),
@@ -136,8 +134,7 @@ class ofApp : public ofBaseApp{
         , 0, 255};
     ofParameter<float> reflectOpacity {"reflectOpacity", 255, 0, 255};
 
-
-    
+    ofParameter<float> tunnelOpacity {"tunnelOpacity", 255, 0, 255};
     
     ofParameter<float> time {"time", 0, 0, DURATION};
     
@@ -168,10 +165,8 @@ class ofApp : public ofBaseApp{
     };
     
     ofParameterGroup lightParams {"light",
-        reflectionSrc,
-        reflectionTarget,
+        tunnelOpacity,
         blurShadeScale,
-        blurShadeRotation,
         noiseFadeIn,
         lightPosition,
         rangeMin,

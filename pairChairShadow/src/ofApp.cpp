@@ -239,6 +239,10 @@ void ofApp::update(){
                 
                 //stp = ofParameterGroup(params);
                 of = ofVec3f(-872,-290,459);
+                tunnelOpacity.set(0);
+                so = 255;
+                renderTunnel.set(false);
+
                 
                 for(auto & p : parts) {
                     p.explosionDirection = ofVec3f(ofRandom(-1, 1),ofRandom(0.01,0.5),ofRandom(-1,1));
@@ -328,9 +332,7 @@ void ofApp::update(){
                 
                 nv.z = ofxeasing::map_clamp(st, 12, 20, 4000, 8000, ofxeasing::quart::easeIn);
                 
-                
                 exp = ofxeasing::map_clamp(st, 16, 18, 900, 700, ofxeasing::quart::easeIn);
-                
                 
                 of.x = ofxeasing::map_clamp(st, 12, 20, fromOffset.x, 334, ofxeasing::quart::easeInOut);
                 
@@ -348,13 +350,27 @@ void ofApp::update(){
             
             if(sceneNumber != 2) {
                 sceneNumber = 2;
+                renderTunnel.set(true);
                 stp = ofParameterGroup(params);
             }
             
             // light fall down
             // fade shade back in
             
-            so = ofxeasing::map_clamp(st, 0, 6, 255, 0, ofxeasing::quart::easeInOut);
+            so = ofxeasing::map_clamp(st, 0, 6, 0, 255, ofxeasing::quart::easeInOut);
+            float ro = ofxeasing::map_clamp(st, 0, 6, 255, 0, ofxeasing::quart::easeInOut);
+            reflectOpacity.set(ro);
+            
+            float blur = ofxeasing::map_clamp(st, 2, 3, 1.3, 8, ofxeasing::quart::easeInOut);
+            blurShadeScale.set(blur);
+            
+            
+            tunnelOpacity.set(ofxeasing::map_clamp(st, 2, 8, 0, 255, ofxeasing::quart::easeInOut));
+            
+            
+            
+            
+
             
         }
         
@@ -582,7 +598,7 @@ void ofApp::drawReflections() {
 
 void ofApp::drawTunnel() {
     
-    ofSetColor(0,0,0);
+    ofSetColor(0,0,0, tunnelOpacity.get());
     for(int i=0; i<10; i++) {
         for (auto & c : contourFinder.getPolylines()) {
             ofPushMatrix();
@@ -645,13 +661,13 @@ void ofApp::draw(){
     
     blur.end();
 
-        fragShader.begin();
+        /*fragShader.begin();
         fragShader.setUniform1f("u_width", 1920);
         fragShader.setUniform1f("u_height", 1080);
         fragShader.setUniform1f("u_time", time.get());
         fragShader.setUniform1f("noiseFadeIn", noiseFadeIn.get());
         fragShader.setUniform1f("invertNoise", invertNoise.get());
-        fragShader.setUniformTexture("tex0", blur.getTextureReference(), 1);
+        fragShader.setUniformTexture("tex0", blur.getTextureReference(), 1);*/
     
         ofSetColor(255);
         blur.draw();
@@ -660,8 +676,7 @@ void ofApp::draw(){
         //floor.draw();
         //cam.end();
         
-        fragShader.end();
-
+        //fragShader.end();
     
     //contourFinder.draw();
     
@@ -674,8 +689,6 @@ void ofApp::draw(){
     
     //glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
     //glBlendFuncSeparate(GL_ONE, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
-
-    
     
     if(renderChair) {
         
@@ -694,7 +707,6 @@ void ofApp::draw(){
     
     // move to its own window
     gui.draw();
-
 }
 
 
