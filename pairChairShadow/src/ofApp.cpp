@@ -34,7 +34,7 @@ float noise(vec2 st) {
     vec2 f = fract(st);
     
     vec2 u = f*f*(3.0-2.0*f);
-    
+
     return mix( mix( dot( random2(i + vec2(0.0,0.0) ), f - vec2(0.0,0.0) ),
                     dot( random2(i + vec2(1.0,0.0) ), f - vec2(1.0,0.0) ), u.x),
                mix( dot( random2(i + vec2(0.0,1.0) ), f - vec2(0.0,1.0) ),
@@ -59,13 +59,11 @@ void main() {
     //color -= smoothstep(.35,.4,noise(st*10.)); // Holes on splatter
     
     //gl_FragColor = vec4(1.-color,0.5);
-    
-    
     gl_FragColor =  vec4( ( (texel0.rgb * (1 - noiseFadeIn))) + ( color.rgb * noiseFadeIn), 1);
     
-    
-    
-    
+    // if invert
+    // gl_FragColor= vec4( 1.0 - color.r, 1.0 - color.g, 1.0 - color.b, color.a );
+
     //gl_FragColor = texel0;
     
     /*if(texel0.r > 0.5) {
@@ -98,7 +96,11 @@ void main()
 //--------------------------------------------------------------
 void ofApp::setup(){
     ofEnableAlphaBlending();
-
+    ofEnableSmoothing();
+    ofEnableAntiAliasing();
+    
+    //ofEnableBlendMode(OF_BLENDMODE_ADD);
+    
     ofSetBackgroundAuto(false);
 
     ofSetBoxResolution( 100, 100, 30 );
@@ -109,7 +111,6 @@ void ofApp::setup(){
    // fragShader.bindDefaults();
     fragShader.linkProgram();
     
-
     blur.setup(1920, 1080, 10, .4, 4);
     
     //fboBlurOnePass.allocate(image.getWidth(), image.getHeight());
@@ -134,7 +135,6 @@ void ofApp::setup(){
     for(auto & n : pairChairModel.getMeshNames()) {
         Part p;
         p.mesh = pairChairModel.getMesh(n);
-        
         p.explosionDirection = ofVec3f(ofRandom(-1, 1),ofRandom(0.01,0.5),ofRandom(-1,1));
         
         p.setParent(chairNode);
@@ -147,14 +147,17 @@ void ofApp::setup(){
     //light.enable();
     
     // lets say our units are mm
-    floor.set(3325, 2845, 10);
+    //floor.set(3325, 2845, 10);
+    floor.set(3325, 1900, 10);
+    //
     
     // rotate chair to stand on the floor
     // set the scale of the chair
     
     gui.setup(params);
-    
     gui.loadFromFile("settings.xml");
+    
+    
     
     ofFbo::Settings fboSettings;
     
@@ -217,93 +220,240 @@ void ofApp::update(){
     
     if(!pause) {
     
-    float t = time.get();
+        float t = time.get();
 
-    time.set(t + ofGetLastFrameTime() );
-    if(t > time.getMax()) { // loop
-        time.set(time.getMin());
-    }
+        time.set(t + ofGetLastFrameTime() );
+        if(t > time.getMax()) { // loop
+            time.set(time.getMin());
+        }
     
+        ofVec3f nv = lightPosition.get();
+        ofVec3f of = chairOffset.get();
+        float exp = explodeAmount.get();
+        float so = shadeOpacity.get();
+        ofVec3f r = chairRotation.get();
+        
+        if(t < 36) {
+            
+            shadeOpacity.set(255);
+            //of.set()
+            
+            if(changeScene(0)) {
+                of = ofVec3f(-872,-290,459);
+                tunnelOpacity.set(0);
+                so = 255;
+                renderTunnel.set(false);
+                reflectOpacity.set(0);
+                
+                autoRotationFactor.set(0);
+                shadowIntensity.set(1);
+
+                
+                r = ofVec3f(92,360,212);
+                
+                for(auto & p : parts) {
+                    p.explosionDirection = ofVec3f(ofRandom(-1, 1),ofRandom(0.01,0.5),ofRandom(-1,1));
+                }
+                
+                reflectFbo.begin();
+                ofClear(0,0,0,0);
+                reflectFbo.end();
+            }
+            
+            renderReflection.set(false);
+            
+            blurShadeScale.set(1.3);
+            
+            nv.x = ofxeasing::map_clamp(t, 13, 26, -10, 1376, ofxeasing::quart::easeInOut);
+            nv.y = ofxeasing::map_clamp(t, 10, 20, -10, 626, ofxeasing::quart::easeInOut);
+            nv.z = ofxeasing::map_clamp(t, 0, 10, -940, 200, ofxeasing::quart::easeInOut);
+            
+            if( t > 26 ) {
+                nv.x = ofxeasing::map_clamp(t, 26, 28, 1376, 834, ofxeasing::quart::easeInOut);
+                nv.y = ofxeasing::map_clamp(t, 26, 28, 626, -414, ofxeasing::quart::easeInOut);
+            }
+            
+            if(t > 29) {
+                nv.x = ofxeasing::map_clamp(t, 29, 33, 834, -2289, ofxeasing::quart::easeInOut);
+                nv.y = ofxeasing::map_clamp(t, 30, 32, -414, -997, ofxeasing::quart::easeInOut);
+                nv.z = ofxeasing::map_clamp(t, 29, 34, 200, ofMap(sin(t*10), -1, 1, -8, 20), ofxeasing::exp::easeIn);
+            }
+            
+            if(t > 33) {
+                nv.x = ofxeasing::map_clamp(t, 33, 34, -2289, -831, ofxeasing::bounce::easeOut);
+                nv.y = ofxeasing::map_clamp(t, 33, 34, -997, 84, ofxeasing::bounce::easeOut);
+            }
+            
+            if(t > 34) {
+                nv.z = ofxeasing::map_clamp(t, 34, 36, ofMap(sin(t*10), -1, 1, -8, 20), ofMap(sin(t*t), -1, 1, -8, 100), ofxeasing::quart::easeOut);
+            }
+            
+            
+        } else if(t < 60) {
+            
+            if(changeScene(1)) {
+                reflectFbo.begin();
+                ofClear(0,0,0,0);
+                reflectFbo.end();
+            }
+            
+            renderReflection.set(true);
+            
+            float st = t-36;
+            
+            //nv.x = ofxeasing::map_clamp(st, 13, 26, -10, 1376, ofxeasing::quart::easeInOut);
+            //nv.y = ofxeasing::map_clamp(st, 10, 20, -10, 626, ofxeasing::quart::easeInOut);
+            
+            if(st < 2) {
+                nv.z = ofxeasing::map_clamp(st, 0, 1, ofMap(sin(t*t), -1, 1, -8, 100), 4000, ofxeasing::quart::easeOut);
+            }
+            
+            //float b = ofxeasing::map_clamp(t, 13, 26, -10, 1376, ofxeasing::quart::easeInOut);
+            
+            so = ofxeasing::map_clamp(st, 0, 4, 255, 0, ofxeasing::quart::easeIn);
+            exp = ofxeasing::map_clamp(st, 3, 6, 0, 900, ofxeasing::quart::easeIn);
+            
+            
+            float ro = ofxeasing::map_clamp(st, 2, 4, 0, 255
+                                            , ofxeasing::quart::easeInOut);
+            reflectOpacity.set(ro);
+            
+            if(st > 2) {
+                
+                nv.x = ofxeasing::map_clamp(st, 2, 5, -831, -5411, ofxeasing::quart::easeInOut);
+                //nv.y = ofxeasing::map_clamp(st, 2, 5, 84, 84, ofxeasing::quart::easeInOut);
+                //nv.z = ofxeasing::map_clamp(st, 2, 5, ofMap(sin(t*t), -1, 1, -8, 100), 4000, ofxeasing::quart::easeOut);
+                
+            }
+            
+            
+            if(st > 12) {
+                
+                nv.x = ofxeasing::map_clamp(st, 12, 20, -5411, 0, ofxeasing::quart::easeInOut);
+                nv.y = ofxeasing::map_clamp(st, 12, 20, 84, 0, ofxeasing::quart::easeInOut);
+                nv.z = ofxeasing::map_clamp(st, 12, 20, 4000, 8000, ofxeasing::quart::easeIn);
+                
+                exp = ofxeasing::map_clamp(st, 16, 18, 900, 700, ofxeasing::quart::easeIn);
+                
+                of.x = ofxeasing::map_clamp(st, 12, 20, fromOffset.x, 334, ofxeasing::quart::easeInOut);
+                
+                of.y = ofxeasing::map_clamp(st, 12, 20, fromOffset.y, -289, ofxeasing::quart::easeInOut);
+                
+                of.z = ofxeasing::map_clamp(st, 12, 20, fromOffset.z, 793, ofxeasing::quart::easeInOut);
+                
+            }
+            
+            
+        } else if(t < 104) {
+            
+            
+            float st = t-60;
+            
+            if(changeScene(2)) {
+                renderTunnel.set(true);
+                
+                tunnelLines.set(10);
+                smoothTunnel.set(8);
+                
+                renderReflection.set(false);
+                
+                targetRotation = fromRotation + ofVec3f(ofRandom(-60,60), ofRandom(-60,60), ofRandom(-60,60));
+                
+                targetRotation2 = fromRotation + ofVec3f(ofRandom(-60,60), ofRandom(-60,60), ofRandom(-60,60));
+            }
+            
+            // light fall down
+            // fade shade back in
+            
+            so = ofxeasing::map_clamp(st, 0, 2, 0, 255, ofxeasing::quart::easeIn);
+            float ro = ofxeasing::map_clamp(st, 0, 1, 255, 0, ofxeasing::quart::easeIn);
+            reflectOpacity.set(ro);
+            
+            
+            float sh = ofxeasing::map_clamp(st, 0, 1, 1, 0.2, ofxeasing::quart::easeIn);
+            shadowIntensity.set(sh);
+            
+            
+            
+            tunnelOpacity.set(ofxeasing::map_clamp(st, 2, 4, 0, 255, ofxeasing::quart::easeInOut));
+
+            
+            if(st > 1) {
+                float sh = ofxeasing::map_clamp(st, 1, 2, 0.2, 1, ofxeasing::quart::easeIn);
+                shadowIntensity.set(sh);
+                
+            }
+            
+            float blur = ofxeasing::map_clamp(st, 0, 1, 1.3, 8, ofxeasing::quart::easeIn);
+            blurShadeScale.set(blur);
+            
+            r.x = ofxeasing::map_clamp(st, 1, 4, fromRotation.x, targetRotation.x, ofxeasing::quart::easeIn);
+            r.y = ofxeasing::map_clamp(st, 6, 12, fromRotation.y,  targetRotation.y, ofxeasing::quart::easeIn);
+            r.z = ofxeasing::map_clamp(st, 14, 19, fromRotation.z,  targetRotation.z, ofxeasing::quart::easeIn);
+            
+            
+            autoRotationFactor.set(ofxeasing::map_clamp(st, 1, 19, 0, 0.3, ofxeasing::quart::easeInOut));
+
+            
+            if(st > 19) {
+                
+                r.x = ofxeasing::map_clamp(st, 19, 22, targetRotation.x, targetRotation2.x, ofxeasing::quart::easeIn);
+                r.y = ofxeasing::map_clamp(st, 24, 28, targetRotation.y,  targetRotation2.y, ofxeasing::quart::easeIn);
+                r.z = ofxeasing::map_clamp(st, 32, 34, targetRotation.z,  targetRotation2.z, ofxeasing::quart::easeIn);
+                
+            }
+            
+            
+            
+            
+        } else if(t < 120) {
+            float st = t-104;
+            
+            if(changeScene(3)) {
+            }
+
+            exp = ofxeasing::map_clamp(st, 0, 8, 700, 0, ofxeasing::quart::easeOut);
+            
+            float blur = ofxeasing::map_clamp(st, 0, 2, 8, 2, ofxeasing::quart::easeIn);
+            blurShadeScale.set(blur);
+            
+            tunnelLines.set(ofxeasing::map_clamp(st, 0, 2, 10, 0, ofxeasing::exp::easeIn));
+            
+            nv.x = ofxeasing::map_clamp(st, 2, 4, fromLightPos.x, 0, ofxeasing::quart::easeInOut);
+            nv.y = ofxeasing::map_clamp(st, 2, 4, fromLightPos.y, 0, ofxeasing::quart::easeInOut);
+            nv.z = ofxeasing::map_clamp(st, 2, 16, fromLightPos.z, -10, ofxeasing::quart::easeIn);
+            
+            
+            autoRotationFactor.set(ofxeasing::map_clamp(st, 0, 8, 0.3, 0, ofxeasing::quart::easeOut));
+            
+        }
+        
+        chairOffset.set(of);
+        shadeOpacity.set(so);
+        lightPosition.set(nv);
+        explodeAmount.set(exp);
+        chairRotation.set(r);
+
     
-    if(t < 36) {
-
-        ofVec3f nv = lightPosition.get();
-        
-        blur.setScale(1.2);
-        
-        nv.x = ofxeasing::map_clamp(t, 13, 26, -10, 1376, ofxeasing::quart::easeInOut);
-        nv.y = ofxeasing::map_clamp(t, 10, 20, -10, 626, ofxeasing::quart::easeInOut);
-        nv.z = ofxeasing::map_clamp(t, 0, 10, -940, 200, ofxeasing::quart::easeInOut);
-        
-        if( t > 26 ) {
-            nv.x = ofxeasing::map_clamp(t, 26, 28, 1376, 834, ofxeasing::quart::easeInOut);
-            nv.y = ofxeasing::map_clamp(t, 26, 28, 626, -414, ofxeasing::quart::easeInOut);
-            
-        }
-        
-        if(t > 29) {
-            nv.x = ofxeasing::map_clamp(t, 29, 33, 834, -2289, ofxeasing::quart::easeInOut);
-            nv.y = ofxeasing::map_clamp(t, 30, 32, -414, -997, ofxeasing::quart::easeInOut);
-            nv.z = ofxeasing::map_clamp(t, 29, 34, 200, ofMap(sin(t*10), -1, 1, -8, 20), ofxeasing::exp::easeIn);
-
-        }
-        
-        
-        if(t > 33) {
-            
-            nv.x = ofxeasing::map_clamp(t, 33, 34, -2289, -831, ofxeasing::bounce::easeOut);
-            nv.y = ofxeasing::map_clamp(t, 33, 34, -997, 84, ofxeasing::bounce::easeOut);
-            
-        }
-        
-        if(t > 34) {
-            nv.z = ofxeasing::map_clamp(t, 34, 36, ofMap(sin(t*10), -1, 1, -8, 20), ofMap(sin(t*t), -1, 1, -8, 100), ofxeasing::quart::easeOut);
-        }
-        
-        lightPosition.set(nv);
-        
-    } else if(t < 46) {
-        
-        float st = t-36;
-        
-        ofVec3f nv = lightPosition.get();
-        
-        //nv.x = ofxeasing::map_clamp(st, 13, 26, -10, 1376, ofxeasing::quart::easeInOut);
-        //nv.y = ofxeasing::map_clamp(st, 10, 20, -10, 626, ofxeasing::quart::easeInOut);
-        nv.z = ofxeasing::map_clamp(st, 0, 1, ofMap(sin(t*t), -1, 1, -8, 100), 4000, ofxeasing::quart::easeOut);
-
-        lightPosition.set(nv);
-        
-        float b = ofxeasing::map_clamp(t, 13, 26, -10, 1376, ofxeasing::quart::easeInOut);
-        
     }
-        
-        
-    }
+
     
     
     
     blur.setScale(blurShadeScale);
     blur.setRotation(blurShadeRotation);
     
-    
     // to leg
     // 831, 84
     
     // light pos to
-    // ofVec3f lightTo(-10, -10, 1251);
-    
-    //fadeManager->add(new ParameterFade<int>(p, msg.getArgAsInt32(0), fadeTime, easeFn));
 
-    
-    
     cam.setFov(camFov); //	benq mh741 throw ratio 1.15-1.49
     cam.setPosition(camPos);
 //    cam.lookAt(ofVec3f(0,0,0));
     
     //cam.setupOffAxisViewPortal(ofVec3f(-1860/2, -3330/2, 0), ofVec3f(-1860/2, 3330/2, 0), ofVec3f(1860/2, 3330/2, 0));
     cam.lookAt(ofVec3f(0,0,0));
-    
     
     shadow.setRange( rangeMin, rangeMax );
 
@@ -321,8 +471,10 @@ void ofApp::update(){
     contourFinder.setMinAreaRadius(minArea);
     contourFinder.setMaxAreaRadius(maxArea);
     contourFinder.setThreshold(threshold);
-    contourFinder.findContours(pixels);
     contourFinder.setFindHoles(holes);
+    
+    contourFinder.setInvert(true);
+    contourFinder.findContours(pixels);
 
     
     lines = contourFinder.getPolylines();
@@ -330,7 +482,6 @@ void ofApp::update(){
     for (int i= 0; i < lines.size(); i++){
         for (int j = 0; j < lines[i].size(); j++){
             //lines[i][j] += ofPoint(100, 500);
-            
             //lines[i][j] = lines[i]
         }
         
@@ -343,7 +494,6 @@ void ofApp::update(){
     
     for(auto & p : parts) {
         p.explosionFactor = ofVec3f(explodeAmount,explodeAmount,explodeAmount);
-        p.autoRotationOffsetVelocity = autoRotationOffsetVelocity;
         p.autoRotationFactor = autoRotationFactor;
     }
     
@@ -351,32 +501,58 @@ void ofApp::update(){
 
 void ofApp::drawReflections() {
     
-    //ofEnableBlendMode(OF_BLENDMODE_ALPHA);
+    
+    ofSetLineWidth(1);
+    //ofEnableBlendMode(<#ofBlendMode blendMode#>)
+    
+    //ofEnableBlendMode(OF_BLENDMODE_SCREEN);
     //ofClear(0,0,0,0.1);
-    //ofSetColor(0,0,0,1);
+    //ofSetColor(0,0,0,5);
     //ofDrawRectangle(0, 0, ofGetWidth(), ofGetHeight());
     
     ofRectangle rect(0,0,ofGetWidth(), ofGetHeight());
     
+    ofSetColor(255,255);
     
-    ofSetColor(255);
     
-    for (int z = 0; z < 100; z ++){
+    for (int z = 0; z < 14; z ++){
         
-            //ofPoint a = borders2[ (mouseX+borders2.size()/2) % borders2.size() ]; // //borders2[ mouseX % borders2.size() ];; //borders2[  ]; //ofPoint(0, mouseY); ///randomPtForSize(rect, side);
+          //ofPoint a = borders2[ (mouseX+borders2.size()/2) % borders2.size() ]; // //borders2[ mouseX % borders2.size() ];; //borders2[  ]; //ofPoint(0, mouseY); ///randomPtForSize(rect, side);
             
-            ofPoint a = borders2[ (mouseX+borders2.size()/2) % borders2.size() ]; // //borders2[ mouseX % borders2.size() ];; //borders2[  ]; //ofPoint(0, mouseY); ///randomPtForSize(rect, side);
+            ofPoint b = borders2[ (ofGetElapsedTimeMillis()+borders2.size()/2) % borders2.size() ]; // //borders2[ mouseX % borders2.size() ];; //borders2[  ]; //ofPoint(0, mouseY); ///randomPtForSize(rect, side);
         
-            ofPoint b = ofPoint(ofGetWidth(), mouseY); ///randomPtForSize(rect, sideb);
+            //ofPoint b = ofPoint(mouseX, mouseY); ///randomPtForSize(rect, sideb);
 
             /*if(lines.size() > 0) {
-                b = lines[0].getCentroid2D();
+                a = lines[0].getCentroid2D();
             }*/
-            
+        
+        //ofPoint a = ofPoint(ofMap(sin(ofGetElapsedTimeMillis() + 1), -1, 1, 0, ofGetWidth()),
+        //                    ofGetHeight());
+        
+        /*if(ofRandom(1) > 0.5) {
+            a = ofPoint(ofMap(sin(ofGetElapsedTimeMillis() + 15), -1, 1, 0, ofGetWidth()), ofGetHeight());
+        }*/
+        
+        //reflectionSrc.get(), ofMap(ofSignedNoise(time.get()), 0, 1, 0, ofGetHeight()); //reflectionSrc.get());
+        
+        
+        ofPoint a = ofPoint(ofMap(sin(time.get() + 15), -1, 1, 0, ofGetWidth()), 0);
+
+        
+        if(lines.size() > 0) {
+            a = lines[int(ofRandom(lines.size()))].getCentroid2D();
+        }
+        
+        //ofDrawCircle(a.x, a.y, 10);
+        //ofDrawCircle(b.x, b.y, 10);
+        
+        //reflectionSrc.get(), ofMap(ofSignedNoise(time.get()), 0, 1, 0, ofGetHeight());//reflectionTarget.get();
+        
         
             bool bNoMoreIntersects = false;
             int count = 0;
-            while (!bNoMoreIntersects && count < 100){
+            while (!bNoMoreIntersects && count < 14){
                 
                 bool bIntersectsWord = false;
                 float minDistance = 10000000;
@@ -397,7 +573,7 @@ void ofApp::drawReflections() {
                                     minDistance = distance;
                                     pos = intersection;
                                     bIntersectsWord = true;
-                                    
+
                                     
                                     ofPoint diff = lines[i][j+1] - lines[i][j];
                                     //ofPoint perp;
@@ -410,30 +586,37 @@ void ofApp::drawReflections() {
                     }
                 }
                 
+                ofColor c = ofColor(255,255,255,255);
+                if(ofRandom(1) < 0.05) {
+                    c = ofColor(ofRandom(255),ofRandom(255),ofRandom(255),255);
+                }
+                
+                ofFill();
+                
                 if (bIntersectsWord == false){
                     
                     ofMesh temp;
                     temp.setMode(OF_PRIMITIVE_LINES);
-                    temp.addColor(ofColor(0,0,0,10));
+                    temp.addColor(c);
                     temp.addVertex(a);
-                    temp.addColor(ofColor(0,0,0,10));
+                    temp.addColor(c);
                     temp.addVertex(b);
                     temp.draw();
-                    
-                    //ofLine(a,b);
+                
+                   // ofSetColor(c);
+                   // ofLine(a,b);
                     bNoMoreIntersects = true;
                 } else {
                     
-                    
                     ofMesh temp;
                     temp.setMode(OF_PRIMITIVE_LINES);
-                    temp.addColor(ofColor(0,0,0,10));
+                    temp.addColor(c);
                     temp.addVertex(a);
-                    temp.addColor(ofColor(0,0,0,10));
+                    temp.addColor(c);
                     temp.addVertex(pos);
                     temp.draw();
                     
-                    
+                    //ofSetColor(c);
                     //ofLine(a, pos);
                     
                     ofPoint diff = pos - a;
@@ -473,40 +656,35 @@ void ofApp::drawReflections() {
         }
     
     //ofDisableBlendMode();
-
-    
-    
 }
 
 void ofApp::drawTunnel() {
     
+    ofSetLineWidth(1);
     
-    ofSetColor(0,0,0);
-    for(int i=0; i<10; i++) {
+    ofSetColor(0,0,0, tunnelOpacity.get());
+    for(int i=0; i<tunnelLines; i++) {
         for (auto & c : contourFinder.getPolylines()) {
             ofPushMatrix();
             
             ofTranslate(c.getCentroid2D());
             ofScale(
-                    (i+1)/10.0,
-                    (i+1)/10.0,
-                    (i+1)/10.0);
+                    1.5/(i+1.0),
+                    1.5/(i+1.0),
+                    1.5/(i+1.0));
             ofTranslate(-c.getCentroid2D());
-            c.getSmoothed((i+1)*20*ofNoise(ofGetElapsedTimef() + i)).draw();
+            c.getSmoothed(/*(i+1) */ smoothTunnel.get() + (noiseTunnel.get() * ofNoise(time.get() + i*20.0)) ).draw();
             ofPopMatrix();
         }
     }
-    
 }
-
 
 
 //--------------------------------------------------------------
 void ofApp::draw(){
     
-    ofDrawRectangle(0, 0, 1920, 1080);
+    ofBackground(bgColor.get());
 
-    
     ofEnableDepthTest();
     
     shadow.beginDepthPass();
@@ -518,9 +696,7 @@ void ofApp::draw(){
     ofClear(0,0,0);
     shadow.beginRenderPass( cam );
     cam.begin();
-    
     renderFloor();
-    
     cam.end();
     shadow.endRenderPass();
     shadeFbo.end();
@@ -529,72 +705,59 @@ void ofApp::draw(){
     
     ofSetColor(255);
     
+    if(renderReflection) {
+        
+        reflectFbo.begin();
+        drawReflections();
+        reflectFbo.end();
+        
+    }
+    
     
     blur.begin();
+    ofBackground(bgColor.get());
+    
+    ofSetColor(255,shadeOpacity.get());
     shadeFbo.draw(0,0);
+    
     blur.end();
     
+    ofSetColor(255);
+    blur.draw();
     
     
-    
-    if(renderShade) {
-        
-        fragShader.begin();
-        
+    ofSetColor(255,reflectOpacity.get());
+    reflectFbo.draw(0,0);
+
+        /*fragShader.begin();
         fragShader.setUniform1f("u_width", 1920);
         fragShader.setUniform1f("u_height", 1080);
         fragShader.setUniform1f("u_time", time.get());
         fragShader.setUniform1f("noiseFadeIn", noiseFadeIn.get());
         fragShader.setUniform1f("invertNoise", invertNoise.get());
-        
-        
-        fragShader.setUniformTexture("tex0", blur.getTextureReference(), 1);
-       
-        blur.draw();
+        fragShader.setUniformTexture("tex0", blur.getTextureReference(), 1);*/
+    
+
         //ofDrawRectangle(0, 0, ofGetWidth(), ofGetHeight());
         //cam.begin();
         //floor.draw();
         //cam.end();
         
-        
-        fragShader.end();
-        
-
-
-        
-
-        
-
-    }
+        //fragShader.end();
     
     //contourFinder.draw();
     
+    ofPushStyle();
     if(renderTunnel) {
+        ofSetColor(255);
         drawTunnel();
     }
+    ofPopStyle();
     
-    
-   //glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-   // glBlendFuncSeparate(GL_ONE, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
-
-    
-    if(renderReflection) {
-        
-    
-        reflectFbo.begin();
-        drawReflections();
-        reflectFbo.end();
-    
-        ofSetColor(255);
-        reflectFbo.draw(0,0);
-    }
-    
-    
-    
-
+    //glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+    //glBlendFuncSeparate(GL_ONE, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
     
     if(renderChair) {
-        
         
         ofEnableDepthTest();
         shadow.beginRenderPass( cam );
@@ -603,28 +766,25 @@ void ofApp::draw(){
         cam.end();
         shadow.endRenderPass();
         ofDisableDepthTest();
-
         
     }
     
-    //ofSetColor(255);
-    //shadow.getDepthTexture().draw(0,0,192,108);
-    
-    // move to its own window
-    gui.draw();
-
+    if(drawGui) {
+        ofSetColor(255);
+        shadow.getDepthTexture().draw(0,0,192,108);
+        gui.draw();
+    }
 }
 
 
 void ofApp::renderFloor() {
-    ofSetColor(bgColor.get());
+    //ofSetColor(bgColor.get());
     floor.draw();
 }
 
 void ofApp::renderModels() {
-    ofSetColor(255);
+    ofSetColor(255,255,255,255);
     ofPushMatrix(); {
-        
         for(auto & p : parts) {
             p.draw();
         }
@@ -635,6 +795,10 @@ void ofApp::renderModels() {
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
 
+    if(key == 'g') {
+        drawGui.set(!drawGui.get());
+    }
+    
 }
 
 //--------------------------------------------------------------
