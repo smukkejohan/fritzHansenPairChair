@@ -95,8 +95,8 @@ void main()
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-    ofEnableAlphaBlending();
-    ofEnableSmoothing();
+    //ofEnableAlphaBlending();
+    //ofEnableSmoothing();
     ofEnableAntiAliasing();
     
     //ofEnableBlendMode(OF_BLENDMODE_ADD);
@@ -502,7 +502,7 @@ void ofApp::update(){
 void ofApp::drawReflections() {
     
     
-    ofSetLineWidth(1);
+    ofSetLineWidth(1.8);
     //ofEnableBlendMode(<#ofBlendMode blendMode#>)
     
     //ofEnableBlendMode(OF_BLENDMODE_SCREEN);
@@ -720,14 +720,18 @@ void ofApp::draw(){
     ofSetColor(255,shadeOpacity.get());
     shadeFbo.draw(0,0);
     
+    
+    ofSetColor(255,reflectOpacity.get());
+    reflectFbo.draw(0,0);
+    
+    
     blur.end();
     
     ofSetColor(255);
     blur.draw();
     
     
-    ofSetColor(255,reflectOpacity.get());
-    reflectFbo.draw(0,0);
+
 
         /*fragShader.begin();
         fragShader.setUniform1f("u_width", 1920);

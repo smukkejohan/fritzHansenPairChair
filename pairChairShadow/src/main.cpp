@@ -9,10 +9,11 @@ int main( ){
     
     mainSettings.resizable = false;
     //mainSettings.setGLVersion(3, 2);
-    mainSettings.decorated = true;
+    mainSettings.decorated = false;
+    //mainSettings.setPosition(ofPoint(0,0));
+    mainSettings.windowMode = OF_FULLSCREEN;
+    
     cout << mainSettings.glVersionMajor << " : " << mainSettings.glVersionMinor << endl;
-    
-    
     
     mainSettings.width = 1920;
     mainSettings.height = 1080;
@@ -21,8 +22,6 @@ int main( ){
     shared_ptr<ofAppBaseWindow> mainWindow = ofCreateWindow(mainSettings);
     
     shared_ptr<ofApp> mainApp(new ofApp);
-
-
     
 	//ofSetupOpenGL(1920,1080,OF_WINDOW);			// <-------- setup the GL context
 
