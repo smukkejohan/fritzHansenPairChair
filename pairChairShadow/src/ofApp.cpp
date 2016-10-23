@@ -111,7 +111,7 @@ void ofApp::setup(){
    // fragShader.bindDefaults();
     fragShader.linkProgram();
     
-    blur.setup(1920, 1080, 10, .4, 4);
+    blur.setup(1920, 1080, 10, .2, 4);
     
     //fboBlurOnePass.allocate(image.getWidth(), image.getHeight());
     //fboBlurTwoPass.allocate(image.getWidth(), image.getHeight());
@@ -161,17 +161,18 @@ void ofApp::setup(){
     ofFbo::Settings fboSettings;
     
     //TODO: Fix MSAA for FBOs
-    fboSettings.numSamples = 1;
+    fboSettings.numSamples = 8;
     fboSettings.useDepth = true;
     fboSettings.width = 1920;
     fboSettings.height = 1080;
-    fboSettings.internalformat = GL_RGB;
-    
+    fboSettings.internalformat = GL_RGBA;
     shadeFbo.allocate(fboSettings);
     
-    reflectFbo.allocate(1920, 1080);
+    
+    fboSettings.useDepth = false;
+    reflectFbo.allocate(fboSettings);
     reflectFbo.begin();
-    //ofBackground(0,0,0,255);
+    ofClear(0,0,0,0);
     reflectFbo.end();
     
     float width = ofGetWidth();
@@ -261,7 +262,7 @@ void ofApp::update(){
             
             renderReflection.set(false);
             
-            blurShadeScale.set(1.3);
+            blurShadeScale.set(0.6);
             
             nv.x = ofxeasing::map_clamp(t, 13, 26, -10, 1376, ofxeasing::quart::easeInOut);
             nv.y = ofxeasing::map_clamp(t, 10, 20, -10, 626, ofxeasing::quart::easeInOut);
@@ -383,7 +384,7 @@ void ofApp::update(){
                 
             }
             
-            float blur = ofxeasing::map_clamp(st, 0, 1, 1.3, 8, ofxeasing::quart::easeIn);
+            float blur = ofxeasing::map_clamp(st, 0, 1, 0.6, 8, ofxeasing::quart::easeIn);
             blurShadeScale.set(blur);
             
             r.x = ofxeasing::map_clamp(st, 1, 4, fromRotation.x, targetRotation.x, ofxeasing::quart::easeIn);
@@ -495,7 +496,6 @@ void ofApp::update(){
         p.explosionFactor = ofVec3f(explodeAmount,explodeAmount,explodeAmount);
         p.autoRotationFactor = autoRotationFactor;
     }
-    
 }
 
 void ofApp::drawReflections() {
@@ -539,7 +539,6 @@ void ofApp::drawReflections() {
         
         ofPoint a = ofPoint(ofMap(sin(time.get() + 15), -1, 1, 0, ofGetWidth()), 0);
 
-        
         if(lines.size() > 0) {
             a = lines[int(ofRandom(lines.size()))].getCentroid2D();
         }
@@ -586,9 +585,9 @@ void ofApp::drawReflections() {
                     }
                 }
                 
-                ofColor c = ofColor(255,255,255,10);
+                ofColor c = ofColor(255,255,255,255);
                 if(ofRandom(1) < 0.05) {
-                    c = ofColor(ofRandom(255),ofRandom(255),ofRandom(255),10);
+                    c = ofColor(ofRandom(255),ofRandom(255),ofRandom(255),255);
                 }
                 
                 ofFill();

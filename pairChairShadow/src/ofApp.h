@@ -49,7 +49,6 @@ public:
             r.z += 360;
         }
         
-        
         ofPushMatrix();
         
         //ofTranslate(mesh.getCentroid());
