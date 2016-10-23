@@ -228,18 +228,29 @@ class ofApp : public ofBaseApp{
     
     ofVec3f offsetTarget;
 
-    
     ofVec3f targetRotation;
     ofVec3f targetRotation2;
     
     ofVec3f fromLightPos;
+    
+    ofVec3f randomPos1;
+    ofVec3f randomPos2;
+    ofVec3f randomPos3;
 
+    float lastEventTime = 0;
+    float randomInterval;
+    
     bool changeScene(int n) {
         if(n != sceneNumber) {
             sceneNumber = n;
             fromOffset = chairOffset.get();
             fromRotation = chairRotation.get();
             fromLightPos = lightPosition.get();
+            
+            randomPos1 = ofVec3f(ofRandom(-2000,2000), ofRandom(-2000,2000), ofRandom(-4,4000));
+            randomPos2 = ofVec3f(ofRandom(-2000,2000), ofRandom(-2000,2000), ofRandom(-4,4000));
+            randomPos3 = ofVec3f(ofRandom(-2000,2000), ofRandom(-2000,2000), ofRandom(-4,4000));
+            
             return true;
         }
         return false;

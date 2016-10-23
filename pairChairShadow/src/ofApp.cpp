@@ -264,30 +264,36 @@ void ofApp::update(){
                 reflectFbo.begin();
                 ofClear(0,0,0,0);
                 reflectFbo.end();
+                
+                randomPos1 = ofVec3f(ofRandom(-2000,2000), ofRandom(-2000,2000), ofRandom(100,200));
+                randomPos2 = ofVec3f(ofRandom(-2000,2000), ofRandom(-2000,2000), ofRandom(-4,4000));
+                randomPos3 = ofVec3f(ofRandom(-2000,2000), ofRandom(-2000,2000), ofRandom(-4,4000));
+                
+                
             }
             
             renderReflection.set(false);
             
             blurShadeScale.set(0.6);
             
-            nv.x = ofxeasing::map_clamp(t, 13, 26, -10, 1376, ofxeasing::quart::easeInOut);
-            nv.y = ofxeasing::map_clamp(t, 10, 20, -10, 626, ofxeasing::quart::easeInOut);
-            nv.z = ofxeasing::map_clamp(t, 0, 10, -940, 200, ofxeasing::quart::easeInOut);
+            nv.x = ofxeasing::map_clamp(t, 13, 26, -10, randomPos1.x, ofxeasing::quart::easeInOut);
+            nv.y = ofxeasing::map_clamp(t, 10, 20, -10, randomPos1.y, ofxeasing::quart::easeInOut);
+            nv.z = ofxeasing::map_clamp(t, 0, 10, -940, randomPos1.z, ofxeasing::quart::easeInOut);
             
             if( t > 26 ) {
-                nv.x = ofxeasing::map_clamp(t, 26, 28, 1376, 834, ofxeasing::quart::easeInOut);
-                nv.y = ofxeasing::map_clamp(t, 26, 28, 626, -414, ofxeasing::quart::easeInOut);
+                nv.x = ofxeasing::map_clamp(t, 26, 28, randomPos1.x, randomPos2.x, ofxeasing::quart::easeInOut);
+                nv.y = ofxeasing::map_clamp(t, 26, 28, randomPos1.y, randomPos2.y, ofxeasing::quart::easeInOut);
             }
             
             if(t > 29) {
-                nv.x = ofxeasing::map_clamp(t, 29, 33, 834, -2289, ofxeasing::quart::easeInOut);
-                nv.y = ofxeasing::map_clamp(t, 30, 32, -414, -997, ofxeasing::quart::easeInOut);
-                nv.z = ofxeasing::map_clamp(t, 29, 34, 200, ofMap(sin(t*10), -1, 1, -8, 20), ofxeasing::exp::easeIn);
+                nv.x = ofxeasing::map_clamp(t, 29, 33, randomPos2.x, randomPos3.x, ofxeasing::quart::easeInOut);
+                nv.y = ofxeasing::map_clamp(t, 30, 32, randomPos2.y, randomPos3.y, ofxeasing::quart::easeInOut);
+                nv.z = ofxeasing::map_clamp(t, 29, 34, randomPos1.z, ofMap(sin(t*10), -1, 1, -8, 20), ofxeasing::exp::easeIn);
             }
             
             if(t > 33) {
-                nv.x = ofxeasing::map_clamp(t, 33, 34, -2289, -831, ofxeasing::bounce::easeOut);
-                nv.y = ofxeasing::map_clamp(t, 33, 34, -997, 84, ofxeasing::bounce::easeOut);
+                nv.x = ofxeasing::map_clamp(t, 33, 34, randomPos3.x, -831, ofxeasing::bounce::easeOut);
+                nv.y = ofxeasing::map_clamp(t, 33, 34, randomPos3.y, 84, ofxeasing::bounce::easeOut);
             }
             
             if(t > 34) {
@@ -305,6 +311,13 @@ void ofApp::update(){
                 
                 offsetTarget = ofVec3f(ofRandom(-600,600),ofRandom(-600,600), ofRandom(700, 2500));
                 
+                randomPos1 = ofVec3f(ofRandom(-4000,-6000), ofRandom(-2000,2000), ofRandom(3000,6000));
+                
+                randomPos2 = ofVec3f(ofRandom(-1200,1200), ofRandom(-1200,1200), ofRandom(6000,7000));
+
+                
+                randomInterval = ofRandom(1, 8);
+                
             }
             
             renderReflection.set(true);
@@ -315,7 +328,7 @@ void ofApp::update(){
             //nv.y = ofxeasing::map_clamp(st, 10, 20, -10, 626, ofxeasing::quart::easeInOut);
             
             if(st < 2) {
-                nv.z = ofxeasing::map_clamp(st, 0, 1, ofMap(sin(t*t), -1, 1, -8, 100), 4000, ofxeasing::quart::easeOut);
+                nv.z = ofxeasing::map_clamp(st, 0, 1, ofMap(sin(t*t), -1, 1, -8, 100), randomPos1.z, ofxeasing::quart::easeOut);
             }
             
             //float b = ofxeasing::map_clamp(t, 13, 26, -10, 1376, ofxeasing::quart::easeInOut);
@@ -328,9 +341,21 @@ void ofApp::update(){
                                             , ofxeasing::quart::easeInOut);
             reflectOpacity.set(ro);
             
+            
+            if(st - lastEventTime > randomInterval) {
+                
+                reflectFbo.begin();
+                ofClear(0,0,0,0);
+                reflectFbo.end();
+                
+                randomInterval = ofRandom(1, 8);
+                lastEventTime = st;
+                
+            }
+            
             if(st > 2) {
                 
-                nv.x = ofxeasing::map_clamp(st, 2, 5, -831, -5411, ofxeasing::quart::easeInOut);
+                nv.x = ofxeasing::map_clamp(st, 2, 5, fromLightPos.x, randomPos1.x, ofxeasing::quart::easeInOut);
                 //nv.y = ofxeasing::map_clamp(st, 2, 5, 84, 84, ofxeasing::quart::easeInOut);
                 //nv.z = ofxeasing::map_clamp(st, 2, 5, ofMap(sin(t*t), -1, 1, -8, 100), 4000, ofxeasing::quart::easeOut);
                 
@@ -339,9 +364,9 @@ void ofApp::update(){
             
             if(st > 12) {
                 
-                nv.x = ofxeasing::map_clamp(st, 12, 20, -5411, 0, ofxeasing::quart::easeInOut);
-                nv.y = ofxeasing::map_clamp(st, 12, 20, 84, 0, ofxeasing::quart::easeInOut);
-                nv.z = ofxeasing::map_clamp(st, 12, 20, 4000, 8000, ofxeasing::quart::easeIn);
+                nv.x = ofxeasing::map_clamp(st, 12, 20, randomPos1.x, randomPos2.x, ofxeasing::quart::easeInOut);
+                nv.y = ofxeasing::map_clamp(st, 12, 20, fromLightPos.y, randomPos2.y, ofxeasing::quart::easeInOut);
+                nv.z = ofxeasing::map_clamp(st, 12, 20, randomPos1.z, randomPos2.z, ofxeasing::quart::easeIn);
                 
                 exp = ofxeasing::map_clamp(st, 16, 18, 900, 700, ofxeasing::quart::easeIn);
                 
@@ -350,7 +375,6 @@ void ofApp::update(){
                 of.y = ofxeasing::map_clamp(st, 12, 20, fromOffset.y, offsetTarget.y, ofxeasing::quart::easeInOut);
                 
                 of.z = ofxeasing::map_clamp(st, 12, 20, fromOffset.z, offsetTarget.z, ofxeasing::quart::easeInOut);
-                
             }
             
             
@@ -375,23 +399,12 @@ void ofApp::update(){
             // light fall down
             // fade shade back in
             
-            so = ofxeasing::map_clamp(st, 0, 2, 0, 255, ofxeasing::quart::easeIn);
+            so = ofxeasing::map_clamp(st, 0, 0.5, 0, 255, ofxeasing::exp::easeOut);
             float ro = ofxeasing::map_clamp(st, 0, 1, 255, 0, ofxeasing::quart::easeIn);
             reflectOpacity.set(ro);
             
-            
-            float sh = ofxeasing::map_clamp(st, 0, 1, 1, 0.2, ofxeasing::quart::easeIn);
-            shadowIntensity.set(sh);
-            
             tunnelOpacity.set(ofxeasing::map_clamp(st, 2, 4, 0, 255, ofxeasing::quart::easeInOut));
 
-            
-            if(st > 1) {
-                float sh = ofxeasing::map_clamp(st, 1, 2, 0.2, 1, ofxeasing::quart::easeIn);
-                shadowIntensity.set(sh);
-                
-            }
-            
             float blur = ofxeasing::map_clamp(st, 0, 1, 0.6, 8, ofxeasing::quart::easeIn);
             blurShadeScale.set(blur);
             
@@ -421,6 +434,13 @@ void ofApp::update(){
                 
                   targetRotation2 = fromRotation + ofVec3f(ofRandom(-60,60), ofRandom(-60,60), ofRandom(-60,60));
                 
+                
+                randomPos1 = ofVec3f(ofRandom(-100,100), ofRandom(-100,100), ofRandom(-20,-400));
+
+                
+                randomPos2 = ofVec3f(ofRandom(-1000,1000), ofRandom(-1000,1000), ofRandom(-20,-400));
+
+                
             }
 
             exp = ofxeasing::map_clamp(st, 0, 8, 700, 0, ofxeasing::quart::easeOut);
@@ -430,9 +450,17 @@ void ofApp::update(){
             
             tunnelLines.set(ofxeasing::map_clamp(st, 0, 2, 10, 0, ofxeasing::exp::easeIn));
             
-            nv.x = ofxeasing::map_clamp(st, 2, 4, fromLightPos.x, 0, ofxeasing::quart::easeInOut);
-            nv.y = ofxeasing::map_clamp(st, 2, 4, fromLightPos.y, 0, ofxeasing::quart::easeInOut);
-            nv.z = ofxeasing::map_clamp(st, 2, 16, fromLightPos.z, -10, ofxeasing::quart::easeIn);
+            nv.x = ofxeasing::map_clamp(st, 2, 4, fromLightPos.x, randomPos1.x, ofxeasing::quart::easeInOut);
+            nv.y = ofxeasing::map_clamp(st, 2, 4, fromLightPos.y, randomPos1.y, ofxeasing::quart::easeInOut);
+            nv.z = ofxeasing::map_clamp(st, 2, 16, fromLightPos.z, randomPos1.z, ofxeasing::quart::easeIn);
+            
+            
+            if(st > 4) {
+                
+                nv.x = ofxeasing::map_clamp(st, 4, 16, randomPos1.x, randomPos2.x, ofxeasing::quart::easeInOut);
+                nv.y = ofxeasing::map_clamp(st, 4, 16, randomPos1.y, randomPos2.y, ofxeasing::quart::easeInOut);
+                
+            }
             
             
             autoRotationFactor.set(ofxeasing::map_clamp(st, 0, 8, 0.3, 0, ofxeasing::quart::easeOut));
@@ -711,7 +739,7 @@ void ofApp::drawTunnel() {
             ofSetColor(cc);
             
             
-            c.getSmoothed(/*(i+1) */ smoothTunnel.get() + (noiseTunnel.get() * ofNoise(time.get() + i*20.0)) ).draw();
+            c.getSmoothed(/*(i+1) */ smoothTunnel.get() + (4* noiseTunnel.get() * ofNoise((time.get()/100) + i*20.0)) ).draw();
             ofPopMatrix();
         }
     }
