@@ -9,6 +9,10 @@
 #include "ofxParameterFader.hpp"
 #include "ofxBlur.h"
 
+#include "soundscape.hpp"
+
+
+
 #define DURATION 120
 
 class Part : public ofNode {
@@ -257,4 +261,7 @@ class ofApp : public ofBaseApp{
     }
     
     
+    Soundscape soundscape;
+    
+
 };
