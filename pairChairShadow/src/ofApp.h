@@ -95,10 +95,14 @@ class ofApp : public ofBaseApp{
     ofFbo shadeFbo;
     ofFbo reflectFbo;
     
+    //ofFbo outFbo;
+
     ofxBlur blur;
     
     void renderFloor();
     void renderModels();
+    
+    ofPixels pixels;
 
     ofxAssimpModelLoader pairChairModel;
     ofNode chairNode;
@@ -221,6 +225,9 @@ class ofApp : public ofBaseApp{
     
     ofVec3f fromOffset;
     ofVec3f fromRotation;
+    
+    ofVec3f offsetTarget;
+
     
     ofVec3f targetRotation;
     ofVec3f targetRotation2;

@@ -17,7 +17,6 @@ uniform float u_height;
 uniform float noiseFadeIn;
 uniform float invertNoise;
 
-
 varying vec2 texCoordVarying;
 uniform sampler2DRect tex0;
 
@@ -103,7 +102,7 @@ void ofApp::setup(){
     
     ofSetBackgroundAuto(false);
 
-    ofSetBoxResolution( 100, 100, 30 );
+    ofSetBoxResolution( 10, 10, 1 );
     
     fragShader.setupShaderFromSource( GL_VERTEX_SHADER, vertextShaderSrc);
     fragShader.setupShaderFromSource( GL_FRAGMENT_SHADER, fragShaderSrc);
@@ -161,19 +160,26 @@ void ofApp::setup(){
     ofFbo::Settings fboSettings;
     
     //TODO: Fix MSAA for FBOs
-    fboSettings.numSamples = 8;
+    fboSettings.numSamples = 1;
     fboSettings.useDepth = true;
     fboSettings.width = 1920;
     fboSettings.height = 1080;
-    fboSettings.internalformat = GL_RGBA;
+    fboSettings.internalformat = GL_RGB;
     shadeFbo.allocate(fboSettings);
     
+    pixels.allocate(1929, 1080, 3);
     
+    
+    fboSettings.numSamples = 8;
     fboSettings.useDepth = false;
     reflectFbo.allocate(fboSettings);
     reflectFbo.begin();
     ofClear(0,0,0,0);
     reflectFbo.end();
+    
+    
+    //fboSettings.numSamples = 4;
+    //outFbo.allocate(fboSettings);
     
     float width = ofGetWidth();
     float height = ofGetHeight();
@@ -295,6 +301,10 @@ void ofApp::update(){
                 reflectFbo.begin();
                 ofClear(0,0,0,0);
                 reflectFbo.end();
+                
+                
+                offsetTarget = ofVec3f(ofRandom(-600,600),ofRandom(-600,600), ofRandom(700, 2500));
+                
             }
             
             renderReflection.set(true);
@@ -335,11 +345,11 @@ void ofApp::update(){
                 
                 exp = ofxeasing::map_clamp(st, 16, 18, 900, 700, ofxeasing::quart::easeIn);
                 
-                of.x = ofxeasing::map_clamp(st, 12, 20, fromOffset.x, 334, ofxeasing::quart::easeInOut);
+                of.x = ofxeasing::map_clamp(st, 12, 20, fromOffset.x, offsetTarget.x, ofxeasing::quart::easeInOut);
                 
-                of.y = ofxeasing::map_clamp(st, 12, 20, fromOffset.y, -289, ofxeasing::quart::easeInOut);
+                of.y = ofxeasing::map_clamp(st, 12, 20, fromOffset.y, offsetTarget.y, ofxeasing::quart::easeInOut);
                 
-                of.z = ofxeasing::map_clamp(st, 12, 20, fromOffset.z, 793, ofxeasing::quart::easeInOut);
+                of.z = ofxeasing::map_clamp(st, 12, 20, fromOffset.z, offsetTarget.z, ofxeasing::quart::easeInOut);
                 
             }
             
@@ -372,8 +382,6 @@ void ofApp::update(){
             
             float sh = ofxeasing::map_clamp(st, 0, 1, 1, 0.2, ofxeasing::quart::easeIn);
             shadowIntensity.set(sh);
-            
-            
             
             tunnelOpacity.set(ofxeasing::map_clamp(st, 2, 4, 0, 255, ofxeasing::quart::easeInOut));
 
@@ -410,6 +418,9 @@ void ofApp::update(){
             float st = t-104;
             
             if(changeScene(3)) {
+                
+                  targetRotation2 = fromRotation + ofVec3f(ofRandom(-60,60), ofRandom(-60,60), ofRandom(-60,60));
+                
             }
 
             exp = ofxeasing::map_clamp(st, 0, 8, 700, 0, ofxeasing::quart::easeOut);
@@ -425,6 +436,11 @@ void ofApp::update(){
             
             
             autoRotationFactor.set(ofxeasing::map_clamp(st, 0, 8, 0.3, 0, ofxeasing::quart::easeOut));
+            
+            
+            r.x = ofxeasing::map_clamp(st, 4, 16, fromRotation.x, targetRotation.x, ofxeasing::quart::easeIn);
+            r.y = ofxeasing::map_clamp(st, 4, 16, fromRotation.y,  targetRotation.y, ofxeasing::quart::easeIn);
+            r.z = ofxeasing::map_clamp(st, 4, 16, fromRotation.z,  targetRotation.z, ofxeasing::quart::easeIn);
             
         }
         
@@ -465,7 +481,6 @@ void ofApp::update(){
     
     shadow.setLightLookAt( ofVec3f(0,0,0), ofVec3f(0,-1,0) );
     
-    ofPixels pixels;
     shadeFbo.readToPixels(pixels);
     
     contourFinder.setMinAreaRadius(minArea);
@@ -585,9 +600,17 @@ void ofApp::drawReflections() {
                     }
                 }
                 
-                ofColor c = ofColor(255,255,255,255);
-                if(ofRandom(1) < 0.05) {
-                    c = ofColor(ofRandom(255),ofRandom(255),ofRandom(255),255);
+                ofColor c = ofColor(237,237,237,237);
+                
+                float rC = ofRandom(1);
+                if(rC < 0.05) {
+                    c = ofColor(42,76,78,255);
+                } else if(rC < 0.1) {
+                    c = ofColor(240,44,48,255);
+
+                } else if(rC < 0.2) {
+                    c = ofColor(57, 66, 65, 255);
+
                 }
                 
                 ofFill();
@@ -661,7 +684,7 @@ void ofApp::drawTunnel() {
     
     ofSetLineWidth(1);
     
-    ofSetColor(0,0,0, tunnelOpacity.get());
+
     for(int i=0; i<tunnelLines; i++) {
         for (auto & c : contourFinder.getPolylines()) {
             ofPushMatrix();
@@ -672,6 +695,22 @@ void ofApp::drawTunnel() {
                     1.5/(i+1.0),
                     1.5/(i+1.0));
             ofTranslate(-c.getCentroid2D());
+            
+            ofColor cc = ofColor(0,0,0,tunnelOpacity.get());
+            
+            if(i % 4 == 0) {
+                cc = ofColor(42,76,78,tunnelOpacity.get());
+            } else if(i % 4 == 2) {
+                cc = ofColor(240,44,48,tunnelOpacity.get());
+                
+            } else if(i % 4 == 4) {
+                cc = ofColor(57, 66, 65, tunnelOpacity.get());
+                
+            }
+            
+            ofSetColor(cc);
+            
+            
             c.getSmoothed(/*(i+1) */ smoothTunnel.get() + (noiseTunnel.get() * ofNoise(time.get() + i*20.0)) ).draw();
             ofPopMatrix();
         }
