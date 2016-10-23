@@ -186,6 +186,9 @@ void ofApp::setup(){
     borders2 = borders;
     borders2 = borders2.getResampledByCount(ofGetWidth());
     
+    soundscape.setup();
+
+    
 }
 
 ofPoint ofApp::randomPtForSize(ofRectangle rect, int side){
@@ -247,7 +250,6 @@ void ofApp::update(){
                 
                 autoRotationFactor.set(0);
                 shadowIntensity.set(1);
-
                 
                 r = ofVec3f(92,360,212);
                 
@@ -259,6 +261,11 @@ void ofApp::update(){
                 ofClear(0,0,0,0);
                 reflectFbo.end();
             }
+            
+            if(t > 6.5){
+                soundscape.droneLowPlay();
+            }
+
             
             renderReflection.set(false);
             
@@ -279,6 +286,12 @@ void ofApp::update(){
                 nv.z = ofxeasing::map_clamp(t, 29, 34, 200, ofMap(sin(t*10), -1, 1, -8, 20), ofxeasing::exp::easeIn);
             }
             
+            if(t > 33 && t < 34){
+                while(soundscape.interval(50)){
+                    soundscape.clickPlay();
+                }
+            }
+            
             if(t > 33) {
                 nv.x = ofxeasing::map_clamp(t, 33, 34, -2289, -831, ofxeasing::bounce::easeOut);
                 nv.y = ofxeasing::map_clamp(t, 33, 34, -997, 84, ofxeasing::bounce::easeOut);
@@ -286,10 +299,34 @@ void ofApp::update(){
             
             if(t > 34) {
                 nv.z = ofxeasing::map_clamp(t, 34, 36, ofMap(sin(t*10), -1, 1, -8, 20), ofMap(sin(t*t), -1, 1, -8, 100), ofxeasing::quart::easeOut);
+                
+                
+                soundscape.soundPlayerDroneLow.setVolume(0.5);
+                soundscape.droneHighPlay();
+
             }
+            
+            if(t > 35 && t < 37){
+                while(soundscape.interval(345)){
+                    soundscape.clickPlay();
+                }
+                //soundscape.clickPlayLots(10); //lots and random until next block
+            }
+
             
             
         } else if(t < 60) {
+ 
+            if (t < 61){
+                soundscape.spaceyPlay(); //play it once
+            }
+            
+            if(t > 50 && t < 55){
+                while(soundscape.interval(ofRandom(600,746))){
+                    soundscape.pluckPlay();
+                }
+            }
+            
             
             if(changeScene(1)) {
                 reflectFbo.begin();
@@ -496,6 +533,9 @@ void ofApp::update(){
         p.explosionFactor = ofVec3f(explodeAmount,explodeAmount,explodeAmount);
         p.autoRotationFactor = autoRotationFactor;
     }
+    
+    soundscape.update();
+
 }
 
 void ofApp::drawReflections() {
@@ -775,6 +815,7 @@ void ofApp::draw(){
     if(drawGui) {
         ofSetColor(255);
         shadow.getDepthTexture().draw(0,0,192,108);
+        soundscape.draw();
         gui.draw();
     }
 }
