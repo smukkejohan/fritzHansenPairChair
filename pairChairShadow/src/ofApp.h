@@ -23,12 +23,34 @@ public:
     ofVec3f partRotationOffset;
     ofVec3f autoRotationOffsetVelocity;
     
-    float autoRotationFactor = autoRotationOffsetVelocity.x;
+    float autoRotationFactor;
     
     void customDraw() {
         
-        partRotationOffset += autoRotationOffsetVelocity * explosionDirection;
-    
+        partRotationOffset += explosionDirection;
+
+        ofVec3f r = autoRotationFactor * partRotationOffset;
+        
+        if(r.x > 360) {
+            r.x -= 360;
+        }
+        if(r.y > 360) {
+            r.y -= 360;
+        }
+        if(r.z > 360) {
+            r.z -= 360;
+        }
+        if(r.x < 360) {
+            r.x += 360;
+        }
+        if(r.y < 360) {
+            r.y += 360;
+        }
+        if(r.z < 360) {
+            r.z += 360;
+        }
+        
+        
         ofPushMatrix();
         
         //ofTranslate(mesh.getCentroid());
@@ -37,9 +59,10 @@ public:
         
         ofTranslate( explosionFactor * explosionDirection );
         
-        ofRotateX(partRotationOffset.x * autoRotationFactor);
-        ofRotateY(partRotationOffset.y * autoRotationFactor);
-        ofRotateZ(partRotationOffset.z * autoRotationFactor);
+        
+        ofRotateX(r.x);
+        ofRotateY(r.y);
+        ofRotateZ(r.z);
         
         mesh.draw();
         ofPopMatrix();
@@ -96,7 +119,6 @@ class ofApp : public ofBaseApp{
     ofParameter<bool> holes {"holes" , true};
     
     ofParameter<ofVec3f> chairRotation {"rotation", ofVec3f(270,0,0), ofVec3f(0,0,0), ofVec3f(360,360,360)};
-    ofParameter<ofVec3f> autoRotationOffsetVelocity  {"auto rotation", ofVec3f(0,0,0), ofVec3f(0,0,0), ofVec3f(20,20,20)};
 
     ofParameter<ofVec3f> chairOffset {"offset", ofVec3f(0,0,0), ofVec3f(-4000,-4000,-4000), ofVec3f(4000,4000,4000)};
     ofParameter<ofVec3f> lightPosition {"pos", ofVec3f(0,0,0), ofVec3f(-8000,-8000,-8000), ofVec3f(8000,8000,8000)};
@@ -116,14 +138,15 @@ class ofApp : public ofBaseApp{
     ofParameter<bool> renderReflection {"render reflection", false};
     
     
+    ofParameter<bool> drawGui {"drawGui", true};
+
+    
     ofParameter<float> blurShadeScale {"blur", 0, 0, 10};
     ofParameter<float> blurShadeRotation {"blurRot", 0, 0, PI};
     
     ofParameter<float> noiseFadeIn {"noiseIn", 0, 0, 1};
     ofParameter<float> invertNoise {"noiseInvert", 0, 0, 1};
 
-
-    
     ofParameter<ofFloatColor> bgColor {"Background color",
         ofFloatColor(1,1,1,1),
     ofFloatColor(0,0,0,0),
@@ -137,6 +160,13 @@ class ofApp : public ofBaseApp{
     ofParameter<float> tunnelOpacity {"tunnelOpacity", 255, 0, 255};
     
     ofParameter<float> time {"time", 0, 0, DURATION};
+    
+    ofParameter<int> tunnelLines {"tunnelLines", 0, 0, 10};
+    
+    ofParameter<float> smoothTunnel {"smoothTunnel", 0, 0, 20};
+    
+    ofParameter<float> noiseTunnel {"noiseTunnel", 0, 0, DURATION};
+
     
     ofParameter<bool> pause {"pause" , false};
     
@@ -153,14 +183,16 @@ class ofApp : public ofBaseApp{
         renderReflection,
         bgColor,
         shadeOpacity,
-        reflectOpacity
+        reflectOpacity,
+        tunnelLines,
+        smoothTunnel,
+        noiseTunnel,
     };
     
     ofParameterGroup chairParams {"chair",
         chairRotation,
         chairOffset,
         explodeAmount,
-        autoRotationOffsetVelocity,
         autoRotationFactor
     };
     
@@ -188,14 +220,26 @@ class ofApp : public ofBaseApp{
     
     ofShader fragShader;
     
-    
     int sceneNumber = -1;
-    ofParameterGroup stp;
-    
     
     ofVec3f fromOffset;
+    ofVec3f fromRotation;
     
+    ofVec3f targetRotation;
+    ofVec3f targetRotation2;
     
+    ofVec3f fromLightPos;
+
+    bool changeScene(int n) {
+        if(n != sceneNumber) {
+            sceneNumber = n;
+            fromOffset = chairOffset.get();
+            fromRotation = chairRotation.get();
+            fromLightPos = lightPosition.get();
+            return true;
+        }
+        return false;
+    }
     
     
 };

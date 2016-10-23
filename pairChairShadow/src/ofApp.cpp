@@ -227,22 +227,23 @@ void ofApp::update(){
         ofVec3f of = chairOffset.get();
         float exp = explodeAmount.get();
         float so = shadeOpacity.get();
+        ofVec3f r = chairRotation.get();
         
         if(t < 36) {
             
             shadeOpacity.set(255);
             //of.set()
             
-            if(sceneNumber != 0) {
-                
-                sceneNumber = 0;
-                
-                //stp = ofParameterGroup(params);
+            if(changeScene(0)) {
                 of = ofVec3f(-872,-290,459);
                 tunnelOpacity.set(0);
                 so = 255;
                 renderTunnel.set(false);
-
+                reflectOpacity.set(0);
+                
+                autoRotationFactor.set(0);
+                
+                r = ofVec3f(92,360,212);
                 
                 for(auto & p : parts) {
                     p.explosionDirection = ofVec3f(ofRandom(-1, 1),ofRandom(0.01,0.5),ofRandom(-1,1));
@@ -251,7 +252,6 @@ void ofApp::update(){
                 reflectFbo.begin();
                 ofClear(0,0,0,0);
                 reflectFbo.end();
-                
             }
             
             renderReflection.set(false);
@@ -276,7 +276,6 @@ void ofApp::update(){
             if(t > 33) {
                 nv.x = ofxeasing::map_clamp(t, 33, 34, -2289, -831, ofxeasing::bounce::easeOut);
                 nv.y = ofxeasing::map_clamp(t, 33, 34, -997, 84, ofxeasing::bounce::easeOut);
-                
             }
             
             if(t > 34) {
@@ -286,17 +285,10 @@ void ofApp::update(){
             
         } else if(t < 60) {
             
-            if(sceneNumber != 1) {
-                sceneNumber = 1;
-                
-                stp = ofParameterGroup(params);
-                
+            if(changeScene(1)) {
                 reflectFbo.begin();
                 ofClear(0,0,0,0);
                 reflectFbo.end();
-                
-                fromOffset = chairOffset.get();
-                
             }
             
             renderReflection.set(true);
@@ -316,20 +308,24 @@ void ofApp::update(){
             exp = ofxeasing::map_clamp(st, 3, 6, 0, 900, ofxeasing::quart::easeIn);
             
             
+            float ro = ofxeasing::map_clamp(st, 2, 4, 0, 255
+                                            , ofxeasing::quart::easeInOut);
+            reflectOpacity.set(ro);
+            
             if(st > 2) {
                 
                 nv.x = ofxeasing::map_clamp(st, 2, 5, -831, -5411, ofxeasing::quart::easeInOut);
                 //nv.y = ofxeasing::map_clamp(st, 2, 5, 84, 84, ofxeasing::quart::easeInOut);
                 //nv.z = ofxeasing::map_clamp(st, 2, 5, ofMap(sin(t*t), -1, 1, -8, 100), 4000, ofxeasing::quart::easeOut);
+                
+
             }
             
             
             if(st > 12) {
                 
                 nv.x = ofxeasing::map_clamp(st, 12, 20, -5411, 0, ofxeasing::quart::easeInOut);
-                
                 nv.y = ofxeasing::map_clamp(st, 12, 20, 84, 0, ofxeasing::quart::easeInOut);
-                
                 nv.z = ofxeasing::map_clamp(st, 12, 20, 4000, 8000, ofxeasing::quart::easeIn);
                 
                 exp = ofxeasing::map_clamp(st, 16, 18, 900, 700, ofxeasing::quart::easeIn);
@@ -343,34 +339,77 @@ void ofApp::update(){
             }
             
             
-        } else if(t < 120) {
+        } else if(t < 104) {
             
             
             float st = t-60;
             
-            if(sceneNumber != 2) {
-                sceneNumber = 2;
+            if(changeScene(2)) {
                 renderTunnel.set(true);
-                stp = ofParameterGroup(params);
+                
+                tunnelLines.set(10);
+                smoothTunnel.set(8);
+                
+                renderReflection.set(false);
+                
+                targetRotation = fromRotation + ofVec3f(ofRandom(-60,60), ofRandom(-60,60), ofRandom(-60,60));
+                
+                targetRotation2 = fromRotation + ofVec3f(ofRandom(-60,60), ofRandom(-60,60), ofRandom(-60,60));
             }
             
             // light fall down
             // fade shade back in
             
-            so = ofxeasing::map_clamp(st, 0, 6, 0, 255, ofxeasing::quart::easeInOut);
-            float ro = ofxeasing::map_clamp(st, 0, 6, 255, 0, ofxeasing::quart::easeInOut);
+            so = ofxeasing::map_clamp(st, 0, 2, 0, 255, ofxeasing::quart::easeIn);
+            float ro = ofxeasing::map_clamp(st, 0, 1, 255, 0, ofxeasing::quart::easeIn);
             reflectOpacity.set(ro);
             
-            float blur = ofxeasing::map_clamp(st, 2, 3, 1.3, 8, ofxeasing::quart::easeInOut);
+            float blur = ofxeasing::map_clamp(st, 0, 1, 1.3, 8, ofxeasing::quart::easeIn);
             blurShadeScale.set(blur);
             
+            
+            r.x = ofxeasing::map_clamp(st, 1, 4, fromRotation.x, targetRotation.x, ofxeasing::quart::easeIn);
+            r.y = ofxeasing::map_clamp(st, 6, 12, fromRotation.y,  targetRotation.y, ofxeasing::quart::easeIn);
+            r.z = ofxeasing::map_clamp(st, 14, 19, fromRotation.z,  targetRotation.z, ofxeasing::quart::easeIn);
+            
+            
+            autoRotationFactor.set(ofxeasing::map_clamp(st, 1, 19, 0, 0.6, ofxeasing::quart::easeInOut));
+
+            
+            
+            if(st > 19) {
+                
+                r.x = ofxeasing::map_clamp(st, 19, 22, targetRotation.x, targetRotation2.x, ofxeasing::quart::easeIn);
+                r.y = ofxeasing::map_clamp(st, 24, 28, targetRotation.y,  targetRotation2.y, ofxeasing::quart::easeIn);
+                r.z = ofxeasing::map_clamp(st, 32, 34, targetRotation.z,  targetRotation2.z, ofxeasing::quart::easeIn);
+                
+            }
             
             tunnelOpacity.set(ofxeasing::map_clamp(st, 2, 8, 0, 255, ofxeasing::quart::easeInOut));
             
             
             
+        } else if(t < 120) {
+            float st = t-104;
             
+            if(changeScene(3)) {
+            
+                
+            }
 
+            exp = ofxeasing::map_clamp(st, 0, 8, 700, 0, ofxeasing::quart::easeInOut);
+            
+            float blur = ofxeasing::map_clamp(st, 0, 2, 8, 2, ofxeasing::quart::easeIn);
+            blurShadeScale.set(blur);
+            
+            tunnelOpacity.set(ofxeasing::map_clamp(st, 0, 2, 0, 2, ofxeasing::exp::easeIn));
+            
+            nv.x = ofxeasing::map_clamp(st, 2, 4, fromLightPos.x, 0, ofxeasing::quart::easeInOut);
+            nv.y = ofxeasing::map_clamp(st, 2, 4, fromLightPos.y, 0, ofxeasing::quart::easeInOut);
+            nv.z = ofxeasing::map_clamp(st, 2, 16, fromLightPos.z, -10, ofxeasing::quart::easeIn);
+            
+            
+            autoRotationFactor.set(ofxeasing::map_clamp(st, 0, 8, 0.6, 0, ofxeasing::quart::easeIn));
             
         }
         
@@ -378,6 +417,8 @@ void ofApp::update(){
         shadeOpacity.set(so);
         lightPosition.set(nv);
         explodeAmount.set(exp);
+        chairRotation.set(r);
+
     
     }
 
@@ -438,7 +479,6 @@ void ofApp::update(){
     
     for(auto & p : parts) {
         p.explosionFactor = ofVec3f(explodeAmount,explodeAmount,explodeAmount);
-        p.autoRotationOffsetVelocity = autoRotationOffsetVelocity;
         p.autoRotationFactor = autoRotationFactor;
     }
     
@@ -532,7 +572,6 @@ void ofApp::drawReflections() {
                     c = ofColor(255,0,0,255);
                 }
                 
-                
                 if (bIntersectsWord == false){
                     
                     ofMesh temp;
@@ -599,17 +638,17 @@ void ofApp::drawReflections() {
 void ofApp::drawTunnel() {
     
     ofSetColor(0,0,0, tunnelOpacity.get());
-    for(int i=0; i<10; i++) {
+    for(int i=0; i<tunnelLines; i++) {
         for (auto & c : contourFinder.getPolylines()) {
             ofPushMatrix();
             
             ofTranslate(c.getCentroid2D());
             ofScale(
-                    (i+1)/10.0,
-                    (i+1)/10.0,
-                    (i+1)/10.0);
+                    1.5/(i+1.0),
+                    1.5/(i+1.0),
+                    1.5/(i+1.0));
             ofTranslate(-c.getCentroid2D());
-            c.getSmoothed((i+1)*20*ofNoise(ofGetElapsedTimef() + i)).draw();
+            c.getSmoothed(/*(i+1) */ smoothTunnel.get() + (noiseTunnel.get() * ofNoise(time.get() + i*20.0)) ).draw();
             ofPopMatrix();
         }
     }
@@ -702,11 +741,11 @@ void ofApp::draw(){
         
     }
     
-    //ofSetColor(255);
-    //shadow.getDepthTexture().draw(0,0,192,108);
-    
-    // move to its own window
-    gui.draw();
+    if(drawGui) {
+        ofSetColor(255);
+        shadow.getDepthTexture().draw(0,0,192,108);
+        gui.draw();
+    }
 }
 
 
@@ -728,6 +767,10 @@ void ofApp::renderModels() {
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
 
+    if(key == 'g') {
+        drawGui.set(!drawGui.get());
+    }
+    
 }
 
 //--------------------------------------------------------------
