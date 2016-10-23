@@ -166,7 +166,6 @@ class ofApp : public ofBaseApp{
     ofParameter<float> smoothTunnel {"smoothTunnel", 0, 0, 20};
     
     ofParameter<float> noiseTunnel {"noiseTunnel", 0, 0, DURATION};
-
     
     ofParameter<bool> pause {"pause" , false};
     

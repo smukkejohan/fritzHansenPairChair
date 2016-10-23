@@ -96,7 +96,11 @@ void main()
 //--------------------------------------------------------------
 void ofApp::setup(){
     ofEnableAlphaBlending();
-
+    ofEnableSmoothing();
+    ofEnableAntiAliasing();
+    
+    //ofEnableBlendMode(OF_BLENDMODE_ADD);
+    
     ofSetBackgroundAuto(false);
 
     ofSetBoxResolution( 100, 100, 30 );
@@ -144,8 +148,8 @@ void ofApp::setup(){
     
     // lets say our units are mm
     //floor.set(3325, 2845, 10);
-    floor.set(3325*2, 2845*2, 10);
-    
+    floor.set(3325, 1900, 10);
+    //
     
     // rotate chair to stand on the floor
     // set the scale of the chair
@@ -242,6 +246,8 @@ void ofApp::update(){
                 reflectOpacity.set(0);
                 
                 autoRotationFactor.set(0);
+                shadowIntensity.set(1);
+
                 
                 r = ofVec3f(92,360,212);
                 
@@ -318,7 +324,6 @@ void ofApp::update(){
                 //nv.y = ofxeasing::map_clamp(st, 2, 5, 84, 84, ofxeasing::quart::easeInOut);
                 //nv.z = ofxeasing::map_clamp(st, 2, 5, ofMap(sin(t*t), -1, 1, -8, 100), 4000, ofxeasing::quart::easeOut);
                 
-
             }
             
             
@@ -364,18 +369,31 @@ void ofApp::update(){
             float ro = ofxeasing::map_clamp(st, 0, 1, 255, 0, ofxeasing::quart::easeIn);
             reflectOpacity.set(ro);
             
+            
+            float sh = ofxeasing::map_clamp(st, 0, 1, 1, 0.2, ofxeasing::quart::easeIn);
+            shadowIntensity.set(sh);
+            
+            
+            
+            tunnelOpacity.set(ofxeasing::map_clamp(st, 2, 4, 0, 255, ofxeasing::quart::easeInOut));
+
+            
+            if(st > 1) {
+                float sh = ofxeasing::map_clamp(st, 1, 2, 0.2, 1, ofxeasing::quart::easeIn);
+                shadowIntensity.set(sh);
+                
+            }
+            
             float blur = ofxeasing::map_clamp(st, 0, 1, 1.3, 8, ofxeasing::quart::easeIn);
             blurShadeScale.set(blur);
-            
             
             r.x = ofxeasing::map_clamp(st, 1, 4, fromRotation.x, targetRotation.x, ofxeasing::quart::easeIn);
             r.y = ofxeasing::map_clamp(st, 6, 12, fromRotation.y,  targetRotation.y, ofxeasing::quart::easeIn);
             r.z = ofxeasing::map_clamp(st, 14, 19, fromRotation.z,  targetRotation.z, ofxeasing::quart::easeIn);
             
             
-            autoRotationFactor.set(ofxeasing::map_clamp(st, 1, 19, 0, 0.6, ofxeasing::quart::easeInOut));
+            autoRotationFactor.set(ofxeasing::map_clamp(st, 1, 19, 0, 0.3, ofxeasing::quart::easeInOut));
 
-            
             
             if(st > 19) {
                 
@@ -385,7 +403,6 @@ void ofApp::update(){
                 
             }
             
-            tunnelOpacity.set(ofxeasing::map_clamp(st, 2, 8, 0, 255, ofxeasing::quart::easeInOut));
             
             
             
@@ -393,23 +410,21 @@ void ofApp::update(){
             float st = t-104;
             
             if(changeScene(3)) {
-            
-                
             }
 
-            exp = ofxeasing::map_clamp(st, 0, 8, 700, 0, ofxeasing::quart::easeInOut);
+            exp = ofxeasing::map_clamp(st, 0, 8, 700, 0, ofxeasing::quart::easeOut);
             
             float blur = ofxeasing::map_clamp(st, 0, 2, 8, 2, ofxeasing::quart::easeIn);
             blurShadeScale.set(blur);
             
-            tunnelOpacity.set(ofxeasing::map_clamp(st, 0, 2, 0, 2, ofxeasing::exp::easeIn));
+            tunnelLines.set(ofxeasing::map_clamp(st, 0, 2, 10, 0, ofxeasing::exp::easeIn));
             
             nv.x = ofxeasing::map_clamp(st, 2, 4, fromLightPos.x, 0, ofxeasing::quart::easeInOut);
             nv.y = ofxeasing::map_clamp(st, 2, 4, fromLightPos.y, 0, ofxeasing::quart::easeInOut);
             nv.z = ofxeasing::map_clamp(st, 2, 16, fromLightPos.z, -10, ofxeasing::quart::easeIn);
             
             
-            autoRotationFactor.set(ofxeasing::map_clamp(st, 0, 8, 0.6, 0, ofxeasing::quart::easeIn));
+            autoRotationFactor.set(ofxeasing::map_clamp(st, 0, 8, 0.3, 0, ofxeasing::quart::easeOut));
             
         }
         
@@ -486,16 +501,21 @@ void ofApp::update(){
 
 void ofApp::drawReflections() {
     
-    //ofEnableBlendMode(OF_BLENDMODE_ALPHA);
+    
+    ofSetLineWidth(1);
+    //ofEnableBlendMode(<#ofBlendMode blendMode#>)
+    
+    //ofEnableBlendMode(OF_BLENDMODE_SCREEN);
     //ofClear(0,0,0,0.1);
     //ofSetColor(0,0,0,5);
     //ofDrawRectangle(0, 0, ofGetWidth(), ofGetHeight());
     
     ofRectangle rect(0,0,ofGetWidth(), ofGetHeight());
     
-    ofSetColor(255);
+    ofSetColor(255,255);
     
-    for (int z = 0; z < 8; z ++){
+    
+    for (int z = 0; z < 14; z ++){
         
           //ofPoint a = borders2[ (mouseX+borders2.size()/2) % borders2.size() ]; // //borders2[ mouseX % borders2.size() ];; //borders2[  ]; //ofPoint(0, mouseY); ///randomPtForSize(rect, side);
             
@@ -522,7 +542,6 @@ void ofApp::drawReflections() {
         
         if(lines.size() > 0) {
             a = lines[int(ofRandom(lines.size()))].getCentroid2D();
-    
         }
         
         //ofDrawCircle(a.x, a.y, 10);
@@ -533,7 +552,7 @@ void ofApp::drawReflections() {
         
             bool bNoMoreIntersects = false;
             int count = 0;
-            while (!bNoMoreIntersects && count < 8){
+            while (!bNoMoreIntersects && count < 14){
                 
                 bool bIntersectsWord = false;
                 float minDistance = 10000000;
@@ -567,10 +586,12 @@ void ofApp::drawReflections() {
                     }
                 }
                 
-                ofColor c = ofColor(255,255,255,ofRandom(200,255));
+                ofColor c = ofColor(255,255,255,255);
                 if(ofRandom(1) < 0.05) {
-                    c = ofColor(255,0,0,255);
+                    c = ofColor(ofRandom(255),ofRandom(255),ofRandom(255),255);
                 }
+                
+                ofFill();
                 
                 if (bIntersectsWord == false){
                     
@@ -581,8 +602,9 @@ void ofApp::drawReflections() {
                     temp.addColor(c);
                     temp.addVertex(b);
                     temp.draw();
-                    
-                    //ofLine(a,b);
+                
+                   // ofSetColor(c);
+                   // ofLine(a,b);
                     bNoMoreIntersects = true;
                 } else {
                     
@@ -594,6 +616,7 @@ void ofApp::drawReflections() {
                     temp.addVertex(pos);
                     temp.draw();
                     
+                    //ofSetColor(c);
                     //ofLine(a, pos);
                     
                     ofPoint diff = pos - a;
@@ -636,6 +659,8 @@ void ofApp::drawReflections() {
 }
 
 void ofApp::drawTunnel() {
+    
+    ofSetLineWidth(1);
     
     ofSetColor(0,0,0, tunnelOpacity.get());
     for(int i=0; i<tunnelLines; i++) {
@@ -695,10 +720,14 @@ void ofApp::draw(){
     ofSetColor(255,shadeOpacity.get());
     shadeFbo.draw(0,0);
     
+    blur.end();
+    
+    ofSetColor(255);
+    blur.draw();
+    
+    
     ofSetColor(255,reflectOpacity.get());
     reflectFbo.draw(0,0);
-    
-    blur.end();
 
         /*fragShader.begin();
         fragShader.setUniform1f("u_width", 1920);
@@ -708,8 +737,7 @@ void ofApp::draw(){
         fragShader.setUniform1f("invertNoise", invertNoise.get());
         fragShader.setUniformTexture("tex0", blur.getTextureReference(), 1);*/
     
-        ofSetColor(255);
-        blur.draw();
+
         //ofDrawRectangle(0, 0, ofGetWidth(), ofGetHeight());
         //cam.begin();
         //floor.draw();
