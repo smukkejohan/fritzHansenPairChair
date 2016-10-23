@@ -158,7 +158,6 @@ void ofApp::setup(){
     gui.loadFromFile("settings.xml");
     
     
-    
     ofFbo::Settings fboSettings;
     
     //TODO: Fix MSAA for FBOs
@@ -501,6 +500,7 @@ void ofApp::update(){
 
 void ofApp::drawReflections() {
     
+    ofEnableAlphaBlending();
     
     ofSetLineWidth(1.8);
     //ofEnableBlendMode(<#ofBlendMode blendMode#>)
@@ -515,7 +515,7 @@ void ofApp::drawReflections() {
     ofSetColor(255,255);
     
     
-    for (int z = 0; z < 14; z ++){
+    for (int z = 0; z < 10; z ++){
         
           //ofPoint a = borders2[ (mouseX+borders2.size()/2) % borders2.size() ]; // //borders2[ mouseX % borders2.size() ];; //borders2[  ]; //ofPoint(0, mouseY); ///randomPtForSize(rect, side);
             
@@ -552,7 +552,7 @@ void ofApp::drawReflections() {
         
             bool bNoMoreIntersects = false;
             int count = 0;
-            while (!bNoMoreIntersects && count < 14){
+            while (!bNoMoreIntersects && count < 10){
                 
                 bool bIntersectsWord = false;
                 float minDistance = 10000000;
@@ -586,9 +586,9 @@ void ofApp::drawReflections() {
                     }
                 }
                 
-                ofColor c = ofColor(255,255,255,255);
+                ofColor c = ofColor(255,255,255,10);
                 if(ofRandom(1) < 0.05) {
-                    c = ofColor(ofRandom(255),ofRandom(255),ofRandom(255),255);
+                    c = ofColor(ofRandom(255),ofRandom(255),ofRandom(255),10);
                 }
                 
                 ofFill();
