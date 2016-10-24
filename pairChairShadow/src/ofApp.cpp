@@ -237,6 +237,7 @@ void ofApp::update(){
     
         float t = time.get();
 
+        
         time.set(t + (ofGetLastFrameTime()*playBackSpeed.get()) );
         if(t > time.getMax()) { // loop
             time.set(time.getMin());
@@ -280,7 +281,7 @@ void ofApp::update(){
                 ofClear(0,0,0,0);
                 reflectFbo.end();
                 
-                playBackSpeed.set(ofRandom(0.9,1.4));
+                playBackSpeed.set(ofRandom(1.0,1.3));
                 
                 randomPos1 = ofVec3f(ofRandom(-2000,2000), ofRandom(-2000,2000), ofRandom(100,200));
                 randomPos2 = ofVec3f(ofRandom(-2000,2000), ofRandom(-2000,2000), ofRandom(-4,4000));
@@ -547,6 +548,10 @@ void ofApp::update(){
             float blur = ofxeasing::map_clamp(st, 0, 2, 1 + ofNoise(ofGetElapsedTimeMillis()/800.0)*6, 2, ofxeasing::quart::easeIn);
             blurShadeScale.set(blur);
             
+            
+            
+            
+            
             tunnelLines.set(ofxeasing::map_clamp(st, 0, 2, 10, 0, ofxeasing::exp::easeIn));
             
             nv.x = ofxeasing::map_clamp(st, 2, 4, fromLightPos.x, randomPos1.x, ofxeasing::quart::easeInOut);
@@ -567,6 +572,14 @@ void ofApp::update(){
             
             autoRotationFactor.set(ofxeasing::map_clamp(st, 0, 8, 0.3, 0, ofxeasing::quart::easeOut));
             
+            
+            if(st > 4) {
+                
+                float blur = ofxeasing::map_clamp(st, 8, 16, 2, 0.9, ofxeasing::quart::easeIn);
+                blurShadeScale.set(blur);
+                
+            }
+
             
             
             r.x = ofxeasing::map_clamp(st, 4, 16, fromRotation.x, targetRotation.x, ofxeasing::quart::easeIn);
