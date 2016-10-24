@@ -11,7 +11,8 @@ int main( ){
     //mainSettings.setGLVersion(3, 2);
     mainSettings.decorated = false;
     //mainSettings.setPosition(ofPoint(0,0));
-    mainSettings.windowMode = OF_FULLSCREEN;
+    
+    //mainSettings.windowMode = OF_FULLSCREEN;
     
     cout << mainSettings.glVersionMajor << " : " << mainSettings.glVersionMinor << endl;
     

@@ -260,6 +260,8 @@ void ofApp::update(){
                 renderTunnel.set(false);
                 reflectOpacity.set(0);
                 
+                noiseTunnel.set(0);
+                
                 autoRotationFactor.set(0);
                 shadowIntensity.set(1);
                 
@@ -267,6 +269,7 @@ void ofApp::update(){
                 
                 for(auto & p : parts) {
                     p.explosionDirection = ofVec3f(ofRandom(-1, 1),ofRandom(0.01,0.5),ofRandom(-1,1));
+                    p.partRotationOffset = 0;
                 }
                 
                 reflectFbo.begin();
@@ -283,11 +286,10 @@ void ofApp::update(){
             if(t > 6.5){
                 soundscape.droneLowPlay();
             }
-
             
             renderReflection.set(false);
             
-            blurShadeScale.set(0.6);
+            blurShadeScale.set(1.3);
             
             nv.x = ofxeasing::map_clamp(t, 13, 26, -10, randomPos1.x, ofxeasing::quart::easeInOut);
             nv.y = ofxeasing::map_clamp(t, 10, 20, -10, randomPos1.y, ofxeasing::quart::easeInOut);
@@ -312,9 +314,9 @@ void ofApp::update(){
                     if(maxTimes > 10) {
                         break;
                     }
-                    
                 }
             }
+            
             
             if(t > 33) {
                 nv.x = ofxeasing::map_clamp(t, 33, 34, randomPos3.x, -831, ofxeasing::bounce::easeOut);
@@ -323,7 +325,6 @@ void ofApp::update(){
             
             if(t > 34) {
                 nv.z = ofxeasing::map_clamp(t, 34, 36, ofMap(sin(t*10), -1, 1, -8, 20), ofMap(sin(t*t), -1, 1, -8, 100), ofxeasing::quart::easeOut);
-                
                 
                 soundscape.soundPlayerDroneLow.setVolume(0.5);
                 soundscape.droneHighPlay();
@@ -370,19 +371,16 @@ void ofApp::update(){
                 ofClear(0,0,0,0);
                 reflectFbo.end();
                 
-                
                 offsetTarget = ofVec3f(ofRandom(-600,600),ofRandom(-600,600), ofRandom(700, 2500));
                 
-                randomPos1 = ofVec3f(ofRandom(-1800,-3500), ofRandom(-2000,2000), ofRandom(3000,6000));
+                randomPos1 = ofVec3f(ofRandom(-3400,-4000), ofRandom(-1000,1000), ofRandom(5200,6000));
                 
-                randomPos2 = ofVec3f(ofRandom(-1200,1200), ofRandom(-1200,1200), ofRandom(6000,7000));
+                randomPos2 = ofVec3f(ofRandom(-1200,1200), ofRandom(-1000,1000), ofRandom(6000,7000));
                 
                 randomInterval = 12;
                 lastEventTime = 0;
                 
             }
-            
-            renderReflection.set(true);
             
             float st = t-36;
             
@@ -390,17 +388,26 @@ void ofApp::update(){
             //nv.y = ofxeasing::map_clamp(st, 10, 20, -10, 626, ofxeasing::quart::easeInOut);
             
             if(st < 2) {
+                
                 nv.z = ofxeasing::map_clamp(st, 0, 1, ofMap(sin(t*t), -1, 1, -8, 100), randomPos1.z, ofxeasing::quart::easeOut);
             }
             
             //float b = ofxeasing::map_clamp(t, 13, 26, -10, 1376, ofxeasing::quart::easeInOut);
             
-            so = ofxeasing::map_clamp(st, 4, 8, 255, 0, ofxeasing::quart::easeIn);
+            so = ofxeasing::map_clamp(st, 6, 7, 255, 0, ofxeasing::quart::easeIn);
             exp = ofxeasing::map_clamp(st, 10, 14, 0, 900, ofxeasing::quart::easeIn);
             
             
-            float ro = ofxeasing::map_clamp(st, 6, 10, 0, 255
-                                            , ofxeasing::quart::easeInOut);
+            if(st > 6) {
+                blurShadeScale.set(ofxeasing::map_clamp(st, 6, 8, 1.3, 0.2, ofxeasing::quart::easeIn));
+            }
+            
+            if(st>7) {
+                renderReflection.set(true);
+            }
+            
+            float ro = ofxeasing::map_clamp(st, 7, 7.2, 0, 255
+                                            , ofxeasing::exp::easeOut);
             reflectOpacity.set(ro);
             
             
@@ -410,7 +417,7 @@ void ofApp::update(){
                 ofClear(0,0,0,0);
                 reflectFbo.end();
                 
-                randomInterval = ofRandom(1, 8);
+                randomInterval = ofRandom(0.5, 4);
                 lastEventTime = st;
                 
             }
@@ -418,16 +425,19 @@ void ofApp::update(){
             if(st > 2) {
                 
                 nv.x = ofxeasing::map_clamp(st, 2, 5, fromLightPos.x, randomPos1.x, ofxeasing::quart::easeInOut);
-                //nv.y = ofxeasing::map_clamp(st, 2, 5, 84, 84, ofxeasing::quart::easeInOut);
+                
+                nv.y = ofxeasing::map_clamp(st, 4, 12, fromLightPos.y, randomPos1.y, ofxeasing::quart::easeInOut);
+                
                 //nv.z = ofxeasing::map_clamp(st, 2, 5, ofMap(sin(t*t), -1, 1, -8, 100), 4000, ofxeasing::quart::easeOut);
                 
             }
             
             
             if(st > 12) {
+
                 
                 nv.x = ofxeasing::map_clamp(st, 12, 20, randomPos1.x, randomPos2.x, ofxeasing::quart::easeInOut);
-                nv.y = ofxeasing::map_clamp(st, 12, 20, fromLightPos.y, randomPos2.y, ofxeasing::quart::easeInOut);
+                nv.y = ofxeasing::map_clamp(st, 12, 20, randomPos1.y, randomPos2.y, ofxeasing::quart::easeInOut);
                 nv.z = ofxeasing::map_clamp(st, 12, 20, randomPos1.z, randomPos2.z, ofxeasing::quart::easeIn);
                 
                 exp = ofxeasing::map_clamp(st, 16, 18, 900, 700, ofxeasing::quart::easeIn);
@@ -451,28 +461,40 @@ void ofApp::update(){
                 tunnelLines.set(10);
                 smoothTunnel.set(8);
                 
-                renderReflection.set(false);
                 
                 targetRotation = fromRotation + ofVec3f(ofRandom(-60,60), ofRandom(-60,60), ofRandom(-60,60));
                 
                 targetRotation2 = fromRotation + ofVec3f(ofRandom(-60,60), ofRandom(-60,60), ofRandom(-60,60));
+                
+                offsetTarget = ofVec3f(ofRandom(-600,200),ofRandom(-250,250), ofRandom(700, 1100));
             }
             
             // light fall down
             // fade shade back in
             
-            so = ofxeasing::map_clamp(st, 0, 0.5, 0, 255, ofxeasing::exp::easeOut);
-            float ro = ofxeasing::map_clamp(st, 0, 1, 255, 0, ofxeasing::quart::easeIn);
+            so = ofxeasing::map_clamp(st, 1, 1.5, 0, 255, ofxeasing::exp::easeOut);
+            float ro = ofxeasing::map_clamp(st, 1, 1.5, 255, 0, ofxeasing::exp::easeOut);
             reflectOpacity.set(ro);
             
-            tunnelOpacity.set(ofxeasing::map_clamp(st, 2, 4, 0, 255, ofxeasing::quart::easeInOut));
+            if(st > 3) {
+                renderReflection.set(false);
+            }
+            
+            tunnelOpacity.set(ofxeasing::map_clamp(st, 2, 4, 0, 255, ofxeasing::exp::easeIn));
 
-            float blur = ofxeasing::map_clamp(st, 0, 1, 0.6, 8, ofxeasing::quart::easeIn);
+            float blur = ofxeasing::map_clamp(st, 1, 1.5, 0.3, 6, ofxeasing::exp::easeOut);
             blurShadeScale.set(blur);
             
             r.x = ofxeasing::map_clamp(st, 1, 4, fromRotation.x, targetRotation.x, ofxeasing::quart::easeIn);
             r.y = ofxeasing::map_clamp(st, 6, 12, fromRotation.y,  targetRotation.y, ofxeasing::quart::easeIn);
             r.z = ofxeasing::map_clamp(st, 14, 19, fromRotation.z,  targetRotation.z, ofxeasing::quart::easeIn);
+            
+            
+            of.x = ofxeasing::map_clamp(st, 6, 14, fromOffset.x, offsetTarget.x, ofxeasing::quart::easeInOut);
+            
+            of.y = ofxeasing::map_clamp(st, 6, 14, fromOffset.y, offsetTarget.y, ofxeasing::quart::easeInOut);
+            
+            of.z = ofxeasing::map_clamp(st, 6, 14, fromOffset.z, offsetTarget.z, ofxeasing::quart::easeInOut);
             
             
             autoRotationFactor.set(ofxeasing::map_clamp(st, 1, 19, 0, 0.3, ofxeasing::quart::easeInOut));
@@ -483,6 +505,9 @@ void ofApp::update(){
                 r.x = ofxeasing::map_clamp(st, 19, 22, targetRotation.x, targetRotation2.x, ofxeasing::quart::easeIn);
                 r.y = ofxeasing::map_clamp(st, 24, 28, targetRotation.y,  targetRotation2.y, ofxeasing::quart::easeIn);
                 r.z = ofxeasing::map_clamp(st, 32, 34, targetRotation.z,  targetRotation2.z, ofxeasing::quart::easeIn);
+                
+                
+                noiseTunnel.set(ofxeasing::map_clamp(st, 30, 34, 0, 120, ofxeasing::quart::easeOut));
                 
             }
             
@@ -526,6 +551,7 @@ void ofApp::update(){
             
             
             autoRotationFactor.set(ofxeasing::map_clamp(st, 0, 8, 0.3, 0, ofxeasing::quart::easeOut));
+            
             
             
             r.x = ofxeasing::map_clamp(st, 4, 16, fromRotation.x, targetRotation.x, ofxeasing::quart::easeIn);
@@ -623,7 +649,7 @@ void ofApp::drawReflections() {
     ofSetColor(255,255);
     
     
-    for (int z = 0; z < 10; z ++){
+    for (int z = 0; z < 8; z ++){
         
           //ofPoint a = borders2[ (mouseX+borders2.size()/2) % borders2.size() ]; // //borders2[ mouseX % borders2.size() ];; //borders2[  ]; //ofPoint(0, mouseY); ///randomPtForSize(rect, side);
             
@@ -659,7 +685,7 @@ void ofApp::drawReflections() {
         
             bool bNoMoreIntersects = false;
             int count = 0;
-            while (!bNoMoreIntersects && count < 10){
+            while (!bNoMoreIntersects && count < 8){
                 
                 bool bIntersectsWord = false;
                 float minDistance = 10000000;
