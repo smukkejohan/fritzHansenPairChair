@@ -11,8 +11,6 @@
 
 #include "soundscape.hpp"
 
-
-
 #define DURATION 120
 
 class Part : public ofNode {

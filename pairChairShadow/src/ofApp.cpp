@@ -99,7 +99,6 @@ void ofApp::setup(){
     ofEnableAntiAliasing();
     
     
-    ofHideCursor();
     
     
     
@@ -292,7 +291,7 @@ void ofApp::update(){
             
             nv.x = ofxeasing::map_clamp(t, 13, 26, -10, randomPos1.x, ofxeasing::quart::easeInOut);
             nv.y = ofxeasing::map_clamp(t, 10, 20, -10, randomPos1.y, ofxeasing::quart::easeInOut);
-            nv.z = ofxeasing::map_clamp(t, 0, 10, -940, randomPos1.z, ofxeasing::quart::easeInOut);
+            nv.z = ofxeasing::map_clamp(t, 0, 4, -940, randomPos1.z, ofxeasing::exp::easeOut);
             
             if( t > 26 ) {
                 nv.x = ofxeasing::map_clamp(t, 26, 28, randomPos1.x, randomPos2.x, ofxeasing::quart::easeInOut);
@@ -306,8 +305,14 @@ void ofApp::update(){
             }
             
             if(t > 33 && t < 34){
+                int maxTimes = 0;
                 while(soundscape.interval(50)){
                     soundscape.clickPlay();
+                    maxTimes++;
+                    if(maxTimes > 10) {
+                        break;
+                    }
+                    
                 }
             }
             
@@ -326,8 +331,14 @@ void ofApp::update(){
             }
             
             if(t > 35 && t < 37){
+                int maxTimes = 0;
                 while(soundscape.interval(345)){
                     soundscape.clickPlay();
+                    
+                    maxTimes++;
+                    if(maxTimes > 10) {
+                        break;
+                    }
                 }
                 //soundscape.clickPlayLots(10); //lots and random until next block
             }
@@ -341,8 +352,15 @@ void ofApp::update(){
             }
             
             if(t > 50 && t < 55){
+                
+                int maxTimes = 0;
                 while(soundscape.interval(ofRandom(600,746))){
                     soundscape.pluckPlay();
+                    
+                    maxTimes++;
+                    if(maxTimes > 10) {
+                        break;
+                    }
                 }
             }
             
@@ -355,12 +373,12 @@ void ofApp::update(){
                 
                 offsetTarget = ofVec3f(ofRandom(-600,600),ofRandom(-600,600), ofRandom(700, 2500));
                 
-                randomPos1 = ofVec3f(ofRandom(-4000,-6000), ofRandom(-2000,2000), ofRandom(3000,6000));
+                randomPos1 = ofVec3f(ofRandom(-1800,-3500), ofRandom(-2000,2000), ofRandom(3000,6000));
                 
                 randomPos2 = ofVec3f(ofRandom(-1200,1200), ofRandom(-1200,1200), ofRandom(6000,7000));
-
                 
-                randomInterval = ofRandom(1, 8);
+                randomInterval = 12;
+                lastEventTime = 0;
                 
             }
             
@@ -377,11 +395,11 @@ void ofApp::update(){
             
             //float b = ofxeasing::map_clamp(t, 13, 26, -10, 1376, ofxeasing::quart::easeInOut);
             
-            so = ofxeasing::map_clamp(st, 0, 4, 255, 0, ofxeasing::quart::easeIn);
-            exp = ofxeasing::map_clamp(st, 3, 6, 0, 900, ofxeasing::quart::easeIn);
+            so = ofxeasing::map_clamp(st, 4, 8, 255, 0, ofxeasing::quart::easeIn);
+            exp = ofxeasing::map_clamp(st, 10, 14, 0, 900, ofxeasing::quart::easeIn);
             
             
-            float ro = ofxeasing::map_clamp(st, 2, 4, 0, 255
+            float ro = ofxeasing::map_clamp(st, 6, 10, 0, 255
                                             , ofxeasing::quart::easeInOut);
             reflectOpacity.set(ro);
             
@@ -887,10 +905,14 @@ void ofApp::draw(){
     }
     
     if(drawGui) {
+        ofShowCursor();
         ofSetColor(255);
         shadow.getDepthTexture().draw(0,0,192,108);
         soundscape.draw();
         gui.draw();
+    } else {
+        ofHideCursor();
+
     }
 }
 
@@ -961,7 +983,6 @@ void ofApp::dragEvent(ofDragInfo dragInfo){
 
 
 void ofApp::exit() {
-    
     
     for(auto &p : parts) {
         p.clearParent();
