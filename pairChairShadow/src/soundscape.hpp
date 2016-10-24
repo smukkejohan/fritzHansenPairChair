@@ -25,10 +25,7 @@ public:
     void cresendoPlay();
     void spaceyPlay();
     
-    
     bool interval(int timeIntervalMilisec);
-    
-    
     
     ofSoundPlayer soundPlayerDroneLow;
     ofSoundPlayer soundPlayerDroneHigh;

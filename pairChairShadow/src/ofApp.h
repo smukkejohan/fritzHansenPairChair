@@ -18,6 +18,9 @@
 class Part : public ofNode {
 public:
     
+    ~Part() {
+    }
+    
     ofMesh mesh;
     
     ofVec3f explosionFactor;
@@ -89,6 +92,8 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
+    
+    void exit();
     
     void drawReflections();
     void drawTunnel();

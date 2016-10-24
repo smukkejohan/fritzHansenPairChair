@@ -98,6 +98,11 @@ void ofApp::setup(){
     //ofEnableSmoothing();
     ofEnableAntiAliasing();
     
+    
+    ofHideCursor();
+    
+    
+    
     //ofEnableBlendMode(OF_BLENDMODE_ADD);
     
     ofSetBackgroundAuto(false);
@@ -193,7 +198,9 @@ void ofApp::setup(){
     borders2 = borders2.getResampledByCount(ofGetWidth());
     
     soundscape.setup();
-
+    
+    
+    drawGui.set(false);
     
 }
 
@@ -952,6 +959,15 @@ void ofApp::dragEvent(ofDragInfo dragInfo){
 
 }
 
+
+void ofApp::exit() {
+    
+    
+    for(auto &p : parts) {
+        p.clearParent();
+    }
+    
+}
 
 
 
