@@ -274,6 +274,8 @@ void ofApp::update(){
                 
                 camFov.set(24.806);
                 
+                camPos.set(ofVec3f(-469.625, -225.701, 4114.86));
+                
                 for(auto & p : parts) {
                     p.explosionDirection = ofVec3f(ofRandom(-1, 1),ofRandom(0.01,0.5),ofRandom(-1,1));
                     p.partRotationOffset = ofVec3f(0,0,0);
