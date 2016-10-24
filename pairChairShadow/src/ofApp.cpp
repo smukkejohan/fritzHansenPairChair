@@ -237,9 +237,13 @@ void ofApp::update(){
     
         float t = time.get();
 
-        time.set(t + ofGetLastFrameTime() );
+        time.set(t + (ofGetLastFrameTime()*playBackSpeed.get()) );
         if(t > time.getMax()) { // loop
             time.set(time.getMin());
+        }
+        
+        if(t < time.getMin()) { // loop
+            time.set(time.getMax());
         }
     
         ofVec3f nv = lightPosition.get();
@@ -275,6 +279,8 @@ void ofApp::update(){
                 reflectFbo.begin();
                 ofClear(0,0,0,0);
                 reflectFbo.end();
+                
+                playBackSpeed.set(ofRandom(1,4));
                 
                 randomPos1 = ofVec3f(ofRandom(-2000,2000), ofRandom(-2000,2000), ofRandom(100,200));
                 randomPos2 = ofVec3f(ofRandom(-2000,2000), ofRandom(-2000,2000), ofRandom(-4,4000));

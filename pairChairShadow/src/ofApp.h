@@ -169,6 +169,9 @@ class ofApp : public ofBaseApp{
     ofParameter<float> tunnelOpacity {"tunnelOpacity", 255, 0, 255};
     
     ofParameter<float> time {"time", 0, 0, DURATION};
+    ofParameter<float> playBackSpeed {"playbackspeed", 1, -4, 4};
+
+    
     
     ofParameter<int> tunnelLines {"tunnelLines", 0, 0, 10};
     
@@ -185,6 +188,7 @@ class ofApp : public ofBaseApp{
     
     ofParameterGroup renderParams {"render",
         time,
+        playBackSpeed,
         pause,
         renderChair,
         renderTunnel,
