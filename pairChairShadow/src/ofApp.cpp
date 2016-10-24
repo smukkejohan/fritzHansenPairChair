@@ -489,7 +489,6 @@ void ofApp::update(){
             tunnelOpacity.set(ofxeasing::map_clamp(st, 2, 4, 0, 255, ofxeasing::exp::easeIn));
 
             float blur = ofxeasing::map_clamp(st, 1, 1.5, 0.3, 6, ofxeasing::exp::easeOut);
-            blurShadeScale.set(blur);
             
             r.x = ofxeasing::map_clamp(st, 1, 4, fromRotation.x, targetRotation.x, ofxeasing::quart::easeIn);
             r.y = ofxeasing::map_clamp(st, 6, 12, fromRotation.y,  targetRotation.y, ofxeasing::quart::easeIn);
@@ -504,7 +503,14 @@ void ofApp::update(){
             
             
             autoRotationFactor.set(ofxeasing::map_clamp(st, 1, 19, 0, 0.3, ofxeasing::quart::easeInOut));
-
+            
+            
+            if(st > 19) {
+                blur = ofxeasing::map_clamp(st, 1, 1.5, 6, 1 + ofNoise(ofGetElapsedTimeMillis()/800.0)*6, ofxeasing::exp::easeOut);
+            }
+            blurShadeScale.set(blur);
+            
+            
             
             if(st > 19) {
                 
@@ -513,7 +519,7 @@ void ofApp::update(){
                 r.z = ofxeasing::map_clamp(st, 32, 34, targetRotation.z,  targetRotation2.z, ofxeasing::quart::easeIn);
                 
                 
-                noiseTunnel.set(ofxeasing::map_clamp(st, 30, 34, 0, 120, ofxeasing::quart::easeOut));
+                noiseTunnel.set(ofxeasing::map_clamp(st, 38, 44, 0, 120, ofxeasing::quart::easeOut));
                 
             }
             
@@ -538,7 +544,7 @@ void ofApp::update(){
 
             exp = ofxeasing::map_clamp(st, 0, 8, 700, 0, ofxeasing::quart::easeOut);
             
-            float blur = ofxeasing::map_clamp(st, 0, 2, 8, 2, ofxeasing::quart::easeIn);
+            float blur = ofxeasing::map_clamp(st, 0, 2, 1 + ofNoise(ofGetElapsedTimeMillis()/800.0)*6, 2, ofxeasing::quart::easeIn);
             blurShadeScale.set(blur);
             
             tunnelLines.set(ofxeasing::map_clamp(st, 0, 2, 10, 0, ofxeasing::exp::easeIn));
@@ -554,6 +560,9 @@ void ofApp::update(){
                 nv.y = ofxeasing::map_clamp(st, 4, 16, randomPos1.y, randomPos2.y, ofxeasing::quart::easeInOut);
                 
             }
+            
+            
+            
             
             
             autoRotationFactor.set(ofxeasing::map_clamp(st, 0, 8, 0.3, 0, ofxeasing::quart::easeOut));
