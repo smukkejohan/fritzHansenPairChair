@@ -269,7 +269,7 @@ void ofApp::update(){
                 
                 for(auto & p : parts) {
                     p.explosionDirection = ofVec3f(ofRandom(-1, 1),ofRandom(0.01,0.5),ofRandom(-1,1));
-                    p.partRotationOffset = 0;
+                    p.partRotationOffset = ofVec3f(0,0,0);
                 }
                 
                 reflectFbo.begin();
