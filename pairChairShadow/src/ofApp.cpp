@@ -280,7 +280,7 @@ void ofApp::update(){
                 ofClear(0,0,0,0);
                 reflectFbo.end();
                 
-                playBackSpeed.set(ofRandom(1,4));
+                playBackSpeed.set(ofRandom(0.9,1.4));
                 
                 randomPos1 = ofVec3f(ofRandom(-2000,2000), ofRandom(-2000,2000), ofRandom(100,200));
                 randomPos2 = ofVec3f(ofRandom(-2000,2000), ofRandom(-2000,2000), ofRandom(-4,4000));
