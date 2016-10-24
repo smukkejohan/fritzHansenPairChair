@@ -272,6 +272,8 @@ void ofApp::update(){
                 
                 r = ofVec3f(92,360,212);
                 
+                camFov.set(24.806);
+                
                 for(auto & p : parts) {
                     p.explosionDirection = ofVec3f(ofRandom(-1, 1),ofRandom(0.01,0.5),ofRandom(-1,1));
                     p.partRotationOffset = ofVec3f(0,0,0);
@@ -508,9 +510,11 @@ void ofApp::update(){
             
             if(st > 19) {
                 blur = ofxeasing::map_clamp(st, 1, 1.5, 6, 1 + ofNoise(ofGetElapsedTimeMillis()/800.0)*6, ofxeasing::exp::easeOut);
+
             }
-            blurShadeScale.set(blur);
             
+            blurShadeScale.set(blur);
+
             
             
             if(st > 19) {
@@ -546,11 +550,6 @@ void ofApp::update(){
             exp = ofxeasing::map_clamp(st, 0, 8, 700, 0, ofxeasing::quart::easeOut);
             
             float blur = ofxeasing::map_clamp(st, 0, 2, 1 + ofNoise(ofGetElapsedTimeMillis()/800.0)*6, 2, ofxeasing::quart::easeIn);
-            blurShadeScale.set(blur);
-            
-            
-            
-            
             
             tunnelLines.set(ofxeasing::map_clamp(st, 0, 2, 10, 0, ofxeasing::exp::easeIn));
             
@@ -567,20 +566,17 @@ void ofApp::update(){
             }
             
             
-            
-            
-            
             autoRotationFactor.set(ofxeasing::map_clamp(st, 0, 8, 0.3, 0, ofxeasing::quart::easeOut));
             
             
             if(st > 4) {
                 
-                float blur = ofxeasing::map_clamp(st, 8, 16, 2, 0.9, ofxeasing::quart::easeIn);
-                blurShadeScale.set(blur);
+                blur = ofxeasing::map_clamp(st, 10, 12, 2, 0.9, ofxeasing::quart::easeIn);
                 
             }
 
-            
+            blurShadeScale.set(blur);
+
             
             r.x = ofxeasing::map_clamp(st, 4, 16, fromRotation.x, targetRotation.x, ofxeasing::quart::easeIn);
             r.y = ofxeasing::map_clamp(st, 4, 16, fromRotation.y,  targetRotation.y, ofxeasing::quart::easeIn);
@@ -607,7 +603,7 @@ void ofApp::update(){
     // 831, 84
     
     // light pos to
-
+    // 24.806
     cam.setFov(camFov); //	benq mh741 throw ratio 1.15-1.49
     cam.setPosition(camPos);
 //    cam.lookAt(ofVec3f(0,0,0));
